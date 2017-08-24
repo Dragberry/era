@@ -1,0 +1,87 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>era</artifactId>
+		<groupId>org.dragberry.era</groupId>
+		<version>1.0.0</version>
+	</parent>
+
+	<artifactId>era-backend</artifactId>
+	<name>..ERA Backend</name>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>era-dal</module>
+		<module>era-business</module>
+		<module>era-web</module>
+	</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.dragberry.era</groupId>
+			<artifactId>era-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	
+		<!-- Apache common utils -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+
+		<!-- Spring framework -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring-framework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring-framework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring-framework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>${spring-data-jpa.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<properties>
+		<spring-framework.version>4.3.5.RELEASE</spring-framework.version>
+		<spring-security.version>4.1.2.RELEASE</spring-security.version>
+		<spring-data-jpa.version>1.10.2.RELEASE</spring-data-jpa.version>
+		<log4j.version>1.2.17</log4j.version>
+	</properties>
+
+</project>
