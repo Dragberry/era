@@ -80,7 +80,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js"
                 ).permitAll()
-                .antMatchers("/auth/**").permitAll()
+                .antMatchers("/api/login/**").permitAll()
                 .anyRequest().authenticated();
         // Custom JWT based security filter
         httpSecurity
