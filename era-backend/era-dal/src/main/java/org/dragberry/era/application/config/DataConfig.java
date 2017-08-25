@@ -43,7 +43,7 @@ public class DataConfig {
 	public LocalSessionFactoryBean sessionFactory() {
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		sessionFactory.setDataSource(dataSource());
-		sessionFactory.setPackagesToScan("org.dragberry.sras.domain");
+		sessionFactory.setPackagesToScan("org.dragberry.era.domain");
 		sessionFactory.setHibernateProperties(hibernateProperties());
 		return sessionFactory;
 	}
@@ -76,7 +76,7 @@ public class DataConfig {
 	public Flyway flyway() {
 		Flyway flyway = new Flyway();
 		flyway.setDataSource(dataSource());
-		flyway.setLocations("classpath:db/migration/", "classpath:org.dragberry.sras.db.migration");
+		flyway.setLocations("classpath:db/migration/", "classpath:org.dragberry.era.db.migration");
 		flyway.setInitOnMigrate(true);
 		return flyway;
 	}

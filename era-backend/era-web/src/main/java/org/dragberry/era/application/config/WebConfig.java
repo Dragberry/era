@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mobile.device.DeviceHandlerMethodArgumentResolver;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -29,6 +31,16 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @ComponentScan(basePackageClasses = { Controllers.class, Exceptions.class })
 public class WebConfig extends WebMvcConfigurerAdapter {
 
+	@Override
+	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+		argumentResolvers.add(deviceResolver());
+	}
+	
+	@Bean
+	public DeviceHandlerMethodArgumentResolver deviceResolver() {
+		return new DeviceHandlerMethodArgumentResolver ();
+	}
+	
 	@Bean
 	public CommonsMultipartResolver multipartResolver() {
 		CommonsMultipartResolver resolver = new CommonsMultipartResolver();

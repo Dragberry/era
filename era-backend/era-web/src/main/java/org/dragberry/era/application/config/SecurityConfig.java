@@ -1,91 +1,92 @@
 package org.dragberry.era.application.config;
 
-import org.dragberry.era.dao.UserAccountDao;
-import org.dragberry.era.web.security.CustomCsrfHeaderFilter;
-import org.dragberry.era.web.security.CustomerSecurityService;
+import org.dragberry.era.web.security.JwtAuthenticationEntryPoint;
+import org.dragberry.era.web.security.JwtAuthenticationTokenFilter;
 import org.dragberry.era.web.security.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
-import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
-import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
-import org.springframework.security.web.csrf.CsrfFilter;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
-import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @ComponentScan(basePackageClasses = { Security.class })
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private static final String X_XSRF_TOKEN = "X-XSRF-TOKEN";
-	private static final String SRAS_REMEMBER_TOKEN = "SRAS_REMEMBER_TOKEN";
-	private static final String UTF_8 = "UTF-8";
-	private static final String SHA_256_ALGORITHM = "SHA-256";
-
 	@Autowired
-	private UserAccountDao userAccountDao;
-	@Autowired
-	private CustomCsrfHeaderFilter customCsrfHeaderFilter;
+    private JwtAuthenticationEntryPoint unauthorizedHandler;
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		CharacterEncodingFilter filter = new CharacterEncodingFilter();
-		filter.setEncoding(UTF_8);
-		filter.setForceEncoding(true);
-		http
-			.csrf().csrfTokenRepository(customCsrfTokenRepository())
-		.and()
-			.addFilterAfter(customCsrfHeaderFilter, CsrfFilter.class)
-			.rememberMe().key(SRAS_REMEMBER_TOKEN).rememberMeServices(rememberMeServices())
-		.and()
-			.httpBasic().authenticationEntryPoint(http403ForbiddenEntryPoint());
-		// .and()
-		// .authorizeRequests()
-		// .antMatchers("/app/transactions/*").denyAll()
-		// .antMatchers("/app/component/transactions/**").denyAll()
-		// .antMatchers("/app/component/transactions/").denyAll()
-		// .antMatchers("/app/component/transactions").denyAll()
+    @Autowired
+    private UserDetailsService userDetailsService;
+    
+    @Autowired
+    public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+        authenticationManagerBuilder
+                .userDetailsService(this.userDetailsService)
+                .passwordEncoder(passwordEncoder());
+    }
+    
+    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+    
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+    
+    @Bean
+    public JwtAuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
+        return new JwtAuthenticationTokenFilter();
+    }
+    
+    @Override
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                // we don't need CSRF because our token is invulnerable
+                .csrf().disable()
 
-	}
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(customerecurityService()).passwordEncoder(new StandardPasswordEncoder(SHA_256_ALGORITHM));
-	}
+                // don't create session
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
-	@Bean
-	public CustomerSecurityService customerecurityService() {
-		return new CustomerSecurityService(userAccountDao);
-	}
+                .authorizeRequests()
+                //.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-	@Bean
-	public CsrfTokenRepository customCsrfTokenRepository() {
-		HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
-		repository.setHeaderName(X_XSRF_TOKEN);
-		return repository;
-	}
+                // allow anonymous resource requests
+                .antMatchers(
+                        HttpMethod.GET,
+                        "/",
+                        "/*.html",
+                        "/favicon.ico",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js"
+                ).permitAll()
+                .antMatchers("/auth/**").permitAll()
+                .anyRequest().authenticated();
+        // Custom JWT based security filter
+        httpSecurity
+                .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
 
-	@Bean
-	public TokenBasedRememberMeServices rememberMeServices() {
-
-		TokenBasedRememberMeServices service =
-				new TokenBasedRememberMeServices(SRAS_REMEMBER_TOKEN, customerecurityService());
-		service.setCookieName(SRAS_REMEMBER_TOKEN);
-		service.setUseSecureCookie(false);
-		service.setAlwaysRemember(false);
-		return service;
-	}
-
-	@Bean
-	public Http403ForbiddenEntryPoint http403ForbiddenEntryPoint() {
-		return new Http403ForbiddenEntryPoint();
-	}
+        // disable page caching
+        httpSecurity.headers().cacheControl();
+    }
 }
