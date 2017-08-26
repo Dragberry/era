@@ -27,8 +27,11 @@ public class Role extends AbstractEntity {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "ROLE_GEN")
 	private Long entityKey;
 	
-	@Column(name = "ROLE_NAME")
-	private String roleName;
+	@Column(name = "MODULE")
+	private String module;
+	
+	@Column(name = "ACTION")
+	private String action;
 	
 	@Override
 	public Long getEntityKey() {
@@ -40,13 +43,20 @@ public class Role extends AbstractEntity {
 		this.entityKey = entityKey;
 	}
 
-	public String getRoleName() {
-		return roleName;
+	public String getModule() {
+		return module;
 	}
 
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
+	public void setModule(String module) {
+		this.module = module;
 	}
-	
-	
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
 }
