@@ -1,6 +1,7 @@
 package org.dragberry.era.domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,6 +72,9 @@ public class UserAccount extends AbstractEntity {
         joinColumns = @JoinColumn(name = "USER_ACCOUNT_KEY", referencedColumnName = "USER_ACCOUNT_KEY"), 
         inverseJoinColumns = @JoinColumn(name = "ROLE_KEY", referencedColumnName = "ROLE_KEY"))
 	private Set<Role> roles = new HashSet<Role>();
+	
+	@Column(name = "PASSWORD_RESET_DATE")
+	private LocalDateTime lastPasswordResetDate;
 	
 	@Override
 	public Long getEntityKey() {
@@ -144,6 +148,14 @@ public class UserAccount extends AbstractEntity {
 
 	public void setBirtdate(LocalDate birtdate) {
 		this.birtdate = birtdate;
+	}
+
+	public LocalDateTime getLastPasswordResetDate() {
+		return lastPasswordResetDate;
+	}
+
+	public void setLastPasswordResetDate(LocalDateTime lastPasswordResetDate) {
+		this.lastPasswordResetDate = lastPasswordResetDate;
 	}
 
 }

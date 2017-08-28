@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -118,9 +120,9 @@ public class JwtTokenUtil implements Serializable {
                 .compact();
     }
 
-    public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
+    public Boolean canTokenBeRefreshed(String token, LocalDateTime lastPasswordReset) {
         final Date created = getIssuedAtDateFromToken(token);
-        return !isCreatedBeforeLastPasswordReset(created, lastPasswordReset)
+        return !isCreatedBeforeLastPasswordReset(created, Date.from(lastPasswordReset.atZone(ZoneId.systemDefault()).toInstant()))
                 && (!isTokenExpired(token) || ignoreTokenExpiration(token));
     }
 
@@ -145,7 +147,8 @@ public class JwtTokenUtil implements Serializable {
         return (
                 username.equals(user.getUsername())
                         && !isTokenExpired(token)
-                        && !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate()));
+                        && !isCreatedBeforeLastPasswordReset(created, 
+                        		Date.from(user.getLastPasswordResetDate().atZone(ZoneId.systemDefault()).toInstant())));
     }
     
 }

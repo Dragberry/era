@@ -1,6 +1,5 @@
 package org.dragberry.era.web.security;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +30,7 @@ public final class JwtUserFactory {
                 user.getPassword(),
                 mapToGrantedAuthorities(user.getRoles()),
                 user.getEnabled(),
-                new Date()
+                user.getLastPasswordResetDate()
         );
     }
 
