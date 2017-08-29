@@ -3,6 +3,7 @@ package org.dragberry.era.web.controller.registration;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,10 +14,17 @@ import org.dragberry.era.business.reporting.ReportTemplateInfo;
 import org.dragberry.era.business.reporting.ReportingService;
 import org.dragberry.era.web.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 @Controller
 public class RegistrationController {
@@ -36,6 +44,9 @@ public class RegistrationController {
 		reg.setFirstName("Максим");
 		reg.setLastName("Драгун");
 		reg.setMiddleName("Леонидович");
+		reg.setSpeciality("1 011 0023 31");
+		reg.setRegistrationDate(LocalDate.now());
+		reg.setAttestateAvg(8.435);
 		return ResponseEntity.ok(Arrays.asList(reg));
 	}
 	
@@ -67,6 +78,14 @@ class RegistrationTO implements Serializable {
 	private String firstName;
 	private String lastName;
 	private String middleName;
+	
+	private String speciality;
+	private Double attestateAvg;
+	@DateTimeFormat(iso = ISO.DATE)
+	@JsonDeserialize(using = LocalDateDeserializer.class)  
+	@JsonSerialize(using = LocalDateSerializer.class)  
+	private LocalDate registrationDate;
+	
 	public Long getId() {
 		return id;
 	}
@@ -90,6 +109,24 @@ class RegistrationTO implements Serializable {
 	}
 	public void setMiddleName(String middleName) {
 		this.middleName = middleName;
+	}
+	public String getSpeciality() {
+		return speciality;
+	}
+	public void setSpeciality(String speciality) {
+		this.speciality = speciality;
+	}
+	public Double getAttestateAvg() {
+		return attestateAvg;
+	}
+	public void setAttestateAvg(Double attestateAvg) {
+		this.attestateAvg = attestateAvg;
+	}
+	public LocalDate getRegistrationDate() {
+		return registrationDate;
+	}
+	public void setRegistrationDate(LocalDate registrationDate) {
+		this.registrationDate = registrationDate;
 	}
 	
 }
