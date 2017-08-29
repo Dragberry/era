@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class RegistrationController {
 	
 	private static final String CONTENT_DISPOSITION_KEY = "Content-Disposition";
-	private static final String CONTENT_DISPOSITION_VALUE = "inline; filename=\"{0}\"";
+	private static final String CONTENT_DISPOSITION_VALUE = "attachment; filename={0}";
 	
 	@Autowired
 	private ContractService contractService;
