@@ -8,7 +8,7 @@
 	<name>ERA</name>
 	<description>ERA</description>
 	<packaging>pom</packaging>
-
+	
 	<modules>
 		<module>era-common</module>
 		<module>era-backend</module>

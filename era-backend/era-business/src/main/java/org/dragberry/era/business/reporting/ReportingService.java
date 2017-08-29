@@ -1,7 +1,13 @@
 package org.dragberry.era.business.reporting;
 
+import java.util.List;
+
+import org.dragberry.era.common.reporting.ReportTemplateInfoTO;
+
 public interface ReportingService {
 	
-	ReportTemplateInfo getReportInfo(Long reportTemplateKey);
+	ReportTemplateInfoTO getReportInfo(Long reportTemplateKey);
+	
+	List<ReportTemplateInfoTO> getReportsForCustomer(Long customerKey);
 
 }

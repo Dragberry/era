@@ -1,19 +1,19 @@
-package org.dragberry.era.business.reporting;
+package org.dragberry.era.common.reporting;
 
-public class ReportTemplateInfo {
+public class ReportTemplateInfoTO {
 
-	private Long reportTemplateKey;
+	private Long id;
 	
 	private String fileName;
 	
 	private String mime;
 	
-	public Long getReportTemplateKey() {
-		return reportTemplateKey;
+	public Long getId() {
+		return id;
 	}
 
-	public void setReportTemplateKey(Long reportTemplateKey) {
-		this.reportTemplateKey = reportTemplateKey;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getFileName() {
