@@ -40,4 +40,15 @@ public class AccessContoll {
 		throw new UnauthorizedException();
 	}
 	
+	public void checkLoggedUser() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null && auth.isAuthenticated()) {
+			Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			if (principal instanceof JwtUser) {
+				return;
+			}
+		}
+		throw new UnauthorizedException();
+	}
+	
 }

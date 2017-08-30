@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -39,12 +40,16 @@ public class UserAccount extends AbstractEntity {
 
 	private static final long serialVersionUID = -2128713516838952908L;
 
-	public static final String FIND_BY_USERNAME_QUERY = "Customer.findByCustomerNAme";
+	public static final String FIND_BY_USERNAME_QUERY = "UserAccount.findByUsername";
 
 	@Id
 	@Column(name = "USER_ACCOUNT_KEY")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "USER_ACCOUNT_GEN")
 	private Long entityKey;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CUSTOMER_KEY", referencedColumnName = "CUSTOMER_KEY")
+	private Customer customer;
 	
 	@Column(name = "USERNAME")
 	private String username;
@@ -156,6 +161,14 @@ public class UserAccount extends AbstractEntity {
 
 	public void setLastPasswordResetDate(LocalDateTime lastPasswordResetDate) {
 		this.lastPasswordResetDate = lastPasswordResetDate;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
 }
