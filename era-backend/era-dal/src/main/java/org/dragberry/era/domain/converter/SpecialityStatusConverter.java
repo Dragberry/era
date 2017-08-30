@@ -4,7 +4,6 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 import org.dragberry.era.domain.Speciality;
-import org.dragberry.era.domain.Speciality.Status;
 
 @Converter
 public class SpecialityStatusConverter implements AttributeConverter<Speciality.Status, Character> {

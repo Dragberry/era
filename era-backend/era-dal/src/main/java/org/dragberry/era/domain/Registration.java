@@ -1,8 +1,10 @@
 package org.dragberry.era.domain;
 
+import java.text.MessageFormat;
 import java.time.LocalDate;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+
+import org.dragberry.era.domain.converter.RegistrationTypeConverter;
 
 @Entity
 @Table(name = "REGISTRATION")
@@ -27,14 +31,47 @@ public class Registration extends AbstractEntity {
 
 	private static final long serialVersionUID = 8173371976074070183L;
 
+	private static final String UNKNOWN_VALUE_MSG = "Unknown Registration type value: {0}!";
+	private static final String NPE_MSG = "Registration type cannot be null!";
+	
+	public static enum Type {
+		BUDGET('B'), PAID('P');
+		
+		public final char value;
+		
+		private Type(char value) {
+			this.value = value;
+		}
+		
+		public static Type valueOf(Character value) {
+			if (value == null) {
+				throw new NullPointerException(NPE_MSG);
+			}
+			for (Type type : Type.values()) {
+				if (value.equals(type.value)) {
+					return type;
+				}
+			}
+			throw new IllegalArgumentException(MessageFormat.format(UNKNOWN_VALUE_MSG, value));
+		}
+	}
+	
 	@Id
 	@Column(name = "REGISTRATION_KEY")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "REGISTRATION_GEN")
 	private Long entityKey;
 	
+	@Column(name = "REGISTRATION_TYPE")
+	@Convert(converter = RegistrationTypeConverter.class)
+	private Type type;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ENROLLEE_KEY", referencedColumnName = "ENROLLEE_KEY")
 	private Enrollee enrollee;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "REGISTRATION_PERIOD_KEY", referencedColumnName = "REGISTRATION_PERIOD_KEY")
+	private RegistrationPeriod registrationPeriod;
 	
 	@Column(name = "REGISTRATION_DATE")
 	private LocalDate registrationDate;
@@ -112,7 +149,21 @@ public class Registration extends AbstractEntity {
 	public void setEnrollee(Enrollee enrollee) {
 		this.enrollee = enrollee;
 	}
-	
-	
 
+	public Type getType() {
+		return type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	public RegistrationPeriod getRegistrationPeriod() {
+		return registrationPeriod;
+	}
+
+	public void setRegistrationPeriod(RegistrationPeriod registrationPeriod) {
+		this.registrationPeriod = registrationPeriod;
+	}
+	
 }

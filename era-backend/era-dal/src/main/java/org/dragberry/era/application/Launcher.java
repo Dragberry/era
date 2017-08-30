@@ -12,6 +12,7 @@ import org.dragberry.era.dao.CertificateDao;
 import org.dragberry.era.dao.EducationInstitutionDao;
 import org.dragberry.era.dao.EnrolleeDao;
 import org.dragberry.era.dao.RegistrationDao;
+import org.dragberry.era.dao.RegistrationPeriodDao;
 import org.dragberry.era.dao.SpecialityDao;
 import org.dragberry.era.dao.SubjectDao;
 import org.dragberry.era.dao.UserAccountDao;
@@ -21,6 +22,8 @@ import org.dragberry.era.domain.Document;
 import org.dragberry.era.domain.EducationInstitution;
 import org.dragberry.era.domain.Enrollee;
 import org.dragberry.era.domain.Registration;
+import org.dragberry.era.domain.RegistrationPeriod;
+import org.dragberry.era.domain.RegistrationPeriod.Status;
 import org.dragberry.era.domain.Speciality;
 import org.dragberry.era.domain.Subject;
 import org.dragberry.era.domain.UserAccount;
@@ -81,6 +84,15 @@ public class Launcher {
 			EducationInstitutionDao einstitutionDao = context.getBean(EducationInstitutionDao.class);
 			EducationInstitution eInstitution = einstitutionDao.findOne(1000l);
 			
+			RegistrationPeriodDao registrationPeriodDao = context.getBean(RegistrationPeriodDao.class);
+			RegistrationPeriod period = new RegistrationPeriod();
+			period.setEducationInstitution(eInstitution);
+			period.setFrom(LocalDate.of(2017, Month.JUNE, 1));
+			period.setTo(LocalDate.of(2017, Month.DECEMBER, 1));
+			period.setTitle("2017/2018 Учебный год");
+			period.setStatus(Status.OPENED);
+			registrationPeriodDao.create(period);
+			
 			RegistrationDao registrationDao = context.getBean(RegistrationDao.class);
 			
 			Registration registration = new Registration();
@@ -90,6 +102,8 @@ public class Launcher {
 			registration.setRegisteredBy(registeredBy);
 			registration.setRegistrationDate(LocalDate.now());
 			registration.setSpeciality(specialitiy);
+			registration.setRegistrationPeriod(period);
+			registration.setType(Registration.Type.BUDGET);
 			registrationDao.create(registration);
 		}
 	}

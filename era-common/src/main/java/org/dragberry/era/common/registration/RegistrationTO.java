@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 public class RegistrationTO implements Serializable {
+	
 	private static final long serialVersionUID = 1742267786414238594L;
 
 	private Long id;
@@ -22,6 +23,8 @@ public class RegistrationTO implements Serializable {
 	private String speciality;
 	
 	private Double attestateAvg;
+	
+	private Character registrationType;
 	
 	@JsonDeserialize(using = LocalDateDeserializer.class)
 	@JsonSerialize(using = LocalDateSerializer.class)
@@ -82,5 +85,14 @@ public class RegistrationTO implements Serializable {
 	public void setRegistrationDate(LocalDate registrationDate) {
 		this.registrationDate = registrationDate;
 	}
+
+	public Character getRegistrationType() {
+		return registrationType;
+	}
+
+	public void setRegistrationType(Character registrationType) {
+		this.registrationType = registrationType;
+	}
+
 
 }

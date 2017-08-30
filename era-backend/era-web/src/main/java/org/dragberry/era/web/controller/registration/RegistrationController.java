@@ -13,6 +13,7 @@ import org.dragberry.era.business.registration.ContractService;
 import org.dragberry.era.business.reporting.ReportingService;
 import org.dragberry.era.common.registration.RegistrationTO;
 import org.dragberry.era.common.reporting.ReportTemplateInfoTO;
+import org.dragberry.era.domain.Registration;
 import org.dragberry.era.web.exception.ResourceNotFoundException;
 import org.dragberry.era.web.security.AccessContoll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ public class RegistrationController {
 		reg.setSpeciality("1 011 0023 31");
 		reg.setRegistrationDate(LocalDate.now());
 		reg.setAttestateAvg(8.435);
+		reg.setRegistrationType(Registration.Type.BUDGET.value);
 		return ResponseEntity.ok(Arrays.asList(reg));
 	}
 	

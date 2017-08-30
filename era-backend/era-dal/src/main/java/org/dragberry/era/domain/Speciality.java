@@ -28,7 +28,7 @@ public class Speciality extends AbstractEntity {
 	private static final long serialVersionUID = 6491824262933007676L;
 	
 	private static final String UNKNOWN_VALUE_MSG = "Unknown Speciality status value: {0}!";
-	private static final String NPE_MSG = "Transaction  Speciality status cannot be null!";
+	private static final String NPE_MSG = "Speciality status cannot be null!";
 	
 	public static enum Status {
 		ACTIVE('A'), INACTIVE('I');
