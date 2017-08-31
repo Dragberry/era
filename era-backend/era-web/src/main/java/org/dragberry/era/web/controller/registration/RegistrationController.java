@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.dragberry.era.business.registration.ContractService;
 import org.dragberry.era.business.reporting.ReportingService;
+import org.dragberry.era.common.registration.RegistrationPeriodTO;
 import org.dragberry.era.common.registration.RegistrationTO;
 import org.dragberry.era.common.reporting.ReportTemplateInfoTO;
 import org.dragberry.era.domain.Registration;
@@ -36,8 +37,8 @@ public class RegistrationController {
 	@Autowired
 	private ReportingService reportingService;
 	
-	@GetMapping("api/registrations/fetch-list")
-	public ResponseEntity<List<RegistrationTO>> fetchRegistrationList() {
+	@GetMapping("api/registrations/get-list")
+	public ResponseEntity<List<RegistrationTO>> getRegistrationList() {
 		RegistrationTO reg = new RegistrationTO();
 		reg.setId(1000L);
 		reg.setFirstName("Максим");
@@ -50,12 +51,12 @@ public class RegistrationController {
 		return ResponseEntity.ok(Arrays.asList(reg));
 	}
 	
-	@GetMapping("/api/registrations/fetch-report-templates")
+	@GetMapping("/api/registrations/get-report-templates")
 	public ResponseEntity<List<ReportTemplateInfoTO>> getReportTemplatesForCustomer(Principal principal) {
 		return ResponseEntity.ok(reportingService.getReportsForCustomer(accessContoll.getLoggedUser().getId()));
 	}
 	
-	@GetMapping("/api/get-registration-contract/{contractId}/template/{templateId}")
+	@GetMapping("/api/registrations/get-contract/{contractId}/template/{templateId}")
 	public void downloadRegistrationContract(
 			HttpServletResponse response,
 			@PathVariable("contractId") Long contractId,
@@ -72,6 +73,14 @@ public class RegistrationController {
 		} catch (IOException exc) {
 			exc.printStackTrace();
 		}
+	}
+	
+	@GetMapping("/api/registrations/get-active-period")
+	public ResponseEntity<RegistrationPeriodTO> getActivePeriod() {
+		RegistrationPeriodTO period = new RegistrationPeriodTO();
+		period.setId(1000L);
+		period.setTitle("2017/2018 учебный год");
+		return ResponseEntity.ok(period);
 	}
 
 }
