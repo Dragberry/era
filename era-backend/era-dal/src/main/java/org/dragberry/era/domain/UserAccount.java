@@ -26,7 +26,7 @@ import javax.persistence.TableGenerator;
 @NamedQueries({
 	@NamedQuery(
 			name = UserAccount.FIND_BY_USERNAME_QUERY,
-			query = "select ua from UserAccount ua where ua.username = :username")
+			query = "select ua from UserAccount ua join fetch ua.customer join fetch ua.roles where ua.username = :username")
 })
 @TableGenerator(
 		name = "USER_ACCOUNT_GEN", 

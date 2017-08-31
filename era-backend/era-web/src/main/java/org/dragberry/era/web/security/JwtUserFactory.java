@@ -23,6 +23,7 @@ public final class JwtUserFactory {
     public static JwtUser create(UserAccount user) {
         return new JwtUser(
                 user.getEntityKey(),
+                user.getCustomer().getEntityKey(),
                 user.getUsername(),
                 user.getFirstName(),
                 user.getLastName(),

@@ -71,7 +71,7 @@ public class Launcher {
 			Map<Subject, Integer> marks;
 			Random random = new Random();
 			SubjectDao subjectDao = context.getBean(SubjectDao.class);
-			marks = subjectDao.fetchList().stream().collect(Collectors.toMap(subject -> subject, subject -> random.nextInt() % 11));
+			marks = subjectDao.fetchList().stream().collect(Collectors.toMap(subject -> subject, subject -> Math.abs(random.nextInt() % 11)));
 			certificate.setMarks(marks);
 			certificateDao.create(certificate);
 			

@@ -16,6 +16,7 @@ public class JwtUser implements UserDetails {
 	private static final long serialVersionUID = 2545544681245698813L;
 	
 	private final Long id;
+	private final Long customerId;
     private final String username;
     private final String firstname;
     private final String lastname;
@@ -27,6 +28,7 @@ public class JwtUser implements UserDetails {
 
     public JwtUser(
           Long id,
+          Long customerId,
           String username,
           String firstname,
           String lastname,
@@ -36,6 +38,7 @@ public class JwtUser implements UserDetails {
           LocalDateTime lastPasswordResetDate
     ) {
         this.id = id;
+        this.customerId = customerId;
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -105,5 +108,10 @@ public class JwtUser implements UserDetails {
     @JsonIgnore
     public LocalDateTime getLastPasswordResetDate() {
         return lastPasswordResetDate;
+    }
+    
+    @JsonIgnore
+    public Long getCustomerId() {
+    	return customerId;
     }
 }

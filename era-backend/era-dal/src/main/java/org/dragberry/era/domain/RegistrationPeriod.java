@@ -12,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -19,6 +21,11 @@ import org.dragberry.era.domain.converter.RegistrationPeriodStatusConverter;
 
 @Entity
 @Table(name = "REGISTRATION_PERIOD")
+@NamedQueries({
+	@NamedQuery(
+			name = RegistrationPeriod.FIND_ACTIVE_PERIOD_FOR_CUSTOMER,
+			query = "select rp from RegistrationPeriod rp, Customer c where c.institution.entityKey = rp.educationInstitution.entityKey and c.entityKey = :customerKey")
+})
 @TableGenerator(
 		name = "REG_PERIOD_GEN", 
 		table = "GENERATOR",
@@ -28,10 +35,11 @@ import org.dragberry.era.domain.converter.RegistrationPeriodStatusConverter;
 		initialValue = 1000,
 		allocationSize = 1)
 public class RegistrationPeriod extends AbstractEntity {
-
 	
 	private static final long serialVersionUID = 3047306263898450821L;
 
+	public final static String FIND_ACTIVE_PERIOD_FOR_CUSTOMER = "RegistrationPeriod.FindActivePeriodForCustomer";
+	
 	private static final String UNKNOWN_VALUE_MSG = "Unknown Registration period status value: {0}!";
 	private static final String NPE_MSG = "Registration period status cannot be null!";
 	

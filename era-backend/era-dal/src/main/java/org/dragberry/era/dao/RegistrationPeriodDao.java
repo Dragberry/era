@@ -4,4 +4,6 @@ import org.dragberry.era.domain.RegistrationPeriod;
 
 public interface RegistrationPeriodDao extends DataAccessObject<RegistrationPeriod, Long> {
 
+	RegistrationPeriod findActivePeriodForCustomer(Long customerKey);
+
 }

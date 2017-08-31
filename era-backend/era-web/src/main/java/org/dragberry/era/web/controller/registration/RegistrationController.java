@@ -10,6 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.dragberry.era.business.registration.ContractService;
+import org.dragberry.era.business.registration.RegistrationService;
 import org.dragberry.era.business.reporting.ReportingService;
 import org.dragberry.era.common.registration.RegistrationPeriodTO;
 import org.dragberry.era.common.registration.RegistrationTO;
@@ -35,20 +36,13 @@ public class RegistrationController {
 	@Autowired
 	private ContractService contractService;
 	@Autowired
+	private RegistrationService registrationService;
+	@Autowired
 	private ReportingService reportingService;
 	
 	@GetMapping("api/registrations/get-list")
 	public ResponseEntity<List<RegistrationTO>> getRegistrationList() {
-		RegistrationTO reg = new RegistrationTO();
-		reg.setId(1000L);
-		reg.setFirstName("Максим");
-		reg.setLastName("Драгун");
-		reg.setMiddleName("Леонидович");
-		reg.setSpeciality("1 011 0023 31");
-		reg.setRegistrationDate(LocalDate.now());
-		reg.setAttestateAvg(8.435);
-		reg.setRegistrationType(Registration.Type.BUDGET.value);
-		return ResponseEntity.ok(Arrays.asList(reg));
+		return ResponseEntity.ok(registrationService.getRegistrationList(accessContoll.getLoggedUser().getCustomerId()));
 	}
 	
 	@GetMapping("/api/registrations/get-report-templates")
@@ -77,10 +71,7 @@ public class RegistrationController {
 	
 	@GetMapping("/api/registrations/get-active-period")
 	public ResponseEntity<RegistrationPeriodTO> getActivePeriod() {
-		RegistrationPeriodTO period = new RegistrationPeriodTO();
-		period.setId(1000L);
-		period.setTitle("2017/2018 учебный год");
-		return ResponseEntity.ok(period);
+		return ResponseEntity.ok(registrationService.getActiveRegistrationPeriod(accessContoll.getLoggedUser().getCustomerId()));
 	}
 
 }
