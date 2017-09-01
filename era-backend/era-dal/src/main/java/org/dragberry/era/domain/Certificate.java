@@ -13,11 +13,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyJoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 @Entity
 @Table(name = "CERTIFICATE")
+@NamedQueries({
+	@NamedQuery(
+			name = Certificate.GET_AVERAGE_MARK_QUERY,
+			query = "select avg(VALUE(c.marks)) from Certificate c where c.entityKey = :certificateKey")
+})
 @TableGenerator(
 		name = "CERTIFICATE_GEN", 
 		table = "GENERATOR",
@@ -29,6 +36,8 @@ import javax.persistence.TableGenerator;
 public class Certificate extends AbstractEntity {
 	
 	private static final long serialVersionUID = 8040613837195453060L;
+
+	public static final String GET_AVERAGE_MARK_QUERY = "Certificate.GetAverageMarkQuery";
 	
 	@Id
 	@Column(name = "CERTIFICATE_KEY")

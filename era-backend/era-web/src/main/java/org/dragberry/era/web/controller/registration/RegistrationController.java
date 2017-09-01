@@ -3,8 +3,6 @@ package org.dragberry.era.web.controller.registration;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.MessageFormat;
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,9 +11,9 @@ import org.dragberry.era.business.registration.ContractService;
 import org.dragberry.era.business.registration.RegistrationService;
 import org.dragberry.era.business.reporting.ReportingService;
 import org.dragberry.era.common.registration.RegistrationPeriodTO;
+import org.dragberry.era.common.registration.RegistrationSearchQuery;
 import org.dragberry.era.common.registration.RegistrationTO;
 import org.dragberry.era.common.reporting.ReportTemplateInfoTO;
-import org.dragberry.era.domain.Registration;
 import org.dragberry.era.web.exception.ResourceNotFoundException;
 import org.dragberry.era.web.security.AccessContoll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class RegistrationController {
@@ -41,8 +40,11 @@ public class RegistrationController {
 	private ReportingService reportingService;
 	
 	@GetMapping("api/registrations/get-list")
-	public ResponseEntity<List<RegistrationTO>> getRegistrationList() {
-		return ResponseEntity.ok(registrationService.getRegistrationList(accessContoll.getLoggedUser().getCustomerId()));
+	public ResponseEntity<List<RegistrationTO>> getRegistrationList(@RequestParam Long periodId) {
+		RegistrationSearchQuery query = new RegistrationSearchQuery();
+		query.setPeriodId(periodId);
+		query.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
+		return ResponseEntity.ok(registrationService.getRegistrationList(query));
 	}
 	
 	@GetMapping("/api/registrations/get-report-templates")
