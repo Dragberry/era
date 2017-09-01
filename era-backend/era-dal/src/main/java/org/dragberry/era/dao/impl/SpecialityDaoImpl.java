@@ -1,5 +1,6 @@
 package org.dragberry.era.dao.impl;
 
+
 import org.dragberry.era.dao.SpecialityDao;
 import org.dragberry.era.domain.Speciality;
 import org.springframework.stereotype.Repository;
@@ -10,5 +11,5 @@ public class SpecialityDaoImpl extends AbstractDao<Speciality> implements Specia
 	public SpecialityDaoImpl() {
 		super(Speciality.class);
 	}
-
+	
 }

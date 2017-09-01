@@ -15,7 +15,8 @@ public abstract class AbstractDao<E extends AbstractEntity> implements DataAcces
 	
 	public static final String LIKE = "%";
 	
-	protected final static String ENTITY_KEY = "entityKey";
+	protected static final String ENTITY_KEY = "entityKey";
+	protected static final String CUSTOMER_KEY = "customerKey";
 	
 	private final String FETCH_LIST_QUERY;
 	private final String COUNT_QUERY;

@@ -6,6 +6,6 @@ import org.dragberry.era.common.speciality.SpecialitySimpleTO;
 
 public interface SpecialityService {
 
-	List<SpecialitySimpleTO> getListForRegistrations(Long customerId, long registrationPeriodId);
+	List<SpecialitySimpleTO> getListForRegistrations(Long customerKey, Long registrationPeriodId);
 
 }

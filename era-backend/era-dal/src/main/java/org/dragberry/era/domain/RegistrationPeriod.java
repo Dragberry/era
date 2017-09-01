@@ -2,6 +2,7 @@ package org.dragberry.era.domain;
 
 import java.text.MessageFormat;
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -11,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -24,7 +27,11 @@ import org.dragberry.era.domain.converter.RegistrationPeriodStatusConverter;
 @NamedQueries({
 	@NamedQuery(
 			name = RegistrationPeriod.FIND_ACTIVE_PERIOD_FOR_CUSTOMER,
-			query = "select rp from RegistrationPeriod rp, Customer c where c.institution.entityKey = rp.educationInstitution.entityKey and c.entityKey = :customerKey")
+			query = "select rp from RegistrationPeriod rp, Customer c where c.institution = rp.educationInstitution and c.entityKey = :customerKey"),
+	@NamedQuery(
+			name = RegistrationPeriod.FIND_SPECIALITIES_FOR_PERIOD,
+			query = "select rp from Customer c, RegistrationPeriod rp join fetch rp.specialities where c.institution = rp.educationInstitution and c.entityKey = :customerKey and rp.entityKey = :periodKey")
+
 })
 @TableGenerator(
 		name = "REG_PERIOD_GEN", 
@@ -39,6 +46,7 @@ public class RegistrationPeriod extends AbstractEntity {
 	private static final long serialVersionUID = 3047306263898450821L;
 
 	public final static String FIND_ACTIVE_PERIOD_FOR_CUSTOMER = "RegistrationPeriod.FindActivePeriodForCustomer";
+	public final static String FIND_SPECIALITIES_FOR_PERIOD = "RegistrationPeriod.FindSpecialitiesForPeriod";
 	
 	private static final String UNKNOWN_VALUE_MSG = "Unknown Registration period status value: {0}!";
 	private static final String NPE_MSG = "Registration period status cannot be null!";
@@ -82,6 +90,12 @@ public class RegistrationPeriod extends AbstractEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "EDUCATION_INSTITUTION_KEY", referencedColumnName = "EDUCATION_INSTITUTION_KEY")
 	private EducationInstitution educationInstitution;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "REG_PERIOD_SPECIALITY", 
+        joinColumns = @JoinColumn(name = "REGISTRATION_PERIOD_KEY", referencedColumnName = "REGISTRATION_PERIOD_KEY"), 
+        inverseJoinColumns = @JoinColumn(name = "SPECIALITY_KEY", referencedColumnName = "SPECIALITY_KEY"))
+	private List<Speciality> specialities;
 	
 	@Column(name = "STATUS")
 	@Convert(converter = RegistrationPeriodStatusConverter.class)
@@ -136,5 +150,14 @@ public class RegistrationPeriod extends AbstractEntity {
 	public void setStatus(Status status) {
 		this.status = status;
 	}
+
+	public List<Speciality> getSpecialities() {
+		return specialities;
+	}
+
+	public void setSpecialities(List<Speciality> specialities) {
+		this.specialities = specialities;
+	}
+	
 
 }

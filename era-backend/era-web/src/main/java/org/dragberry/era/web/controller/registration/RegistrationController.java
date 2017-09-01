@@ -44,7 +44,9 @@ public class RegistrationController {
 			@RequestParam("periodId") Long periodId,
 			@RequestParam(name = "name", required = false) String name,
 			@RequestParam(name = "speciality", required = false) Long speciality,
-			@RequestParam(name = "stydy-type", required = false) Character studyType) {
+			@RequestParam(name = "study-type", required = false) Character studyType) {
+//		checkPeriod(periodId, accessContoll.getLoggedUser().getId());
+		
 		RegistrationSearchQuery query = new RegistrationSearchQuery();
 		query.setPeriodId(periodId);
 		query.setCustomerId(accessContoll.getLoggedUser().getCustomerId());

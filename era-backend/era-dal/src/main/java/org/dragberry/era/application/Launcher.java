@@ -2,6 +2,7 @@ package org.dragberry.era.application;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -76,7 +77,6 @@ public class Launcher {
 			certificateDao.create(certificate);
 			
 			SpecialityDao specialityDao = context.getBean(SpecialityDao.class);
-			Speciality specialitiy = specialityDao.findOne(1000L);
 			
 			UserAccountDao userAccountDao = context.getBean(UserAccountDao.class);
 			UserAccount registeredBy = userAccountDao.findOne(1000L);
@@ -91,6 +91,7 @@ public class Launcher {
 			period.setTo(LocalDate.of(2017, Month.DECEMBER, 1));
 			period.setTitle("2017/2018 Учебный год");
 			period.setStatus(Status.OPENED);
+			period.setSpecialities(specialityDao.fetchList());
 			registrationPeriodDao.create(period);
 			
 			RegistrationDao registrationDao = context.getBean(RegistrationDao.class);
@@ -101,7 +102,7 @@ public class Launcher {
 			registration.setInstitution(eInstitution);
 			registration.setRegisteredBy(registeredBy);
 			registration.setRegistrationDate(LocalDate.now());
-			registration.setSpeciality(specialitiy);
+			registration.setSpeciality(specialityDao.findOne(1000L));
 			registration.setRegistrationPeriod(period);
 			registration.setType(Registration.Type.BUDGET);
 			registrationDao.create(registration);

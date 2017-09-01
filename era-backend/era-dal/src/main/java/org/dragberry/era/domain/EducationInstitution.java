@@ -1,16 +1,10 @@
 package org.dragberry.era.domain;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -45,13 +39,6 @@ public class EducationInstitution extends AbstractEntity {
 	@Column(name = "CITY")
 	private String city;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "EINSTITUTION_SPECIALITY", 
-        joinColumns = @JoinColumn(name = "EDUCATION_INSTITUTION_KEY", referencedColumnName = "EDUCATION_INSTITUTION_KEY"), 
-        inverseJoinColumns = @JoinColumn(name = "SPECIALITY_KEY", referencedColumnName = "SPECIALITY_KEY"))
-	private Set<Speciality> specialities;
-	
-	
 	@Override
 	public Long getEntityKey() {
 		return entityKey;
@@ -84,14 +71,6 @@ public class EducationInstitution extends AbstractEntity {
 
 	public void setCity(String city) {
 		this.city = city;
-	}
-
-	public Set<Speciality> getSpecialities() {
-		return specialities;
-	}
-
-	public void setSpecialities(Set<Speciality> specialities) {
-		this.specialities = specialities;
 	}
 
 	public String getShortName() {
