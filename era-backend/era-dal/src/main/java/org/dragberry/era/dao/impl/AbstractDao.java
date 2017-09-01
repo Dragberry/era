@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 public abstract class AbstractDao<E extends AbstractEntity> implements DataAccessObject<E, Long> {
 	
+	public static final String LIKE = "%";
+	
 	protected final static String ENTITY_KEY = "entityKey";
 	
 	private final String FETCH_LIST_QUERY;
@@ -83,6 +85,10 @@ public abstract class AbstractDao<E extends AbstractEntity> implements DataAcces
 			typedQuery.setParameter(entry.getKey(), entry.getValue());
 		});
 		return typedQuery;
+	}
+	
+	protected static String forLike(String exp) {
+		return exp + LIKE;
 	}
 	
 }

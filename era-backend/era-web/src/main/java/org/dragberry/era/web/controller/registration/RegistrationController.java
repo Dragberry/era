@@ -40,10 +40,17 @@ public class RegistrationController {
 	private ReportingService reportingService;
 	
 	@GetMapping("api/registrations/get-list")
-	public ResponseEntity<List<RegistrationTO>> getRegistrationList(@RequestParam Long periodId) {
+	public ResponseEntity<List<RegistrationTO>> getRegistrationList(
+			@RequestParam("periodId") Long periodId,
+			@RequestParam(name = "name", required = false) String name,
+			@RequestParam(name = "speciality", required = false) Long speciality,
+			@RequestParam(name = "stydy-type", required = false) Character studyType) {
 		RegistrationSearchQuery query = new RegistrationSearchQuery();
 		query.setPeriodId(periodId);
 		query.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
+		query.setName(name);
+		query.setSpecialityId(speciality);
+		query.setStudyType(studyType);
 		return ResponseEntity.ok(registrationService.getRegistrationList(query));
 	}
 	
