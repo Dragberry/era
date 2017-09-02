@@ -1,4 +1,4 @@
-package org.dragberry.era.web.controller.speciality;
+package org.dragberry.era.web.controller;
 
 import java.util.List;
 
