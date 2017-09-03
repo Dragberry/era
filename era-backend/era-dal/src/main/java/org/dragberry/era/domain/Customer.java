@@ -36,7 +36,7 @@ public class Customer extends AbstractEntity {
 	
 	private static final long serialVersionUID = -2951173904850762419L;
 	
-	public static final String FIND_BY_USER_ACCOUNT_KEY_QUERY = "Customer.findByUserAccountKey";
+	public static final String FIND_BY_USER_ACCOUNT_KEY_QUERY = "Customer.FindByUserAccountKey";
 	
 	@Id
 	@Column(name = "CUSTOMER_KEY")

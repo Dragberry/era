@@ -1,7 +1,7 @@
 package org.dragberry.era.web.controller;
 
 import org.dragberry.era.business.customer.CustomerService;
-import org.dragberry.era.common.customer.CustomerDetailsTO;
+import org.dragberry.era.common.Results;
 import org.dragberry.era.web.security.AccessContoll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +19,8 @@ public class CustomerController {
 	private CustomerService customerServie;
 	
 	@GetMapping("/fetch-details")
-	public ResponseEntity<CustomerDetailsTO> getCustomerInfo() {
-		return ResponseEntity.ok(customerServie.getCustomerDetailsForUserAccount(accessControl.getLoggedUser().getId()));
+	public ResponseEntity<?> getCustomerInfo() {
+		return ResponseEntity.ok(Results.create(customerServie.getCustomerDetailsForUserAccount(accessControl.getLoggedUser().getCustomerId())));
 	}
 
 }

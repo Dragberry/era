@@ -40,7 +40,7 @@ public class UserAccount extends AbstractEntity {
 
 	private static final long serialVersionUID = -2128713516838952908L;
 
-	public static final String FIND_BY_USERNAME_QUERY = "UserAccount.findByUsername";
+	public static final String FIND_BY_USERNAME_QUERY = "UserAccount.FindByUsername";
 
 	@Id
 	@Column(name = "USER_ACCOUNT_KEY")

@@ -14,7 +14,7 @@ public class CustomerServiceBean implements CustomerService {
 	
 	@Override
 	public CustomerDetailsTO getCustomerDetailsForUserAccount(Long customerKey) {
-		Customer customer = customerDao.findOne(1000L);
+		Customer customer = customerDao.findOne(customerKey);
 		CustomerDetailsTO details = new CustomerDetailsTO();
 		details.setId(customer.getEntityKey());
 		details.setCustomerName(customer.getCustomerName());

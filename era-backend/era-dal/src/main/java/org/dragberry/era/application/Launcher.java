@@ -37,75 +37,210 @@ public class Launcher {
 	public static void main(String[] args) {
 		try(ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(DataConfig.class)) {
 			EnrolleeDao enrolleeDao = context.getBean(EnrolleeDao.class);
-			Enrollee enr = new Enrollee();
-			enr.setFirstName("Максим");
-			enr.setMiddleName("Леонидович");
-			enr.setLastName("Драгун");
-			enr.setBirthdate(LocalDate.of(1991, Month.FEBRUARY, 4));
-			enr.setPhone("+375293120855");
-			enr.setEmail("max-hellfire@mail.ru");
-			
-			Document doc = new Document();
-			doc.setType(Type.PASSPORT);
-			doc.setIssueDate(LocalDate.of(2016, Month.JANUARY, 6));
-			doc.setIssuedBy("Ленинское РУВД г.Минска");
-			doc.setId("22222222");
-			doc.setDocumentId("MP2179093");
-			enr.setDocument(doc);
-			
-			Address addr = new Address();
-			addr.setCity("Минск");
-			addr.setCountry("BY");
-			addr.setFlat("161");
-			addr.setHouse("60");
-			addr.setStreet("Прушинских");
-			addr.setZipCode("220112");
-			enr.setAddress(addr);
-			enr = enrolleeDao.create(enr);
-			
 			CertificateDao certificateDao = context.getBean(CertificateDao.class);
-			Certificate certificate = new Certificate();
-			certificate.setInstitution("СШ №143 г.Минска");
-			certificate.setYear(2006);
-			certificate.setEnrollee(enr);
-			
-			Map<Subject, Integer> marks;
-			Random random = new Random();
 			SubjectDao subjectDao = context.getBean(SubjectDao.class);
-			marks = subjectDao.fetchList().stream().collect(Collectors.toMap(subject -> subject, subject -> Math.abs(random.nextInt() % 11)));
-			certificate.setMarks(marks);
-			certificateDao.create(certificate);
-			
 			SpecialityDao specialityDao = context.getBean(SpecialityDao.class);
-			
 			UserAccountDao userAccountDao = context.getBean(UserAccountDao.class);
-			UserAccount registeredBy = userAccountDao.findOne(1000L);
-			
 			EducationInstitutionDao einstitutionDao = context.getBean(EducationInstitutionDao.class);
-			EducationInstitution eInstitution = einstitutionDao.findOne(1000l);
-			
 			RegistrationPeriodDao registrationPeriodDao = context.getBean(RegistrationPeriodDao.class);
-			RegistrationPeriod period = new RegistrationPeriod();
-			period.setEducationInstitution(eInstitution);
-			period.setFrom(LocalDate.of(2017, Month.JUNE, 1));
-			period.setTo(LocalDate.of(2017, Month.DECEMBER, 1));
-			period.setTitle("2017/2018 Учебный год");
-			period.setStatus(Status.OPENED);
-			period.setSpecialities(specialityDao.fetchList());
-			registrationPeriodDao.create(period);
-			
 			RegistrationDao registrationDao = context.getBean(RegistrationDao.class);
 			
-			Registration registration = new Registration();
-			registration.setCertificate(certificate);
-			registration.setEnrollee(enr);
-			registration.setInstitution(eInstitution);
-			registration.setRegisteredBy(registeredBy);
-			registration.setRegistrationDate(LocalDate.now());
-			registration.setSpeciality(specialityDao.findOne(1000L));
-			registration.setRegistrationPeriod(period);
-			registration.setType(Registration.Type.BUDGET);
-			registrationDao.create(registration);
+			
+			first(enrolleeDao, certificateDao, subjectDao, specialityDao, userAccountDao, einstitutionDao,
+					registrationPeriodDao, registrationDao);
+			second(enrolleeDao, certificateDao, subjectDao, specialityDao, userAccountDao, einstitutionDao,
+					registrationPeriodDao, registrationDao);
+			third(enrolleeDao, certificateDao, subjectDao, specialityDao, userAccountDao, einstitutionDao,
+					registrationPeriodDao, registrationDao);
 		}
 	}
+	
+	private static void third(EnrolleeDao enrolleeDao, CertificateDao certificateDao, SubjectDao subjectDao,
+			SpecialityDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
+			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao) {
+		Enrollee enr = new Enrollee();
+		enr.setFirstName("Сергеев");
+		enr.setMiddleName("Сергеевич");
+		enr.setLastName("Рогатов");
+		enr.setBirthdate(LocalDate.of(1991, Month.FEBRUARY, 4));
+		enr.setPhone("+375293120855");
+		enr.setEmail("max-hellfire@mail.ru");
+		
+		Document doc = new Document();
+		doc.setType(Type.PASSPORT);
+		doc.setIssueDate(LocalDate.of(2016, Month.JANUARY, 6));
+		doc.setIssuedBy("Ленинское РУВД г.Минска");
+		doc.setId("25222222");
+		doc.setDocumentId("MP2179693");
+		enr.setDocument(doc);
+		
+		Address addr = new Address();
+		addr.setCity("Минск");
+		addr.setCountry("BY");
+		addr.setFlat("161");
+		addr.setHouse("60");
+		addr.setStreet("Прушинских");
+		addr.setZipCode("220112");
+		enr.setAddress(addr);
+		enr = enrolleeDao.create(enr);
+		
+		Certificate certificate = new Certificate();
+		certificate.setInstitution("СШ №777 г.Минска");
+		certificate.setYear(2006);
+		certificate.setEnrollee(enr);
+		
+		Map<Subject, Integer> marks;
+		Random random = new Random();
+		marks = subjectDao.fetchList().stream().collect(Collectors.toMap(subject -> subject, subject -> Math.abs(random.nextInt() % 11)));
+		certificate.setMarks(marks);
+		certificateDao.create(certificate);
+		
+		UserAccount registeredBy = userAccountDao.findOne(1002L);
+		
+		EducationInstitution eInstitution = einstitutionDao.findOne(1001l);
+		
+		RegistrationPeriod period = new RegistrationPeriod();
+		period.setEducationInstitution(eInstitution);
+		period.setFrom(LocalDate.of(2017, Month.JUNE, 1));
+		period.setTo(LocalDate.of(2017, Month.DECEMBER, 1));
+		period.setTitle("2017/2018 Учебный год");
+		period.setStatus(Status.OPENED);
+		period.setSpecialities(specialityDao.fetchList());
+		registrationPeriodDao.create(period);
+		
+		Registration registration = new Registration();
+		registration.setCertificate(certificate);
+		registration.setEnrollee(enr);
+		registration.setInstitution(eInstitution);
+		registration.setRegisteredBy(registeredBy);
+		registration.setRegistrationDate(LocalDate.now());
+		registration.setSpeciality(specialityDao.findOne(1000L));
+		registration.setRegistrationPeriod(period);
+		registration.setType(Registration.Type.BUDGET);
+		registrationDao.create(registration);
+	}
+	
+	private static void second(EnrolleeDao enrolleeDao, CertificateDao certificateDao, SubjectDao subjectDao,
+			SpecialityDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
+			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao) {
+		Enrollee enr = new Enrollee();
+		enr.setFirstName("Иван");
+		enr.setMiddleName("Иванович");
+		enr.setLastName("Иванов");
+		enr.setBirthdate(LocalDate.of(1991, Month.FEBRUARY, 4));
+		enr.setPhone("+375293120855");
+		enr.setEmail("max-hellfire@mail.ru");
+		
+		Document doc = new Document();
+		doc.setType(Type.PASSPORT);
+		doc.setIssueDate(LocalDate.of(2016, Month.JANUARY, 6));
+		doc.setIssuedBy("Ленинское РУВД г.Минска");
+		doc.setId("1112223");
+		doc.setDocumentId("MP2149093");
+		enr.setDocument(doc);
+		
+		Address addr = new Address();
+		addr.setCity("Минск");
+		addr.setCountry("BY");
+		addr.setFlat("161");
+		addr.setHouse("60");
+		addr.setStreet("Прушинских");
+		addr.setZipCode("220112");
+		enr.setAddress(addr);
+		enr = enrolleeDao.create(enr);
+		
+		Certificate certificate = new Certificate();
+		certificate.setInstitution("СШ №54 г.Минска");
+		certificate.setYear(2006);
+		certificate.setEnrollee(enr);
+		
+		Map<Subject, Integer> marks;
+		Random random = new Random();
+		marks = subjectDao.fetchList().stream().collect(Collectors.toMap(subject -> subject, subject -> Math.abs(random.nextInt() % 11)));
+		certificate.setMarks(marks);
+		certificateDao.create(certificate);
+		
+		UserAccount registeredBy = userAccountDao.findOne(1000L);
+		
+		EducationInstitution eInstitution = einstitutionDao.findOne(1000l);
+		
+		RegistrationPeriod period = registrationPeriodDao.findOne(1000l);
+		
+		Registration registration = new Registration();
+		registration.setCertificate(certificate);
+		registration.setEnrollee(enr);
+		registration.setInstitution(eInstitution);
+		registration.setRegisteredBy(registeredBy);
+		registration.setRegistrationDate(LocalDate.now());
+		registration.setSpeciality(specialityDao.findOne(1000L));
+		registration.setRegistrationPeriod(period);
+		registration.setType(Registration.Type.BUDGET);
+		registrationDao.create(registration);
+	}
+
+	private static void first(EnrolleeDao enrolleeDao, CertificateDao certificateDao, SubjectDao subjectDao,
+			SpecialityDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
+			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao) {
+		Enrollee enr = new Enrollee();
+		enr.setFirstName("Максим");
+		enr.setMiddleName("Леонидович");
+		enr.setLastName("Драгун");
+		enr.setBirthdate(LocalDate.of(1991, Month.FEBRUARY, 4));
+		enr.setPhone("+375293120855");
+		enr.setEmail("max-hellfire@mail.ru");
+		
+		Document doc = new Document();
+		doc.setType(Type.PASSPORT);
+		doc.setIssueDate(LocalDate.of(2016, Month.JANUARY, 6));
+		doc.setIssuedBy("Ленинское РУВД г.Минска");
+		doc.setId("22222222");
+		doc.setDocumentId("MP2179093");
+		enr.setDocument(doc);
+		
+		Address addr = new Address();
+		addr.setCity("Минск");
+		addr.setCountry("BY");
+		addr.setFlat("161");
+		addr.setHouse("60");
+		addr.setStreet("Прушинских");
+		addr.setZipCode("220112");
+		enr.setAddress(addr);
+		enr = enrolleeDao.create(enr);
+		
+		Certificate certificate = new Certificate();
+		certificate.setInstitution("СШ №143 г.Минска");
+		certificate.setYear(2006);
+		certificate.setEnrollee(enr);
+		
+		Map<Subject, Integer> marks;
+		Random random = new Random();
+		marks = subjectDao.fetchList().stream().collect(Collectors.toMap(subject -> subject, subject -> Math.abs(random.nextInt() % 11)));
+		certificate.setMarks(marks);
+		certificateDao.create(certificate);
+		
+		UserAccount registeredBy = userAccountDao.findOne(1000L);
+		
+		EducationInstitution eInstitution = einstitutionDao.findOne(1000l);
+		
+		RegistrationPeriod period = new RegistrationPeriod();
+		period.setEducationInstitution(eInstitution);
+		period.setFrom(LocalDate.of(2017, Month.JUNE, 1));
+		period.setTo(LocalDate.of(2017, Month.DECEMBER, 1));
+		period.setTitle("2017/2018 Учебный год");
+		period.setStatus(Status.OPENED);
+		period.setSpecialities(specialityDao.fetchList());
+		registrationPeriodDao.create(period);
+		
+		Registration registration = new Registration();
+		registration.setCertificate(certificate);
+		registration.setEnrollee(enr);
+		registration.setInstitution(eInstitution);
+		registration.setRegisteredBy(registeredBy);
+		registration.setRegistrationDate(LocalDate.now());
+		registration.setSpeciality(specialityDao.findOne(1000L));
+		registration.setRegistrationPeriod(period);
+		registration.setType(Registration.Type.BUDGET);
+		registrationDao.create(registration);
+	}
+	
 }

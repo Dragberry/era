@@ -3,6 +3,8 @@ package org.dragberry.era.web.controller;
 import java.util.List;
 
 import org.dragberry.era.business.speciality.SpecialityService;
+import org.dragberry.era.common.ResultTO;
+import org.dragberry.era.common.Results;
 import org.dragberry.era.common.speciality.SpecialitySimpleTO;
 import org.dragberry.era.web.security.AccessContoll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +25,8 @@ public class SpecialityController {
 	private SpecialityService specialityService;
 	
 	@GetMapping("/get-list-for-registrations")
-	public ResponseEntity<List<SpecialitySimpleTO>> getListForRegistrations(@RequestParam("periodId") Long periodId) {
-		return ResponseEntity.ok(specialityService.getListForRegistrations(accessContoll.getLoggedUser().getCustomerId(), periodId));
+	public ResponseEntity<ResultTO<List<SpecialitySimpleTO>>> getListForRegistrations(@RequestParam("periodId") Long periodId) {
+		return ResponseEntity.ok(Results.create(specialityService.getListForRegistrations(accessContoll.getLoggedUser().getCustomerId(), periodId)));
 	}
 
 }
