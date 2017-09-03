@@ -13,8 +13,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public final class JwtUserFactory {
 
-	private static final String ROLE_PREFIX = "ROLE_";
-	
 	private final static Map<Role, SimpleGrantedAuthority> ROLES_CASH = new ConcurrentHashMap<>();
     
 	private JwtUserFactory() {
@@ -38,7 +36,7 @@ public final class JwtUserFactory {
     private static List<GrantedAuthority> mapToGrantedAuthorities(Set<Role> authorities) {
         return authorities.stream().map(
         		authority -> ROLES_CASH.computeIfAbsent(authority, 
-                		role -> new SimpleGrantedAuthority(ROLE_PREFIX + authority.getModule() + authority.getAction())))
+                		role -> new SimpleGrantedAuthority(authority.toString())))
                 .collect(Collectors.toList());
     }
 }

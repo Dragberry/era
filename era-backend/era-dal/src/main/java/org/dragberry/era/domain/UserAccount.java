@@ -26,7 +26,11 @@ import javax.persistence.TableGenerator;
 @NamedQueries({
 	@NamedQuery(
 			name = UserAccount.FIND_BY_USERNAME_QUERY,
-			query = "select ua from UserAccount ua join fetch ua.customer join fetch ua.roles where ua.username = :username")
+			query = "select ua from UserAccount ua join fetch ua.customer join fetch ua.roles where ua.username = :username"),
+	@NamedQuery(
+			name = UserAccount.FIND_ACCOUNTS_FOR_CUSTOMER_QUERY,
+			query = "select distinct ua from UserAccount ua join fetch ua.roles where ua.customer.entityKey = :customerKey")
+
 })
 @TableGenerator(
 		name = "USER_ACCOUNT_GEN", 
@@ -41,7 +45,8 @@ public class UserAccount extends AbstractEntity {
 	private static final long serialVersionUID = -2128713516838952908L;
 
 	public static final String FIND_BY_USERNAME_QUERY = "UserAccount.FindByUsername";
-
+	public static final String FIND_ACCOUNTS_FOR_CUSTOMER_QUERY = "UserAccount.FindAccountsForCustomer";
+	
 	@Id
 	@Column(name = "USER_ACCOUNT_KEY")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "USER_ACCOUNT_GEN")

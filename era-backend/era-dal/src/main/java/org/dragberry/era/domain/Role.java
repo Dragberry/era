@@ -22,6 +22,8 @@ public class Role extends AbstractEntity {
 	
 	private static final long serialVersionUID = 2965399771263638041L;
 
+	private static final String ROLE_PREFIX = "ROLE_";
+
 	@Id
 	@Column(name = "ROLE_KEY")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "ROLE_GEN")
@@ -57,6 +59,11 @@ public class Role extends AbstractEntity {
 
 	public void setAction(String action) {
 		this.action = action;
+	}
+	
+	@Override
+	public String toString() {
+		return ROLE_PREFIX + module + "_" + action;
 	}
 
 }

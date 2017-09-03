@@ -22,4 +22,11 @@ public class UserAccountDaoImpl extends AbstractDao<UserAccount> implements User
 			.getResultList();
 		return result.size() > 0  ? result.get(0) : null;
 	}
+	
+	@Override
+	public List<UserAccount> findAccountsForCustomer(Long customerKey) {
+		return getEntityManager().createNamedQuery(UserAccount.FIND_ACCOUNTS_FOR_CUSTOMER_QUERY, getEntityType())
+				.setParameter(CUSTOMER_KEY, customerKey)
+				.getResultList();
+	}
 }
