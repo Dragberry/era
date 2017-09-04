@@ -3,11 +3,13 @@ package org.dragberry.era.common.useraccount;
 import java.io.Serializable;
 import java.util.List;
 
-public class UserAccountTO implements Serializable {
+public class UserAccountCreateTO implements Serializable {
 
 	private static final long serialVersionUID = -4221432157502501441L;
 
 	private Long id;
+	
+	private Long customerId;
 	
 	private String username;
 	
@@ -16,6 +18,10 @@ public class UserAccountTO implements Serializable {
 	private String lastName;
 	
 	private String email;
+	
+	private String password;
+	
+	private String repeatedPassword;
 	
 	private List<String> roles;
 
@@ -65,6 +71,30 @@ public class UserAccountTO implements Serializable {
 
 	public void setRoles(List<String> roles) {
 		this.roles = roles;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getRepeatedPassword() {
+		return repeatedPassword;
+	}
+
+	public void setRepeatedPassword(String repeatedPassword) {
+		this.repeatedPassword = repeatedPassword;
+	}
+
+	public Long getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(Long customerId) {
+		this.customerId = customerId;
 	}
 	
 }

@@ -2,8 +2,6 @@ package org.dragberry.era.application;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -25,7 +23,6 @@ import org.dragberry.era.domain.Enrollee;
 import org.dragberry.era.domain.Registration;
 import org.dragberry.era.domain.RegistrationPeriod;
 import org.dragberry.era.domain.RegistrationPeriod.Status;
-import org.dragberry.era.domain.Speciality;
 import org.dragberry.era.domain.Subject;
 import org.dragberry.era.domain.UserAccount;
 import org.dragberry.era.domain.Document.Type;
