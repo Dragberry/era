@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 public class UserAccountDaoImpl extends AbstractDao<UserAccount> implements UserAccountDao {
 
 	private static final String USERNAME = "username";
+	private static final String EMAIL = "email";
 	
 	public UserAccountDaoImpl() {
 		super(UserAccount.class);
@@ -19,6 +20,14 @@ public class UserAccountDaoImpl extends AbstractDao<UserAccount> implements User
 	public UserAccount findByUsername(String name) {
 		List<UserAccount> result = getEntityManager().createNamedQuery(UserAccount.FIND_BY_USERNAME_QUERY, getEntityType())
 			.setParameter(USERNAME, name)
+			.getResultList();
+		return result.size() > 0  ? result.get(0) : null;
+	}
+	
+	@Override
+	public UserAccount findByEmail(String email) {
+		List<UserAccount> result = getEntityManager().createNamedQuery(UserAccount.FIND_BY_EMAIL_QUERY, getEntityType())
+			.setParameter(EMAIL, email)
 			.getResultList();
 		return result.size() > 0  ? result.get(0) : null;
 	}

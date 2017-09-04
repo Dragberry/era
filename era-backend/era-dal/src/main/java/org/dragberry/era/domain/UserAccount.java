@@ -26,10 +26,13 @@ import javax.persistence.TableGenerator;
 @NamedQueries({
 	@NamedQuery(
 			name = UserAccount.FIND_BY_USERNAME_QUERY,
-			query = "select ua from UserAccount ua join fetch ua.customer join fetch ua.roles where ua.username = :username"),
+			query = "select distinct ua from UserAccount ua join fetch ua.customer left join fetch ua.roles where ua.username = :username"),
+	@NamedQuery(
+			name = UserAccount.FIND_BY_EMAIL_QUERY,
+			query = "select distinct ua from UserAccount ua join fetch ua.customer left join fetch ua.roles where ua.email = :email"),
 	@NamedQuery(
 			name = UserAccount.FIND_ACCOUNTS_FOR_CUSTOMER_QUERY,
-			query = "select distinct ua from UserAccount ua join fetch ua.roles where ua.customer.entityKey = :customerKey")
+			query = "select distinct ua from UserAccount ua left join fetch ua.roles where ua.customer.entityKey = :customerKey")
 
 })
 @TableGenerator(
@@ -45,6 +48,7 @@ public class UserAccount extends AbstractEntity {
 	private static final long serialVersionUID = -2128713516838952908L;
 
 	public static final String FIND_BY_USERNAME_QUERY = "UserAccount.FindByUsername";
+	public static final String FIND_BY_EMAIL_QUERY = "UserAccount.FindByEmail";
 	public static final String FIND_ACCOUNTS_FOR_CUSTOMER_QUERY = "UserAccount.FindAccountsForCustomer";
 	
 	@Id

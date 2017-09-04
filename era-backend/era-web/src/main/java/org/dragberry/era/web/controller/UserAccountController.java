@@ -1,6 +1,7 @@
 package org.dragberry.era.web.controller;
 
 import org.dragberry.era.business.useraccount.UserAccountService;
+import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
 import org.dragberry.era.common.useraccount.UserAccountCreateTO;
 import org.dragberry.era.web.security.AccessContoll;
@@ -24,14 +25,16 @@ public class UserAccountController {
 	
 	@GetMapping("/get-list")
 	public ResponseEntity<?> fetchList() {
+		accessContoll.checkPermission("ROLE_USERACCOUNTS_VIEW");
 		return ResponseEntity.ok(Results.create(userAccountService.getListForCustomer(accessContoll.getLoggedUser().getCustomerId())));
 	}
 	
 	@PostMapping("/create")
 	public ResponseEntity<?> createUserAccount(@RequestBody UserAccountCreateTO userAccount) {
-		accessContoll.checkPermission("ROLE_USERACCONTS_CREATE");
+		accessContoll.checkPermission("ROLE_USERACCOUNTS_CREATE");
 		userAccount.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
-		return ResponseEntity.ok(Results.create(userAccount));
+		ResultTO<UserAccountCreateTO> result = userAccountService.create(userAccount);
+		return ResponseEntity.ok(result);
 	}
 	
 
