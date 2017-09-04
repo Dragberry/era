@@ -70,7 +70,7 @@ public class UserAccount extends AbstractEntity {
 	private String lastName;
 	
 	@Column(name = "BIRTHDATE")
-	private LocalDate birtdate;
+	private LocalDate birthdate;
 	
 	@Column(name = "EMAIL")
 	private String email;
@@ -156,14 +156,6 @@ public class UserAccount extends AbstractEntity {
 		this.roles = roles;
 	}
 
-	public LocalDate getBirtdate() {
-		return birtdate;
-	}
-
-	public void setBirtdate(LocalDate birtdate) {
-		this.birtdate = birtdate;
-	}
-
 	public LocalDateTime getLastPasswordResetDate() {
 		return lastPasswordResetDate;
 	}
@@ -178,6 +170,14 @@ public class UserAccount extends AbstractEntity {
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+
+	public LocalDate getBirthdate() {
+		return birthdate;
+	}
+
+	public void setBirthdate(LocalDate birthdate) {
+		this.birthdate = birthdate;
 	}
 
 }

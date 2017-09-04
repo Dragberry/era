@@ -19,6 +19,8 @@ public class UserAccountCreateTO implements Serializable {
 	
 	private String email;
 	
+	private String birthdate;
+	
 	private String password;
 	
 	private String repeatedPassword;
@@ -95,6 +97,14 @@ public class UserAccountCreateTO implements Serializable {
 
 	public void setCustomerId(Long customerId) {
 		this.customerId = customerId;
+	}
+
+	public String getBirthdate() {
+		return birthdate;
+	}
+
+	public void setBirthdate(String birthdate) {
+		this.birthdate = birthdate;
 	}
 	
 }

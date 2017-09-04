@@ -1,7 +1,9 @@
 package org.dragberry.era.business.useraccount;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -111,6 +113,16 @@ public class UserAccountServiceBean implements UserAccountService {
 				}
 			}
 		}
+		// Bidthdate
+		
+		LocalDate birthdate = null;
+		if (StringUtils.isNotBlank(userAccount.getBirthdate())) {
+			try {
+				birthdate =  LocalDate.parse(userAccount.getBirthdate());
+			} catch(DateTimeParseException ex) {
+				issues.add(Issues.create("validation.user-account.birthdate-invalid"));
+			}
+		}
 		
 		if (issues.isEmpty()) {
 			UserAccount account = new UserAccount();
@@ -118,6 +130,7 @@ public class UserAccountServiceBean implements UserAccountService {
 			account.setEmail(userAccount.getEmail());
 			account.setFirstName(userAccount.getFirstName());
 			account.setLastName(userAccount.getLastName());
+			account.setBirthdate(birthdate);
 			account.setPassword(passwordEncoder.encode(userAccount.getPassword()));
 			account.setEnabled(true);
 			account.setLastPasswordResetDate(LocalDateTime.now());
