@@ -114,14 +114,8 @@ public class UserAccountServiceBean implements UserAccountService {
 			}
 		}
 		// Bidthdate
-		
-		LocalDate birthdate = null;
-		if (StringUtils.isNotBlank(userAccount.getBirthdate())) {
-			try {
-				birthdate =  LocalDate.parse(userAccount.getBirthdate());
-			} catch(DateTimeParseException ex) {
-				issues.add(Issues.create("validation.user-account.birthdate-invalid"));
-			}
+		if (userAccount.getBirthdate() == null) {
+			issues.add(Issues.create("validation.user-account.birthdate-is-empty"));
 		}
 		
 		if (issues.isEmpty()) {
@@ -130,7 +124,7 @@ public class UserAccountServiceBean implements UserAccountService {
 			account.setEmail(userAccount.getEmail());
 			account.setFirstName(userAccount.getFirstName());
 			account.setLastName(userAccount.getLastName());
-			account.setBirthdate(birthdate);
+			account.setBirthdate(userAccount.getBirthdate());
 			account.setPassword(passwordEncoder.encode(userAccount.getPassword()));
 			account.setEnabled(true);
 			account.setLastPasswordResetDate(LocalDateTime.now());

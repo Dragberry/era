@@ -1,7 +1,13 @@
 package org.dragberry.era.common.useraccount;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 public class UserAccountCreateTO implements Serializable {
 
@@ -19,7 +25,9 @@ public class UserAccountCreateTO implements Serializable {
 	
 	private String email;
 	
-	private String birthdate;
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@JsonSerialize(using = LocalDateSerializer.class)
+	private LocalDate birthdate;
 	
 	private String password;
 	
@@ -99,11 +107,11 @@ public class UserAccountCreateTO implements Serializable {
 		this.customerId = customerId;
 	}
 
-	public String getBirthdate() {
+	public LocalDate getBirthdate() {
 		return birthdate;
 	}
 
-	public void setBirthdate(String birthdate) {
+	public void setBirthdate(LocalDate birthdate) {
 		this.birthdate = birthdate;
 	}
 	
