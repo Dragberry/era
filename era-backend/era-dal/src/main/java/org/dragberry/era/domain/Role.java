@@ -1,15 +1,23 @@
 package org.dragberry.era.domain;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 @Entity
 @Table(name = "ROLE")
+@NamedQueries({
+	@NamedQuery(
+			name = Role.FIND_BY_MODULE_AND_ACTION_QUERY,
+			query = "select r from Role r where r.module = :module and r.action = :action")
+})
 @TableGenerator(
 		name = "ROLE_GEN", 
 		table = "GENERATOR",
@@ -18,11 +26,14 @@ import javax.persistence.TableGenerator;
 		valueColumnName = "GEN_VALUE",
 		initialValue = 1000,
 		allocationSize = 1)
+@Cacheable(true)
 public class Role extends AbstractEntity {
 	
 	private static final long serialVersionUID = 2965399771263638041L;
 
 	private static final String ROLE_PREFIX = "ROLE_";
+
+	public static final String FIND_BY_MODULE_AND_ACTION_QUERY = "Role.FindByModuleAndAction";
 
 	@Id
 	@Column(name = "ROLE_KEY")

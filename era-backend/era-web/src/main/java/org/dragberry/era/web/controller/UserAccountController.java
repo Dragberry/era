@@ -3,6 +3,7 @@ package org.dragberry.era.web.controller;
 import org.dragberry.era.business.useraccount.UserAccountService;
 import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
+import org.dragberry.era.common.useraccount.RoleHolderTO;
 import org.dragberry.era.common.useraccount.UserAccountCreateTO;
 import org.dragberry.era.web.security.AccessContoll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ public class UserAccountController {
 	public ResponseEntity<?> createUserAccount(@RequestBody UserAccountCreateTO userAccount) {
 		accessContoll.checkPermission("ROLE_USERACCOUNTS_CREATE");
 		userAccount.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
+		userAccount.getRoles().stream().filter(RoleHolderTO::getEnabled).map(RoleHolderTO::getRole).forEach(accessContoll::checkPermission);
 		ResultTO<UserAccountCreateTO> result = userAccountService.create(userAccount);
 		return ResponseEntity.ok(result);
 	}

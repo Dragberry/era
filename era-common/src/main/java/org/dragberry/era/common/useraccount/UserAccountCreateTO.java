@@ -2,6 +2,7 @@ package org.dragberry.era.common.useraccount;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -33,8 +34,8 @@ public class UserAccountCreateTO implements Serializable {
 	
 	private String repeatedPassword;
 	
-	private List<String> roles;
-
+	private List<RoleHolderTO> roles = new ArrayList<>();
+	
 	public Long getId() {
 		return id;
 	}
@@ -75,11 +76,11 @@ public class UserAccountCreateTO implements Serializable {
 		this.email = email;
 	}
 
-	public List<String> getRoles() {
+	public List<RoleHolderTO> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<String> roles) {
+	public void setRoles(List<RoleHolderTO> roles) {
 		this.roles = roles;
 	}
 

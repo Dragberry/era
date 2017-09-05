@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -81,7 +80,7 @@ public class UserAccount extends AbstractEntity {
 	@Column(name = "ENABLED")
 	private Boolean enabled;
 	
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+	@ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "USER_ACCOUNT_ROLE", 
         joinColumns = @JoinColumn(name = "USER_ACCOUNT_KEY", referencedColumnName = "USER_ACCOUNT_KEY"), 
         inverseJoinColumns = @JoinColumn(name = "ROLE_KEY", referencedColumnName = "ROLE_KEY"))

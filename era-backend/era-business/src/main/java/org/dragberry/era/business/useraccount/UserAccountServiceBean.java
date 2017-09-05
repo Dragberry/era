@@ -1,9 +1,6 @@
 package org.dragberry.era.business.useraccount;
 
-import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,11 +12,11 @@ import org.dragberry.era.common.IssueTO;
 import org.dragberry.era.common.Issues;
 import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
+import org.dragberry.era.common.useraccount.RoleHolderTO;
 import org.dragberry.era.common.useraccount.UserAccountCreateTO;
 import org.dragberry.era.common.useraccount.UserAccountTO;
 import org.dragberry.era.dao.CustomerDao;
 import org.dragberry.era.dao.UserAccountDao;
-import org.dragberry.era.domain.AbstractEntity;
 import org.dragberry.era.domain.Role;
 import org.dragberry.era.domain.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +36,8 @@ public class UserAccountServiceBean implements UserAccountService {
 	private UserAccountDao userAccountDao;
 	@Autowired
 	private CustomerDao customerDao;
+	@Autowired
+	private RoleCash roleCash;
 	
 	@Override
 	public List<UserAccountTO> getListForCustomer(Long customerKey) {
@@ -128,7 +127,8 @@ public class UserAccountServiceBean implements UserAccountService {
 			account.setPassword(passwordEncoder.encode(userAccount.getPassword()));
 			account.setEnabled(true);
 			account.setLastPasswordResetDate(LocalDateTime.now());
-			account.setRoles(null);
+			account.setRoles(userAccount.getRoles().stream().filter(RoleHolderTO::getEnabled)
+					.map(roleCash::getRole).collect(Collectors.toSet()));
 			account.setCustomer(customerDao.findOne(userAccount.getCustomerId()));
 			
 			account = userAccountDao.create(account);
@@ -137,10 +137,4 @@ public class UserAccountServiceBean implements UserAccountService {
 		return Results.create(userAccount, issues);
 	}
 
-	interface EntityBuilder<T extends Serializable, E extends AbstractEntity> {
-		
-		ResultTO<E> build(T object);
-		
-		
-	}
 }
