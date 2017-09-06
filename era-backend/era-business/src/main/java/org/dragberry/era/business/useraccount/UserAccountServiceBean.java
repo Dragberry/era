@@ -14,6 +14,7 @@ import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
 import org.dragberry.era.common.useraccount.RoleHolderTO;
 import org.dragberry.era.common.useraccount.UserAccountCreateTO;
+import org.dragberry.era.common.useraccount.UserAccountDeleteTO;
 import org.dragberry.era.common.useraccount.UserAccountTO;
 import org.dragberry.era.dao.CustomerDao;
 import org.dragberry.era.dao.UserAccountDao;
@@ -22,6 +23,7 @@ import org.dragberry.era.domain.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class UserAccountServiceBean implements UserAccountService {
@@ -51,6 +53,29 @@ public class UserAccountServiceBean implements UserAccountService {
 			to.setRoles(entity.getRoles().stream().map(Role::toString).collect(Collectors.toList()));
 			return to;
 		}).collect(Collectors.toList());
+	}
+	
+	@Override
+	@Transactional
+	public ResultTO<UserAccountDeleteTO> delete(UserAccountDeleteTO userAccount) {
+		List<IssueTO> issues = new ArrayList<>();
+		UserAccount account = userAccountDao.findOne(userAccount.getId());
+		if (userAccount.getUserAccountId().equals(userAccount.getId())) {
+			issues.add(Issues.create("validation.user-account.account-is-initiator"));
+		} else {
+			if (account == null) {
+				issues.add(Issues.create("validation.user-account.account-doesnt-exist"));
+			} else {
+				if (!account.getCustomer().getEntityKey().equals(userAccount.getCustomerId())) {
+					issues.add(Issues.create("validation.user-account.account-doesnt-belong-to-customer"));
+				}
+			}
+		}
+		if (issues.isEmpty()) {
+			userAccountDao.delete(userAccount.getId());
+		}
+		userAccount.setUsername(account.getUsername());
+		return Results.create(userAccount, issues);
 	}
 	
 	@Override
