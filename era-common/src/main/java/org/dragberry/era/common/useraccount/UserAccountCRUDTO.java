@@ -1,23 +1,20 @@
 package org.dragberry.era.common.useraccount;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.dragberry.era.common.AbstractCRUDTO;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
-public class UserAccountCreateTO implements Serializable {
+public class UserAccountCRUDTO extends AbstractCRUDTO {
 
 	private static final long serialVersionUID = -4221432157502501441L;
 
-	private Long id;
-	
-	private Long customerId;
-	
 	private String username;
 	
 	private String firstName;
@@ -36,14 +33,6 @@ public class UserAccountCreateTO implements Serializable {
 	
 	private List<RoleHolderTO> roles = new ArrayList<>();
 	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getUsername() {
 		return username;
 	}
@@ -98,14 +87,6 @@ public class UserAccountCreateTO implements Serializable {
 
 	public void setRepeatedPassword(String repeatedPassword) {
 		this.repeatedPassword = repeatedPassword;
-	}
-
-	public Long getCustomerId() {
-		return customerId;
-	}
-
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
 	}
 
 	public LocalDate getBirthdate() {
