@@ -36,7 +36,7 @@ public class RegistrationServiceBean implements RegistrationService {
 			to.setId(entity.getEntityKey());
 			to.setRegistrationDate(entity.getRegistrationDate());
 			to.setRegistrationType(entity.getType().value);
-			to.setSpeciality(entity.getSpeciality().getTitle());
+			to.setSpecialty(entity.getSpecialty().getTitle());
 			to.setAttestateAvg(certificateDao.getAverageMark(entity.getCertificate().getEntityKey()));
 			return to;
 		}).collect(Collectors.toList());

@@ -85,8 +85,8 @@ public class Registration extends AbstractEntity {
 	private EducationInstitution institution;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SPECIALITY_KEY", referencedColumnName = "SPECIALITY_KEY")
-	private Speciality speciality;
+	@JoinColumn(name = "SPECIALTY_KEY", referencedColumnName = "SPECIALTY_KEY")
+	private Specialty specialty;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CERTIFICATE_KEY", referencedColumnName = "CERTIFICATE_KEY")
@@ -126,12 +126,12 @@ public class Registration extends AbstractEntity {
 		this.institution = institution;
 	}
 
-	public Speciality getSpeciality() {
-		return speciality;
+	public Specialty getSpecialty() {
+		return specialty;
 	}
 
-	public void setSpeciality(Speciality speciality) {
-		this.speciality = speciality;
+	public void setSpecialty(Specialty speciality) {
+		this.specialty = speciality;
 	}
 
 	public Certificate getCertificate() {

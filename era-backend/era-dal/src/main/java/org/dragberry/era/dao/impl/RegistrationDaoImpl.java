@@ -32,7 +32,7 @@ public class RegistrationDaoImpl extends AbstractDao<Registration> implements Re
 		Root<Customer> custRoot = cq.from(Customer.class);
 		regRoot.fetch("enrollee");
 		regRoot.fetch("institution");
-		regRoot.fetch("speciality");
+		regRoot.fetch("specialty");
 		regRoot.fetch("certificate");
 		regRoot.fetch("registrationPeriod");
 		
@@ -49,8 +49,8 @@ public class RegistrationDaoImpl extends AbstractDao<Registration> implements Re
 							cb.like(regRoot.get("enrollee").get("middleName"), word));
 				}).collect(Collectors.toList()).toArray(new Predicate[] {})));
 		}
-		if (query.getSpecialityId() != null) {
-			where.add(cb.equal(regRoot.get("speciality").get("entityKey"), query.getSpecialityId()));
+		if (query.getSpecialtyId() != null) {
+			where.add(cb.equal(regRoot.get("specialty").get("entityKey"), query.getSpecialtyId()));
 		}
 		if (query.getStudyType() != null) {
 			where.add(cb.equal(regRoot.get("type"), Registration.Type.valueOf(query.getStudyType())));

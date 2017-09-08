@@ -1,8 +1,8 @@
-package org.dragberry.era.common.speciality;
+package org.dragberry.era.common.specialty;
 
 import java.io.Serializable;
 
-public class SpecialitySimpleTO implements Serializable {
+public class SpecialtySimpleTO implements Serializable {
 	
 	private static final long serialVersionUID = -5500253439264001707L;
 

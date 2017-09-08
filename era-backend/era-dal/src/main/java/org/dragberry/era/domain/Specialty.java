@@ -11,24 +11,24 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.dragberry.era.domain.converter.SpecialityStatusConverter;
+import org.dragberry.era.domain.converter.SpecialtyStatusConverter;
 
 @Entity
-@Table(name = "SPECIALITY")
+@Table(name = "SPECIALTY")
 @TableGenerator(
-		name = "SPECIALITY_GEN", 
+		name = "SPECIALTY_GEN", 
 		table = "GENERATOR",
 		pkColumnName = "GEN_NAME", 
-		pkColumnValue = "SPECIALITY_GEN",
+		pkColumnValue = "SPECIALTY_GEN",
 		valueColumnName = "GEN_VALUE",
 		initialValue = 1000,
 		allocationSize = 1)
-public class Speciality extends AbstractEntity {
+public class Specialty extends AbstractEntity {
 
 	private static final long serialVersionUID = 6491824262933007676L;
 	
-	private static final String UNKNOWN_VALUE_MSG = "Unknown Speciality status value: {0}!";
-	private static final String NPE_MSG = "Speciality status cannot be null!";
+	private static final String UNKNOWN_VALUE_MSG = "Unknown Specialty status value: {0}!";
+	private static final String NPE_MSG = "Specialty status cannot be null!";
 	
 	public static enum Status {
 		ACTIVE('A'), INACTIVE('I');
@@ -53,8 +53,8 @@ public class Speciality extends AbstractEntity {
 	}
 	
 	@Id
-	@Column(name = "SPECIALITY_KEY")
-	@GeneratedValue(strategy = GenerationType.TABLE, generator = "SPECIALITY_GEN")
+	@Column(name = "SPECIALTY_KEY")
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "SPECIALTY_GEN")
 	private Long entityKey;
 	
 	@Column(name = "TITLE")
@@ -64,7 +64,7 @@ public class Speciality extends AbstractEntity {
 	private String code;
 	
 	@Column(name = "STATUS")
-	@Convert(converter = SpecialityStatusConverter.class)
+	@Convert(converter = SpecialtyStatusConverter.class)
 	private Status STATUS;
 	
 	@Override

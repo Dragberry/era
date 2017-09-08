@@ -12,7 +12,7 @@ public class RegistrationSearchQuery implements Serializable {
 	
 	private Long periodId;
 	
-	private Long specialityId;
+	private Long specialtyId;
 	
 	private Character studyType;
 	
@@ -40,12 +40,12 @@ public class RegistrationSearchQuery implements Serializable {
 		this.periodId = periodId;
 	}
 
-	public Long getSpecialityId() {
-		return specialityId;
+	public Long getSpecialtyId() {
+		return specialtyId;
 	}
 
-	public void setSpecialityId(Long specialityId) {
-		this.specialityId = specialityId;
+	public void setSpecialtyId(Long specialtyId) {
+		this.specialtyId = specialtyId;
 	}
 
 	public Character getStudyType() {

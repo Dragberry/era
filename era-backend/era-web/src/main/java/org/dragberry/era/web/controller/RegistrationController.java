@@ -52,7 +52,7 @@ public class RegistrationController {
 		query.setPeriodId(periodId);
 		query.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
 		query.setName(name);
-		query.setSpecialityId(speciality);
+		query.setSpecialtyId(speciality);
 		query.setStudyType(studyType);
 		return ResponseEntity.ok(Results.create(registrationService.getRegistrationList(query)));
 	}

@@ -20,7 +20,7 @@ public class RegistrationTO implements Serializable {
 	
 	private String middleName;
 
-	private String speciality;
+	private String specialty;
 	
 	private Double attestateAvg;
 	
@@ -62,12 +62,12 @@ public class RegistrationTO implements Serializable {
 		this.middleName = middleName;
 	}
 
-	public String getSpeciality() {
-		return speciality;
+	public String getSpecialty() {
+		return specialty;
 	}
 
-	public void setSpeciality(String speciality) {
-		this.speciality = speciality;
+	public void setSpecialty(String speciality) {
+		this.specialty = speciality;
 	}
 
 	public Double getAttestateAvg() {

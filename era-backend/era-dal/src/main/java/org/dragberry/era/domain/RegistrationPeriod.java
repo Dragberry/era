@@ -29,8 +29,8 @@ import org.dragberry.era.domain.converter.RegistrationPeriodStatusConverter;
 			name = RegistrationPeriod.FIND_ACTIVE_PERIOD_FOR_CUSTOMER,
 			query = "select rp from RegistrationPeriod rp, Customer c where c.institution = rp.educationInstitution and c.entityKey = :customerKey"),
 	@NamedQuery(
-			name = RegistrationPeriod.FIND_SPECIALITIES_FOR_PERIOD,
-			query = "select rp from Customer c, RegistrationPeriod rp join fetch rp.specialities where c.institution = rp.educationInstitution and c.entityKey = :customerKey and rp.entityKey = :periodKey")
+			name = RegistrationPeriod.FIND_SPECIALTIES_FOR_PERIOD,
+			query = "select rp from Customer c, RegistrationPeriod rp join fetch rp.specialties where c.institution = rp.educationInstitution and c.entityKey = :customerKey and rp.entityKey = :periodKey")
 
 })
 @TableGenerator(
@@ -46,7 +46,7 @@ public class RegistrationPeriod extends AbstractEntity {
 	private static final long serialVersionUID = 3047306263898450821L;
 
 	public final static String FIND_ACTIVE_PERIOD_FOR_CUSTOMER = "RegistrationPeriod.FindActivePeriodForCustomer";
-	public final static String FIND_SPECIALITIES_FOR_PERIOD = "RegistrationPeriod.FindSpecialitiesForPeriod";
+	public final static String FIND_SPECIALTIES_FOR_PERIOD = "RegistrationPeriod.FindSpecialitiesForPeriod";
 	
 	private static final String UNKNOWN_VALUE_MSG = "Unknown Registration period status value: {0}!";
 	private static final String NPE_MSG = "Registration period status cannot be null!";
@@ -92,10 +92,10 @@ public class RegistrationPeriod extends AbstractEntity {
 	private EducationInstitution educationInstitution;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "REG_PERIOD_SPECIALITY", 
+    @JoinTable(name = "REG_PERIOD_SPECIALTY", 
         joinColumns = @JoinColumn(name = "REGISTRATION_PERIOD_KEY", referencedColumnName = "REGISTRATION_PERIOD_KEY"), 
-        inverseJoinColumns = @JoinColumn(name = "SPECIALITY_KEY", referencedColumnName = "SPECIALITY_KEY"))
-	private List<Speciality> specialities;
+        inverseJoinColumns = @JoinColumn(name = "SPECIALTY_KEY", referencedColumnName = "SPECIALTY_KEY"))
+	private List<Specialty> specialties;
 	
 	@Column(name = "STATUS")
 	@Convert(converter = RegistrationPeriodStatusConverter.class)
@@ -151,12 +151,12 @@ public class RegistrationPeriod extends AbstractEntity {
 		this.status = status;
 	}
 
-	public List<Speciality> getSpecialities() {
-		return specialities;
+	public List<Specialty> getSpecialties() {
+		return specialties;
 	}
 
-	public void setSpecialities(List<Speciality> specialities) {
-		this.specialities = specialities;
+	public void setSpecialties(List<Specialty> specialities) {
+		this.specialties = specialities;
 	}
 	
 

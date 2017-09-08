@@ -12,7 +12,7 @@ import org.dragberry.era.dao.EducationInstitutionDao;
 import org.dragberry.era.dao.EnrolleeDao;
 import org.dragberry.era.dao.RegistrationDao;
 import org.dragberry.era.dao.RegistrationPeriodDao;
-import org.dragberry.era.dao.SpecialityDao;
+import org.dragberry.era.dao.SpecialtyDao;
 import org.dragberry.era.dao.SubjectDao;
 import org.dragberry.era.dao.UserAccountDao;
 import org.dragberry.era.domain.Address;
@@ -36,7 +36,7 @@ public class Launcher {
 			EnrolleeDao enrolleeDao = context.getBean(EnrolleeDao.class);
 			CertificateDao certificateDao = context.getBean(CertificateDao.class);
 			SubjectDao subjectDao = context.getBean(SubjectDao.class);
-			SpecialityDao specialityDao = context.getBean(SpecialityDao.class);
+			SpecialtyDao specialityDao = context.getBean(SpecialtyDao.class);
 			UserAccountDao userAccountDao = context.getBean(UserAccountDao.class);
 			EducationInstitutionDao einstitutionDao = context.getBean(EducationInstitutionDao.class);
 			RegistrationPeriodDao registrationPeriodDao = context.getBean(RegistrationPeriodDao.class);
@@ -53,7 +53,7 @@ public class Launcher {
 	}
 	
 	private static void third(EnrolleeDao enrolleeDao, CertificateDao certificateDao, SubjectDao subjectDao,
-			SpecialityDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
+			SpecialtyDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
 			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao) {
 		Enrollee enr = new Enrollee();
 		enr.setFirstName("Сергеев");
@@ -102,7 +102,7 @@ public class Launcher {
 		period.setTo(LocalDate.of(2017, Month.DECEMBER, 1));
 		period.setTitle("2017/2018 Учебный год");
 		period.setStatus(Status.OPENED);
-		period.setSpecialities(specialityDao.fetchList());
+		period.setSpecialties(specialityDao.fetchList());
 		registrationPeriodDao.create(period);
 		
 		Registration registration = new Registration();
@@ -111,14 +111,14 @@ public class Launcher {
 		registration.setInstitution(eInstitution);
 		registration.setRegisteredBy(registeredBy);
 		registration.setRegistrationDate(LocalDate.now());
-		registration.setSpeciality(specialityDao.findOne(1000L));
+		registration.setSpecialty(specialityDao.findOne(1000L));
 		registration.setRegistrationPeriod(period);
 		registration.setType(Registration.Type.BUDGET);
 		registrationDao.create(registration);
 	}
 	
 	private static void second(EnrolleeDao enrolleeDao, CertificateDao certificateDao, SubjectDao subjectDao,
-			SpecialityDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
+			SpecialtyDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
 			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao) {
 		Enrollee enr = new Enrollee();
 		enr.setFirstName("Иван");
@@ -169,14 +169,14 @@ public class Launcher {
 		registration.setInstitution(eInstitution);
 		registration.setRegisteredBy(registeredBy);
 		registration.setRegistrationDate(LocalDate.now());
-		registration.setSpeciality(specialityDao.findOne(1000L));
+		registration.setSpecialty(specialityDao.findOne(1000L));
 		registration.setRegistrationPeriod(period);
 		registration.setType(Registration.Type.BUDGET);
 		registrationDao.create(registration);
 	}
 
 	private static void first(EnrolleeDao enrolleeDao, CertificateDao certificateDao, SubjectDao subjectDao,
-			SpecialityDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
+			SpecialtyDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
 			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao) {
 		Enrollee enr = new Enrollee();
 		enr.setFirstName("Максим");
@@ -225,7 +225,7 @@ public class Launcher {
 		period.setTo(LocalDate.of(2017, Month.DECEMBER, 1));
 		period.setTitle("2017/2018 Учебный год");
 		period.setStatus(Status.OPENED);
-		period.setSpecialities(specialityDao.fetchList());
+		period.setSpecialties(specialityDao.fetchList());
 		registrationPeriodDao.create(period);
 		
 		Registration registration = new Registration();
@@ -234,7 +234,7 @@ public class Launcher {
 		registration.setInstitution(eInstitution);
 		registration.setRegisteredBy(registeredBy);
 		registration.setRegistrationDate(LocalDate.now());
-		registration.setSpeciality(specialityDao.findOne(1000L));
+		registration.setSpecialty(specialityDao.findOne(1000L));
 		registration.setRegistrationPeriod(period);
 		registration.setType(Registration.Type.BUDGET);
 		registrationDao.create(registration);

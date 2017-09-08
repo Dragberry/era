@@ -3,12 +3,12 @@ package org.dragberry.era.dao;
 import java.util.List;
 
 import org.dragberry.era.domain.RegistrationPeriod;
-import org.dragberry.era.domain.Speciality;
+import org.dragberry.era.domain.Specialty;
 
 public interface RegistrationPeriodDao extends DataAccessObject<RegistrationPeriod, Long> {
 
 	RegistrationPeriod findActivePeriodForCustomer(Long customerKey);
 	
-	List<Speciality> findSpecialitiesForPeriod(Long customerKey, Long periodKey);
+	List<Specialty> findSpecialtiesForPeriod(Long customerKey, Long periodKey);
 
 }
