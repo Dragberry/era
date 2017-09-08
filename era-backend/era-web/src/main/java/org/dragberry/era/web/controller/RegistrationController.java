@@ -11,17 +11,21 @@ import org.dragberry.era.business.registration.RegistrationService;
 import org.dragberry.era.business.reporting.ReportingService;
 import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
+import org.dragberry.era.common.registration.RegistrationCRUDTO;
 import org.dragberry.era.common.registration.RegistrationPeriodTO;
 import org.dragberry.era.common.registration.RegistrationSearchQuery;
 import org.dragberry.era.common.registration.RegistrationTO;
 import org.dragberry.era.common.reporting.ReportTemplateInfoTO;
 import org.dragberry.era.web.exception.ResourceNotFoundException;
 import org.dragberry.era.web.security.AccessContoll;
+import org.dragberry.era.web.security.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -84,6 +88,14 @@ public class RegistrationController {
 		} catch (IOException exc) {
 			exc.printStackTrace();
 		}
+	}
+	
+	@PostMapping("/create")
+	public ResponseEntity<?> create(@RequestBody RegistrationCRUDTO registration) {
+		accessContoll.checkPermission(Roles.Registrations.CREATE);
+		registration.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
+		registration.setUserAccountId(accessContoll.getLoggedUser().getId());
+		return ResponseEntity.ok(null);
 	}
 	
 }
