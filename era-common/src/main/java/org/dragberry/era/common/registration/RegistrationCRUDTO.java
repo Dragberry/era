@@ -12,7 +12,9 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 	
 	private PersonCRUDTO enrollee;
 	
-	private Character studyForm;
+	private Character fundsSource;
+	
+	private Character educationForm;
 	
 	private Long educationInstitutionId;
 	
@@ -34,14 +36,6 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 
 	public void setEnrollee(PersonCRUDTO enrollee) {
 		this.enrollee = enrollee;
-	}
-
-	public Character getStudyForm() {
-		return studyForm;
-	}
-
-	public void setStudyForm(Character studyForm) {
-		this.studyForm = studyForm;
 	}
 
 	public Long getEducationInstitutionId() {
@@ -66,6 +60,22 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 
 	public void setCertificate(CertificateCRUDTO certificate) {
 		this.certificate = certificate;
+	}
+
+	public Character getFundsSource() {
+		return fundsSource;
+	}
+
+	public void setFundsSource(Character fundsSource) {
+		this.fundsSource = fundsSource;
+	}
+
+	public Character getEducationForm() {
+		return educationForm;
+	}
+
+	public void setEducationForm(Character educationForm) {
+		this.educationForm = educationForm;
 	}
 
 }

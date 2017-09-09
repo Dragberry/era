@@ -63,6 +63,9 @@ public class Specialty extends AbstractEntity {
 	@Column(name = "CODE")
 	private String code;
 	
+	@Column(name = "QUALIFICATION")
+	private String qualification;
+	
 	@Column(name = "STATUS")
 	@Convert(converter = SpecialtyStatusConverter.class)
 	private Status STATUS;
@@ -91,6 +94,14 @@ public class Specialty extends AbstractEntity {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getQualification() {
+		return qualification;
+	}
+
+	public void setQualification(String qualification) {
+		this.qualification = qualification;
 	}
 
 }

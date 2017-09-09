@@ -52,8 +52,8 @@ public class RegistrationDaoImpl extends AbstractDao<Registration> implements Re
 		if (query.getSpecialtyId() != null) {
 			where.add(cb.equal(regRoot.get("specialty").get("entityKey"), query.getSpecialtyId()));
 		}
-		if (query.getStudyType() != null) {
-			where.add(cb.equal(regRoot.get("type"), Registration.Type.valueOf(query.getStudyType())));
+		if (query.getFundsSource() != null) {
+			where.add(cb.equal(regRoot.get("fundsSource"), Registration.FundsSource.valueOf(query.getFundsSource())));
 		}
 		cq.where(where.toArray(new Predicate[] {}));
 		cq.select(regRoot).distinct(true);

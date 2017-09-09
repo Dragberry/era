@@ -15,7 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.dragberry.era.domain.converter.RegistrationTypeConverter;
+import org.dragberry.era.domain.converter.EducationFormConverter;
+import org.dragberry.era.domain.converter.FundsSourceConverter;
 
 @Entity
 @Table(name = "REGISTRATION")
@@ -31,43 +32,22 @@ public class Registration extends AbstractEntity {
 
 	private static final long serialVersionUID = 8173371976074070183L;
 
-	private static final String UNKNOWN_VALUE_MSG = "Unknown Registration type value: {0}!";
-	private static final String NPE_MSG = "Registration type cannot be null!";
-	
-	public static enum Type {
-		BUDGET('B'), PAID('P');
-		
-		public final char value;
-		
-		private Type(char value) {
-			this.value = value;
-		}
-		
-		public static Type valueOf(Character value) {
-			if (value == null) {
-				throw new NullPointerException(NPE_MSG);
-			}
-			for (Type type : Type.values()) {
-				if (value.equals(type.value)) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException(MessageFormat.format(UNKNOWN_VALUE_MSG, value));
-		}
-	}
-	
 	@Id
 	@Column(name = "REGISTRATION_KEY")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "REGISTRATION_GEN")
 	private Long entityKey;
 	
-	@Column(name = "REGISTRATION_TYPE")
-	@Convert(converter = RegistrationTypeConverter.class)
-	private Type type;
+	@Column(name = "FUNDS_SOURCE")
+	@Convert(converter = FundsSourceConverter.class)
+	private FundsSource fundsSource;
+	
+	@Column(name = "EDUCATION_FORM")
+	@Convert(converter = EducationFormConverter.class)
+	private EducationForm educationForm;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ENROLLEE_KEY", referencedColumnName = "ENROLLEE_KEY")
-	private Enrollee enrollee;
+	@JoinColumn(name = "ENROLLEE_KEY", referencedColumnName = "PERSON_KEY")
+	private Person enrollee;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "REGISTRATION_PERIOD_KEY", referencedColumnName = "REGISTRATION_PERIOD_KEY")
@@ -142,20 +122,28 @@ public class Registration extends AbstractEntity {
 		this.certificate = certificate;
 	}
 
-	public Enrollee getEnrollee() {
+	public Person getEnrollee() {
 		return enrollee;
 	}
 
-	public void setEnrollee(Enrollee enrollee) {
+	public void setEnrollee(Person enrollee) {
 		this.enrollee = enrollee;
 	}
-
-	public Type getType() {
-		return type;
+	
+	public FundsSource getFundsSource() {
+		return fundsSource;
 	}
 
-	public void setType(Type type) {
-		this.type = type;
+	public void setFundsSource(FundsSource fundsSource) {
+		this.fundsSource = fundsSource;
+	}
+
+	public EducationForm getEducationForm() {
+		return educationForm;
+	}
+
+	public void setEducationForm(EducationForm educationForm) {
+		this.educationForm = educationForm;
 	}
 
 	public RegistrationPeriod getRegistrationPeriod() {
@@ -164,6 +152,54 @@ public class Registration extends AbstractEntity {
 
 	public void setRegistrationPeriod(RegistrationPeriod registrationPeriod) {
 		this.registrationPeriod = registrationPeriod;
+	}
+	
+	private static final String UNKNOWN_VALUE_MSG = "Unknown {0} value: {1}!";
+
+	private static final String NPE_MSG = "{0} cannot be null!";
+	
+	public static enum EducationForm {
+		FULL_TIME('F'), EXTRAMURAL('E');
+		
+		public final char value;
+		
+		private EducationForm(char value) {
+			this.value = value;
+		}
+		
+		public static EducationForm valueOf(Character value) {
+			if (value == null) {
+				throw new NullPointerException(MessageFormat.format(NPE_MSG, EducationForm.class.getName()));
+			}
+			for (EducationForm form : EducationForm.values()) {
+				if (value.equals(form.value)) {
+					return form;
+				}
+			}
+			throw new IllegalArgumentException(MessageFormat.format(UNKNOWN_VALUE_MSG, EducationForm.class.getName(), value));
+		}
+	}
+	
+	public static enum FundsSource {
+		BUDGET('B'), PAYER('P');
+		
+		public final char value;
+		
+		private FundsSource(char value) {
+			this.value = value;
+		}
+		
+		public static FundsSource valueOf(Character value) {
+			if (value == null) {
+				throw new NullPointerException(MessageFormat.format(NPE_MSG, FundsSource.class.getName()));
+			}
+			for (FundsSource src : FundsSource.values()) {
+				if (value.equals(src.value)) {
+					return src;
+				}
+			}
+			throw new IllegalArgumentException(MessageFormat.format(UNKNOWN_VALUE_MSG, FundsSource.class.getName(), value));
+		}
 	}
 	
 }

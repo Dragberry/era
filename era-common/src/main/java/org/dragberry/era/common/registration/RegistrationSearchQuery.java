@@ -14,7 +14,7 @@ public class RegistrationSearchQuery implements Serializable {
 	
 	private Long specialtyId;
 	
-	private Character studyType;
+	private Character fundsSource;
 	
 	public Long getCustomerId() {
 		return customerId;
@@ -48,12 +48,12 @@ public class RegistrationSearchQuery implements Serializable {
 		this.specialtyId = specialtyId;
 	}
 
-	public Character getStudyType() {
-		return studyType;
+	public Character getFundsSource() {
+		return fundsSource;
 	}
 
-	public void setStudyType(Character studyType) {
-		this.studyType = studyType;
+	public void setFundsSource(Character fundsSource) {
+		this.fundsSource = fundsSource;
 	}
-	
+
 }

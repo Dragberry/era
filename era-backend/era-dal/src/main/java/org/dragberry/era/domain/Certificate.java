@@ -51,8 +51,8 @@ public class Certificate extends AbstractEntity {
 	private String institution;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ENROLLEE_KEY", referencedColumnName = "ENROLLEE_KEY")
-	private Enrollee enrollee;
+	@JoinColumn(name = "ENROLLEE_KEY", referencedColumnName = "PERSON_KEY")
+	private Person enrollee;
 	
 	@ElementCollection
 	@CollectionTable(name = "CERTIFICATE_SUBJECT", joinColumns = @JoinColumn(name = "CERTIFICATE_KEY"))
@@ -94,11 +94,11 @@ public class Certificate extends AbstractEntity {
 		this.marks = marks;
 	}
 
-	public Enrollee getEnrollee() {
+	public Person getEnrollee() {
 		return enrollee;
 	}
 
-	public void setEnrollee(Enrollee enrollee) {
+	public void setEnrollee(Person enrollee) {
 		this.enrollee = enrollee;
 	}
 	

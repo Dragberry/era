@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.dragberry.era.application.config.DataConfig;
 import org.dragberry.era.dao.CertificateDao;
 import org.dragberry.era.dao.EducationInstitutionDao;
-import org.dragberry.era.dao.EnrolleeDao;
+import org.dragberry.era.dao.PersonDao;
 import org.dragberry.era.dao.RegistrationDao;
 import org.dragberry.era.dao.RegistrationPeriodDao;
 import org.dragberry.era.dao.SpecialtyDao;
@@ -19,7 +19,7 @@ import org.dragberry.era.domain.Address;
 import org.dragberry.era.domain.Certificate;
 import org.dragberry.era.domain.Document;
 import org.dragberry.era.domain.EducationInstitution;
-import org.dragberry.era.domain.Enrollee;
+import org.dragberry.era.domain.Person;
 import org.dragberry.era.domain.Registration;
 import org.dragberry.era.domain.RegistrationPeriod;
 import org.dragberry.era.domain.RegistrationPeriod.Status;
@@ -28,12 +28,13 @@ import org.dragberry.era.domain.UserAccount;
 import org.dragberry.era.domain.Document.Type;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.jmx.support.RegistrationPolicy;
 
 public class Launcher {
 	
 	public static void main(String[] args) {
 		try(ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(DataConfig.class)) {
-			EnrolleeDao enrolleeDao = context.getBean(EnrolleeDao.class);
+			PersonDao personDao = context.getBean(PersonDao.class);
 			CertificateDao certificateDao = context.getBean(CertificateDao.class);
 			SubjectDao subjectDao = context.getBean(SubjectDao.class);
 			SpecialtyDao specialityDao = context.getBean(SpecialtyDao.class);
@@ -43,19 +44,19 @@ public class Launcher {
 			RegistrationDao registrationDao = context.getBean(RegistrationDao.class);
 			
 			
-			first(enrolleeDao, certificateDao, subjectDao, specialityDao, userAccountDao, einstitutionDao,
+			first(personDao, certificateDao, subjectDao, specialityDao, userAccountDao, einstitutionDao,
 					registrationPeriodDao, registrationDao);
-			second(enrolleeDao, certificateDao, subjectDao, specialityDao, userAccountDao, einstitutionDao,
+			second(personDao, certificateDao, subjectDao, specialityDao, userAccountDao, einstitutionDao,
 					registrationPeriodDao, registrationDao);
-			third(enrolleeDao, certificateDao, subjectDao, specialityDao, userAccountDao, einstitutionDao,
+			third(personDao, certificateDao, subjectDao, specialityDao, userAccountDao, einstitutionDao,
 					registrationPeriodDao, registrationDao);
 		}
 	}
 	
-	private static void third(EnrolleeDao enrolleeDao, CertificateDao certificateDao, SubjectDao subjectDao,
+	private static void third(PersonDao personDao, CertificateDao certificateDao, SubjectDao subjectDao,
 			SpecialtyDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
 			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao) {
-		Enrollee enr = new Enrollee();
+		Person enr = new Person();
 		enr.setFirstName("Сергеев");
 		enr.setMiddleName("Сергеевич");
 		enr.setLastName("Рогатов");
@@ -79,7 +80,7 @@ public class Launcher {
 		addr.setStreet("Прушинских");
 		addr.setZipCode("220112");
 		enr.setAddress(addr);
-		enr = enrolleeDao.create(enr);
+		enr = personDao.create(enr);
 		
 		Certificate certificate = new Certificate();
 		certificate.setInstitution("СШ №777 г.Минска");
@@ -113,14 +114,15 @@ public class Launcher {
 		registration.setRegistrationDate(LocalDate.now());
 		registration.setSpecialty(specialityDao.findOne(1000L));
 		registration.setRegistrationPeriod(period);
-		registration.setType(Registration.Type.BUDGET);
+		registration.setFundsSource(Registration.FundsSource.BUDGET);
+		registration.setEducationForm(Registration.EducationForm.FULL_TIME);
 		registrationDao.create(registration);
 	}
 	
-	private static void second(EnrolleeDao enrolleeDao, CertificateDao certificateDao, SubjectDao subjectDao,
+	private static void second(PersonDao personDao, CertificateDao certificateDao, SubjectDao subjectDao,
 			SpecialtyDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
 			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao) {
-		Enrollee enr = new Enrollee();
+		Person enr = new Person();
 		enr.setFirstName("Иван");
 		enr.setMiddleName("Иванович");
 		enr.setLastName("Иванов");
@@ -144,7 +146,7 @@ public class Launcher {
 		addr.setStreet("Прушинских");
 		addr.setZipCode("220112");
 		enr.setAddress(addr);
-		enr = enrolleeDao.create(enr);
+		enr = personDao.create(enr);
 		
 		Certificate certificate = new Certificate();
 		certificate.setInstitution("СШ №54 г.Минска");
@@ -170,15 +172,16 @@ public class Launcher {
 		registration.setRegisteredBy(registeredBy);
 		registration.setRegistrationDate(LocalDate.now());
 		registration.setSpecialty(specialityDao.findOne(1000L));
+		registration.setFundsSource(Registration.FundsSource.PAYER);
+		registration.setEducationForm(Registration.EducationForm.EXTRAMURAL);
 		registration.setRegistrationPeriod(period);
-		registration.setType(Registration.Type.BUDGET);
 		registrationDao.create(registration);
 	}
 
-	private static void first(EnrolleeDao enrolleeDao, CertificateDao certificateDao, SubjectDao subjectDao,
+	private static void first(PersonDao personDao, CertificateDao certificateDao, SubjectDao subjectDao,
 			SpecialtyDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
 			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao) {
-		Enrollee enr = new Enrollee();
+		Person enr = new Person();
 		enr.setFirstName("Максим");
 		enr.setMiddleName("Леонидович");
 		enr.setLastName("Драгун");
@@ -202,7 +205,7 @@ public class Launcher {
 		addr.setStreet("Прушинских");
 		addr.setZipCode("220112");
 		enr.setAddress(addr);
-		enr = enrolleeDao.create(enr);
+		enr = personDao.create(enr);
 		
 		Certificate certificate = new Certificate();
 		certificate.setInstitution("СШ №143 г.Минска");
@@ -236,7 +239,8 @@ public class Launcher {
 		registration.setRegistrationDate(LocalDate.now());
 		registration.setSpecialty(specialityDao.findOne(1000L));
 		registration.setRegistrationPeriod(period);
-		registration.setType(Registration.Type.BUDGET);
+		registration.setFundsSource(Registration.FundsSource.BUDGET);
+		registration.setEducationForm(Registration.EducationForm.FULL_TIME);
 		registrationDao.create(registration);
 	}
 	

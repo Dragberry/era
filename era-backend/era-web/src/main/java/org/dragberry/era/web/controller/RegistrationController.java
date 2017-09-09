@@ -1,7 +1,6 @@
 package org.dragberry.era.web.controller;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class RegistrationController {
 	
 	private static final String CONTENT_DISPOSITION_KEY = "Content-Disposition";
-	private static final String CONTENT_DISPOSITION_VALUE = "attachment; filename={0}";
+	private static final String CONTENT_DISPOSITION_VALUE = "attachment";
 	
 	@Autowired
 	private AccessContoll accessContoll;
@@ -51,13 +50,14 @@ public class RegistrationController {
 			@RequestParam("periodId") Long periodId,
 			@RequestParam(name = "name", required = false) String name,
 			@RequestParam(name = "speciality", required = false) Long speciality,
-			@RequestParam(name = "study-type", required = false) Character studyType) {
+			@RequestParam(name = "funds-source", required = false) Character fundsSource) {
+		accessContoll.checkPermission(Roles.Registrations.VIEW);
 		RegistrationSearchQuery query = new RegistrationSearchQuery();
 		query.setPeriodId(periodId);
 		query.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
 		query.setName(name);
 		query.setSpecialtyId(speciality);
-		query.setStudyType(studyType);
+		query.setFundsSource(fundsSource);
 		return ResponseEntity.ok(Results.create(registrationService.getRegistrationList(query)));
 	}
 	
@@ -82,7 +82,7 @@ public class RegistrationController {
 				throw new ResourceNotFoundException();
 			}
 			response.setContentType(reportInfo.getMime());
-	        response.setHeader(CONTENT_DISPOSITION_KEY, MessageFormat.format(CONTENT_DISPOSITION_VALUE, reportInfo.getFileName()));
+	        response.setHeader(CONTENT_DISPOSITION_KEY, CONTENT_DISPOSITION_VALUE);
 			contractService.generateRegistrationContract(contractId, templateId, response.getOutputStream());
 			
 		} catch (IOException exc) {

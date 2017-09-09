@@ -30,11 +30,11 @@ public class V1_3__add_templates implements SpringJdbcMigration  {
 		prTemplateStatement.setLong(1, reportKey);
 		prTemplateStatement.setLong(2, institutionKey);
 		prTemplateStatement.setString(3, ReportTemplate.Type.DOCX.fileExtension);
-		prTemplateStatement.setString(4, "test-template");
+		prTemplateStatement.setString(4, "МРК (платное)");
 		LobCreator lobCreator = handler.getLobCreator();
         InputStream input = null;
         try {
-            input = getClass().getResourceAsStream("/db/migration/V1/test-template.docx");
+            input = getClass().getResourceAsStream("/db/migration/V1/mrc-paid-contract.docx");
             byte[] data = null;
             if (input != null) {
                 data = IOUtils.toByteArray(input);

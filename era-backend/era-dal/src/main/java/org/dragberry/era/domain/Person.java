@@ -12,22 +12,22 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 @Entity
-@Table(name = "ENROLLEE")
+@Table(name = "PERSON")
 @TableGenerator(
-		name = "ENROLLEE_GEN", 
+		name = "PERSON_GEN", 
 		table = "GENERATOR",
 		pkColumnName = "GEN_NAME", 
-		pkColumnValue = "ENROLLEE_GEN",
+		pkColumnValue = "PERSON_GEN",
 		valueColumnName = "GEN_VALUE",
 		initialValue = 1000,
 		allocationSize = 1)
-public class Enrollee extends AbstractEntity {
+public class Person extends AbstractEntity {
 
 	private static final long serialVersionUID = -8828891463937405432L;
 	
 	@Id
-	@Column(name = "ENROLLEE_KEY")
-	@GeneratedValue(strategy = GenerationType.TABLE, generator = "ENROLLEE_GEN")
+	@Column(name = "PERSON_KEY")
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "PERSON_GEN")
 	private Long entityKey;
 	
 	@Column(name = "FIRST_NAME")

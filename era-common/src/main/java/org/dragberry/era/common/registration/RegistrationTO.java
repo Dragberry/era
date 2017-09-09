@@ -24,7 +24,7 @@ public class RegistrationTO implements Serializable {
 	
 	private Double attestateAvg;
 	
-	private Character registrationType;
+	private Character fundsSource;
 	
 	@JsonDeserialize(using = LocalDateDeserializer.class)
 	@JsonSerialize(using = LocalDateSerializer.class)
@@ -86,13 +86,12 @@ public class RegistrationTO implements Serializable {
 		this.registrationDate = registrationDate;
 	}
 
-	public Character getRegistrationType() {
-		return registrationType;
+	public Character getFundsSource() {
+		return fundsSource;
 	}
 
-	public void setRegistrationType(Character registrationType) {
-		this.registrationType = registrationType;
+	public void setFundsSource(Character fundsSource) {
+		this.fundsSource = fundsSource;
 	}
-
 
 }

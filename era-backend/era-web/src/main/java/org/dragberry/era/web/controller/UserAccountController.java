@@ -5,6 +5,7 @@ import org.dragberry.era.common.Results;
 import org.dragberry.era.common.useraccount.RoleHolderTO;
 import org.dragberry.era.common.useraccount.UserAccountCRUDTO;
 import org.dragberry.era.web.security.AccessContoll;
+import org.dragberry.era.web.security.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,7 +34,7 @@ public class UserAccountController {
 	
 	@GetMapping("/get-details/{userAccountId}")
 	public ResponseEntity<?> fetchList(@PathVariable Long userAccountId) {
-		accessContoll.checkPermission("ROLE_USERACCOUNTS_VIEW");
+		accessContoll.checkPermission(Roles.UserAccounts.VIEW);
 		UserAccountCRUDTO request = new UserAccountCRUDTO();
 		request.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
 		request.setUserAccountId(accessContoll.getLoggedUser().getId());
@@ -43,7 +44,7 @@ public class UserAccountController {
 	
 	@PostMapping("/create")
 	public ResponseEntity<?> createUserAccount(@RequestBody UserAccountCRUDTO userAccount) {
-		accessContoll.checkPermission("ROLE_USERACCOUNTS_CREATE");
+		accessContoll.checkPermission(Roles.UserAccounts.CREATE);
 		userAccount.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
 		userAccount.getRoles().stream().filter(RoleHolderTO::getEnabled).map(RoleHolderTO::getRole).forEach(accessContoll::checkPermission);
 		return ResponseEntity.ok(userAccountService.create(userAccount));
@@ -51,7 +52,7 @@ public class UserAccountController {
 	
 	@PostMapping("/update")
 	public ResponseEntity<?> updateUserAccount(@RequestBody UserAccountCRUDTO userAccount) {
-		accessContoll.checkPermission("ROLE_USERACCOUNTS_UPDATE");
+		accessContoll.checkPermission(Roles.UserAccounts.UPDATE);
 		userAccount.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
 		userAccount.getRoles().stream().filter(RoleHolderTO::getEnabled).map(RoleHolderTO::getRole).forEach(accessContoll::checkPermission);
 		return ResponseEntity.ok(userAccountService.update(userAccount));
@@ -59,7 +60,7 @@ public class UserAccountController {
 	
 	@DeleteMapping("/delete/{userAccountId}")
 	public ResponseEntity<?> deleteUserAccount(@PathVariable Long userAccountId) {
-		accessContoll.checkPermission("ROLE_USERACCOUNTS_DELETE");
+		accessContoll.checkPermission(Roles.UserAccounts.DELETE);
 		UserAccountCRUDTO request = new UserAccountCRUDTO();
 		request.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
 		request.setUserAccountId(accessContoll.getLoggedUser().getId());
