@@ -1,10 +1,10 @@
 package org.dragberry.era.web.controller;
 
 import org.dragberry.era.common.Results;
+import org.dragberry.era.security.JwtUser;
 import org.dragberry.era.web.security.JwtAuthenticationRequest;
 import org.dragberry.era.web.security.JwtAuthenticationResponse;
 import org.dragberry.era.web.security.JwtTokenUtil;
-import org.dragberry.era.web.security.JwtUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;

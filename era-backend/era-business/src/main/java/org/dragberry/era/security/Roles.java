@@ -1,4 +1,4 @@
-package org.dragberry.era.web.security;
+package org.dragberry.era.security;
 
 public interface Roles {
 	

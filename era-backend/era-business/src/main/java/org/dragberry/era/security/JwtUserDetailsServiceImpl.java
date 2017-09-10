@@ -1,4 +1,4 @@
-package org.dragberry.era.web.security;
+package org.dragberry.era.security;
 
 import org.dragberry.era.dao.UserAccountDao;
 import org.dragberry.era.domain.UserAccount;
@@ -16,6 +16,9 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private UserAccountDao userAccountDao;
+    
+    @Autowired
+    private JwtUserFactory factory;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -24,7 +27,7 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
         } else {
-            return JwtUserFactory.create(user);
+            return factory.create(user);
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.dragberry.era.web.security;
+package org.dragberry.era.security;
 
 import java.time.LocalDateTime;
 import java.util.Collection;

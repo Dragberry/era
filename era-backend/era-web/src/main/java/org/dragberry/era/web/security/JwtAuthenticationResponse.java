@@ -2,6 +2,8 @@ package org.dragberry.era.web.security;
 
 import java.io.Serializable;
 
+import org.dragberry.era.security.JwtUser;
+
 /**
  * Created by stephan on 20.03.16.
  */

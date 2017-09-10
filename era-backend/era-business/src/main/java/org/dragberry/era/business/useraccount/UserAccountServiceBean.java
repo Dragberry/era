@@ -19,6 +19,7 @@ import org.dragberry.era.dao.CustomerDao;
 import org.dragberry.era.dao.UserAccountDao;
 import org.dragberry.era.domain.Role;
 import org.dragberry.era.domain.UserAccount;
+import org.dragberry.era.security.RoleCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

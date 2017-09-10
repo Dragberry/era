@@ -2,7 +2,7 @@ package org.dragberry.era.web.controller;
 
 import org.dragberry.era.business.customer.CustomerService;
 import org.dragberry.era.common.Results;
-import org.dragberry.era.web.security.AccessContoll;
+import org.dragberry.era.security.AccessControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerController {
 	
 	@Autowired
-	private AccessContoll accessControl;
+	private AccessControl accessControl;
 	@Autowired
 	private CustomerService customerServie;
 	

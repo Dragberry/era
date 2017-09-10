@@ -4,8 +4,8 @@ import org.dragberry.era.business.useraccount.UserAccountService;
 import org.dragberry.era.common.Results;
 import org.dragberry.era.common.useraccount.RoleHolderTO;
 import org.dragberry.era.common.useraccount.UserAccountCRUDTO;
-import org.dragberry.era.web.security.AccessContoll;
-import org.dragberry.era.web.security.Roles;
+import org.dragberry.era.security.AccessControl;
+import org.dragberry.era.security.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,14 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserAccountController {
 	
 	@Autowired
-	private AccessContoll accessContoll;
+	private AccessControl accessContoll;
 	
 	@Autowired
 	private UserAccountService userAccountService;
 	
 	@GetMapping("/get-list")
 	public ResponseEntity<?> fetchList() {
-		accessContoll.checkPermission("ROLE_USERACCOUNTS_VIEW");
+		accessContoll.checkPermission(Roles.UserAccounts.VIEW);
 		return ResponseEntity.ok(Results.create(userAccountService.getListForCustomer(accessContoll.getLoggedUser().getCustomerId())));
 	}
 	

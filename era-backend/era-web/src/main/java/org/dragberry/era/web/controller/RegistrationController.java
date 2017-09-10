@@ -15,9 +15,9 @@ import org.dragberry.era.common.registration.RegistrationPeriodTO;
 import org.dragberry.era.common.registration.RegistrationSearchQuery;
 import org.dragberry.era.common.registration.RegistrationTO;
 import org.dragberry.era.common.reporting.ReportTemplateInfoTO;
+import org.dragberry.era.security.AccessControl;
+import org.dragberry.era.security.Roles;
 import org.dragberry.era.web.exception.ResourceNotFoundException;
-import org.dragberry.era.web.security.AccessContoll;
-import org.dragberry.era.web.security.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -36,7 +36,7 @@ public class RegistrationController {
 	private static final String CONTENT_DISPOSITION_VALUE = "attachment";
 	
 	@Autowired
-	private AccessContoll accessContoll;
+	private AccessControl accessContoll;
 	
 	@Autowired
 	private ContractService contractService;
