@@ -11,8 +11,15 @@ public class IssueTO implements Serializable {
 	private final String errorCode;
 	
 	private final List<Object> params;
+	
+	private final String fieldId;
 
 	public IssueTO(String errorCode, Object... params) {
+		this(errorCode, null, params);
+	}
+	
+	public IssueTO(String errorCode, String fieldId, Object... params) {
+		this.fieldId = fieldId;
 		this.errorCode = errorCode;
 		this.params = Arrays.asList(params);
 	}
@@ -23,6 +30,10 @@ public class IssueTO implements Serializable {
 
 	public List<Object> getParams() {
 		return params;
+	}
+	
+	public String getFieldId() {
+		return fieldId;
 	}
 
 }

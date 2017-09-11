@@ -95,7 +95,7 @@ public class RegistrationController {
 		accessContoll.checkPermission(Roles.Registrations.CREATE);
 		registration.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
 		registration.setUserAccountId(accessContoll.getLoggedUser().getId());
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(registrationService.createRegistration(registration));
 	}
 	
 }

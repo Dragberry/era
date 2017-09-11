@@ -4,6 +4,11 @@ import java.time.LocalDate;
 
 import org.dragberry.era.common.AbstractCRUDTO;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
 public class PersonCRUDTO extends AbstractCRUDTO {
 
 	private static final long serialVersionUID = -3719332346039339698L;
@@ -14,6 +19,8 @@ public class PersonCRUDTO extends AbstractCRUDTO {
 	
 	private String middleName;
 	
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@JsonSerialize(using = LocalDateSerializer.class)
 	private LocalDate birthdate;
 	
 	private DocumentTO document;

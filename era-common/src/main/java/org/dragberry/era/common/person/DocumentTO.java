@@ -11,7 +11,7 @@ public class DocumentTO implements Serializable {
 	
 	private String id;
 	
-	private String documnetId;
+	private String documentId;
 	
 	private LocalDate issueDate;
 	
@@ -33,12 +33,12 @@ public class DocumentTO implements Serializable {
 		this.id = id;
 	}
 
-	public String getDocumnetId() {
-		return documnetId;
+	public String getDocumentId() {
+		return documentId;
 	}
 
-	public void setDocumnetId(String documnetId) {
-		this.documnetId = documnetId;
+	public void setDocumentId(String documentId) {
+		this.documentId = documentId;
 	}
 
 	public LocalDate getIssueDate() {
