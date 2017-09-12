@@ -3,6 +3,11 @@ package org.dragberry.era.common.person;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
 public class DocumentTO implements Serializable {
 
 	private static final long serialVersionUID = 8365638606145665802L;
@@ -13,6 +18,8 @@ public class DocumentTO implements Serializable {
 	
 	private String documentId;
 	
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@JsonSerialize(using = LocalDateSerializer.class)
 	private LocalDate issueDate;
 	
 	private String issuedBy;
