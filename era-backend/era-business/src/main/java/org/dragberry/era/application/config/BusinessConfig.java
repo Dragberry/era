@@ -2,6 +2,7 @@ package org.dragberry.era.application.config;
 
 import org.dragberry.era.business.BusinessServices;
 import org.dragberry.era.business.registration.validation.AddressValidator;
+import org.dragberry.era.business.registration.validation.DocumentValidator;
 import org.dragberry.era.business.registration.validation.EnrolleeValidator;
 import org.dragberry.era.business.registration.validation.RegistrationValidationService;
 import org.dragberry.era.business.validation.ValidationService;
@@ -29,12 +30,18 @@ public class BusinessConfig {
 		ValidationService<Registration> service = new RegistrationValidationService();
 		service.addValidator(enrolleeValidator());
 		service.addValidator(addressValidator());
+		service.addValidator(documentValidator());
 		return service;
 	}
 	
 	@Bean
 	public Validator<Registration> enrolleeValidator() {
 		return new EnrolleeValidator();
+	}
+	
+	@Bean
+	public Validator<Registration> documentValidator() {
+		return new DocumentValidator();
 	}
 	
 	@Bean
