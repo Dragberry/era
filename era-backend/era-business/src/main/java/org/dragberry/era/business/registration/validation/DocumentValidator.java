@@ -11,7 +11,9 @@ import org.dragberry.era.common.IssueTO;
 import org.dragberry.era.common.Issues;
 import org.dragberry.era.domain.Document;
 import org.dragberry.era.domain.Registration;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DocumentValidator implements Validator<Registration> {
 
 	private interface Errors extends RegistrationCommon {

@@ -10,7 +10,9 @@ import org.dragberry.era.common.IssueTO;
 import org.dragberry.era.common.Issues;
 import org.dragberry.era.domain.Person;
 import org.dragberry.era.domain.Registration;
+import org.springframework.stereotype.Component;
 
+@Component
 public class EnrolleeValidator implements Validator<Registration> {
 
 	private interface Errors extends RegistrationCommon {

@@ -11,7 +11,9 @@ import org.dragberry.era.common.Issues;
 import org.dragberry.era.domain.Address;
 import org.dragberry.era.domain.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AddressValidator implements Validator<Registration> {
 
 	@Autowired
