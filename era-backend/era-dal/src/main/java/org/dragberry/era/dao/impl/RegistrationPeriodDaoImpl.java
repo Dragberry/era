@@ -3,8 +3,8 @@ package org.dragberry.era.dao.impl;
 import java.util.List;
 
 import org.dragberry.era.dao.RegistrationPeriodDao;
+import org.dragberry.era.domain.RegisteredSpecialty;
 import org.dragberry.era.domain.RegistrationPeriod;
-import org.dragberry.era.domain.Specialty;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -25,12 +25,12 @@ public class RegistrationPeriodDaoImpl extends AbstractDao<RegistrationPeriod> i
 	}
 	
 	@Override
-	public List<Specialty> findSpecialtiesForPeriod(Long customerKey, Long periodKey) {
+	public List<RegisteredSpecialty> findSpecialtiesForPeriod(Long customerKey, Long periodKey) {
 		return getEntityManager()
-				.createNamedQuery(RegistrationPeriod.FIND_SPECIALTIES_FOR_PERIOD, RegistrationPeriod.class)
+				.createNamedQuery(RegistrationPeriod.FIND_SPECIALTIES_FOR_PERIOD, RegisteredSpecialty.class)
 				.setParameter(CUSTOMER_KEY, customerKey)
 				.setParameter(PERIOD_KEY, periodKey)
-				.getSingleResult().getSpecialties();
+				.getResultList();
 	}
 
 }

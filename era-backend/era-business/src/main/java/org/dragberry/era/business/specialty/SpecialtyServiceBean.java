@@ -19,7 +19,7 @@ public class SpecialtyServiceBean implements SpecialtyService {
 		return registrationPeriodDao.findSpecialtiesForPeriod(customerKey, registrationPeriodId).stream().map(entity -> {
 			SpecialtySimpleTO to = new SpecialtySimpleTO();
 			to.setId(entity.getEntityKey());
-			to.setName(entity.getTitle());
+			to.setName(entity.getSpecialty().getTitle());
 			return to;
 		}).collect(Collectors.toList());
 	}

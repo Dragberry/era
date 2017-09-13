@@ -12,15 +12,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.dragberry.era.domain.converter.RegistrationPeriodStatusConverter;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 @Table(name = "REGISTRATION_PERIOD")
@@ -30,7 +31,7 @@ import org.dragberry.era.domain.converter.RegistrationPeriodStatusConverter;
 			query = "select rp from RegistrationPeriod rp, Customer c where c.institution = rp.educationInstitution and c.entityKey = :customerKey"),
 	@NamedQuery(
 			name = RegistrationPeriod.FIND_SPECIALTIES_FOR_PERIOD,
-			query = "select rp from Customer c, RegistrationPeriod rp join fetch rp.specialties where c.institution = rp.educationInstitution and c.entityKey = :customerKey and rp.entityKey = :periodKey")
+			query = "select distinct rs from Customer c, RegistrationPeriod rp, RegisteredSpecialty rs join fetch rs.specialty where c.institution = rp.educationInstitution and rp = rs.registrationPeriod and c.entityKey = :customerKey and rp.entityKey = :periodKey")
 
 })
 @TableGenerator(
@@ -91,11 +92,9 @@ public class RegistrationPeriod extends AbstractEntity {
 	@JoinColumn(name = "EDUCATION_INSTITUTION_KEY", referencedColumnName = "EDUCATION_INSTITUTION_KEY")
 	private EducationInstitution educationInstitution;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "REG_PERIOD_SPECIALTY", 
-        joinColumns = @JoinColumn(name = "REGISTRATION_PERIOD_KEY", referencedColumnName = "REGISTRATION_PERIOD_KEY"), 
-        inverseJoinColumns = @JoinColumn(name = "SPECIALTY_KEY", referencedColumnName = "SPECIALTY_KEY"))
-	private List<Specialty> specialties;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "registrationPeriod")
+	@Cascade(CascadeType.SAVE_UPDATE)
+	private List<RegisteredSpecialty> specialties;
 	
 	@Column(name = "STATUS")
 	@Convert(converter = RegistrationPeriodStatusConverter.class)
@@ -151,13 +150,12 @@ public class RegistrationPeriod extends AbstractEntity {
 		this.status = status;
 	}
 
-	public List<Specialty> getSpecialties() {
+	public List<RegisteredSpecialty> getSpecialties() {
 		return specialties;
 	}
 
-	public void setSpecialties(List<Specialty> specialities) {
-		this.specialties = specialities;
+	public void setSpecialties(List<RegisteredSpecialty> specialties) {
+		this.specialties = specialties;
 	}
-	
 
 }

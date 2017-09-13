@@ -3,6 +3,7 @@ package org.dragberry.era.application;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -11,6 +12,7 @@ import org.dragberry.era.application.config.DataConfig;
 import org.dragberry.era.dao.CertificateDao;
 import org.dragberry.era.dao.EducationInstitutionDao;
 import org.dragberry.era.dao.PersonDao;
+import org.dragberry.era.dao.RegisteredSpecialtyDao;
 import org.dragberry.era.dao.RegistrationDao;
 import org.dragberry.era.dao.RegistrationPeriodDao;
 import org.dragberry.era.dao.SpecialtyDao;
@@ -22,12 +24,14 @@ import org.dragberry.era.domain.Document;
 import org.dragberry.era.domain.EducationInstitution;
 import org.dragberry.era.domain.FundsSource;
 import org.dragberry.era.domain.Person;
+import org.dragberry.era.domain.RegisteredSpecialty;
 import org.dragberry.era.domain.Registration;
 import org.dragberry.era.domain.RegistrationPeriod;
 import org.dragberry.era.domain.RegistrationPeriod.Status;
 import org.dragberry.era.domain.Subject;
 import org.dragberry.era.domain.UserAccount;
 import org.dragberry.era.domain.Document.Type;
+import org.dragberry.era.domain.EducationBase;
 import org.dragberry.era.domain.EducationForm;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -44,20 +48,21 @@ public class Launcher {
 			EducationInstitutionDao einstitutionDao = context.getBean(EducationInstitutionDao.class);
 			RegistrationPeriodDao registrationPeriodDao = context.getBean(RegistrationPeriodDao.class);
 			RegistrationDao registrationDao = context.getBean(RegistrationDao.class);
+			RegisteredSpecialtyDao registeredSpecialtyDao = context.getBean(RegisteredSpecialtyDao.class);
 			
 			
 			first(personDao, certificateDao, subjectDao, specialityDao, userAccountDao, einstitutionDao,
-					registrationPeriodDao, registrationDao);
+					registrationPeriodDao, registrationDao, registeredSpecialtyDao);
 			second(personDao, certificateDao, subjectDao, specialityDao, userAccountDao, einstitutionDao,
-					registrationPeriodDao, registrationDao);
+					registrationPeriodDao, registrationDao, registeredSpecialtyDao);
 			third(personDao, certificateDao, subjectDao, specialityDao, userAccountDao, einstitutionDao,
-					registrationPeriodDao, registrationDao);
+					registrationPeriodDao, registrationDao, registeredSpecialtyDao);
 		}
 	}
 	
 	private static void third(PersonDao personDao, CertificateDao certificateDao, SubjectDao subjectDao,
 			SpecialtyDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
-			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao) {
+			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao, RegisteredSpecialtyDao registeredSpecialtyDao) {
 		Person enr = new Person();
 		enr.setFirstName("Сергеев");
 		enr.setMiddleName("Сергеевич");
@@ -105,7 +110,16 @@ public class Launcher {
 		period.setTo(LocalDate.of(2017, Month.DECEMBER, 1));
 		period.setTitle("2017/2018 Учебный год");
 		period.setStatus(Status.OPENED);
-		period.setSpecialties(specialityDao.fetchList());
+
+		specialityDao.fetchList().stream().map(spec -> {
+			RegisteredSpecialty rSpec = new RegisteredSpecialty();
+			rSpec.setSpecialty(spec);
+			rSpec.setSeparateByEducationBase(true);
+			rSpec.setSeparateByEducationForm(true);
+			rSpec.setSeparateByFundsSource(false);
+			return rSpec;
+		}).collect(Collectors.toList());
+		
 		registrationPeriodDao.create(period);
 		
 		Registration registration = new Registration();
@@ -123,7 +137,7 @@ public class Launcher {
 	
 	private static void second(PersonDao personDao, CertificateDao certificateDao, SubjectDao subjectDao,
 			SpecialtyDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
-			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao) {
+			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao, RegisteredSpecialtyDao registeredSpecialtyDao) {
 		Person enr = new Person();
 		enr.setFirstName("Иван");
 		enr.setMiddleName("Иванович");
@@ -182,7 +196,7 @@ public class Launcher {
 
 	private static void first(PersonDao personDao, CertificateDao certificateDao, SubjectDao subjectDao,
 			SpecialtyDao specialityDao, UserAccountDao userAccountDao, EducationInstitutionDao einstitutionDao,
-			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao) {
+			RegistrationPeriodDao registrationPeriodDao, RegistrationDao registrationDao, RegisteredSpecialtyDao registeredSpecialtyDao) {
 		Person enr = new Person();
 		enr.setFirstName("Максим");
 		enr.setMiddleName("Леонидович");
@@ -230,7 +244,20 @@ public class Launcher {
 		period.setTo(LocalDate.of(2017, Month.DECEMBER, 1));
 		period.setTitle("2017/2018 Учебный год");
 		period.setStatus(Status.OPENED);
-		period.setSpecialties(specialityDao.fetchList());
+		
+		period.setSpecialties(specialityDao.fetchList().stream().map(spec -> {
+			RegisteredSpecialty rSpec = new RegisteredSpecialty();
+			rSpec.setSpecialty(spec);
+			rSpec.setRegistrationPeriod(period);
+			rSpec.setSeparateByEducationBase(true);
+			rSpec.setEducationBases(EnumSet.allOf(EducationBase.class));
+			rSpec.setSeparateByEducationForm(true);
+			rSpec.setEducationForms(EnumSet.allOf(EducationForm.class));
+			rSpec.setSeparateByFundsSource(false);
+			rSpec.setFundsSources(EnumSet.allOf(FundsSource.class));
+			return rSpec;
+		}).collect(Collectors.toList()));
+		
 		registrationPeriodDao.create(period);
 		
 		Registration registration = new Registration();

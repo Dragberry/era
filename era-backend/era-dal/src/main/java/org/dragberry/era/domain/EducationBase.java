@@ -2,7 +2,7 @@ package org.dragberry.era.domain;
 
 public enum EducationBase implements BaseEnum {
 
-	L9("9"), L11("11");
+	L9("09"), L11("11");
 	
 	public final String value;
 	

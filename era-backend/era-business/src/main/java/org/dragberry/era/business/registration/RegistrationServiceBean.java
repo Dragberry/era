@@ -137,12 +137,12 @@ public class RegistrationServiceBean implements RegistrationService {
 			registration.setSpecialty(specialtyDao.findOne(registrationCRUD.getSpecialtyId()));
 		}
 		try {
-			registration.setFundsSource(FundsSource.valueOf(registrationCRUD.getFundsSource()));
+			registration.setFundsSource(FundsSource.resolve(registrationCRUD.getFundsSource()));
 		} catch (Exception exc) {
 			registration.setFundsSource(null);
 		}
 		try {
-			registration.setEducationForm(EducationForm.valueOf(registrationCRUD.getEducationForm()));
+			registration.setEducationForm(EducationForm.resolve(registrationCRUD.getEducationForm()));
 		} catch (Exception exc) {
 			registration.setEducationForm(null);
 		}
