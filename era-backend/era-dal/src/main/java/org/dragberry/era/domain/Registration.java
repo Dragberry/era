@@ -1,6 +1,5 @@
 package org.dragberry.era.domain;
 
-import java.text.MessageFormat;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -152,54 +151,6 @@ public class Registration extends AbstractEntity {
 
 	public void setRegistrationPeriod(RegistrationPeriod registrationPeriod) {
 		this.registrationPeriod = registrationPeriod;
-	}
-	
-	private static final String UNKNOWN_VALUE_MSG = "Unknown {0} value: {1}!";
-
-	private static final String NPE_MSG = "{0} cannot be null!";
-	
-	public static enum EducationForm {
-		FULL_TIME('F'), EXTRAMURAL('E');
-		
-		public final char value;
-		
-		private EducationForm(char value) {
-			this.value = value;
-		}
-		
-		public static EducationForm valueOf(Character value) {
-			if (value == null) {
-				throw new NullPointerException(MessageFormat.format(NPE_MSG, EducationForm.class.getName()));
-			}
-			for (EducationForm form : EducationForm.values()) {
-				if (value.equals(form.value)) {
-					return form;
-				}
-			}
-			throw new IllegalArgumentException(MessageFormat.format(UNKNOWN_VALUE_MSG, EducationForm.class.getName(), value));
-		}
-	}
-	
-	public static enum FundsSource {
-		BUDGET('B'), PAYER('P');
-		
-		public final char value;
-		
-		private FundsSource(char value) {
-			this.value = value;
-		}
-		
-		public static FundsSource valueOf(Character value) {
-			if (value == null) {
-				throw new NullPointerException(MessageFormat.format(NPE_MSG, FundsSource.class.getName()));
-			}
-			for (FundsSource src : FundsSource.values()) {
-				if (value.equals(src.value)) {
-					return src;
-				}
-			}
-			throw new IllegalArgumentException(MessageFormat.format(UNKNOWN_VALUE_MSG, FundsSource.class.getName(), value));
-		}
 	}
 	
 }

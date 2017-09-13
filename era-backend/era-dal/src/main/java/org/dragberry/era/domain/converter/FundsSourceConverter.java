@@ -3,18 +3,18 @@ package org.dragberry.era.domain.converter;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import org.dragberry.era.domain.Registration;
+import org.dragberry.era.domain.FundsSource;
 
 @Converter
-public class FundsSourceConverter implements AttributeConverter<Registration.FundsSource, Character> {
+public class FundsSourceConverter implements AttributeConverter<FundsSource, Character> {
 
 	@Override
-	public Character convertToDatabaseColumn(Registration.FundsSource attribute) {
+	public Character convertToDatabaseColumn(FundsSource attribute) {
 		return attribute.value;
 	}
 
 	@Override
-	public Registration.FundsSource convertToEntityAttribute(Character dbData) {
-		return Registration.FundsSource.valueOf(dbData);
+	public FundsSource convertToEntityAttribute(Character dbData) {
+		return FundsSource.resolve(dbData);
 	}
 }

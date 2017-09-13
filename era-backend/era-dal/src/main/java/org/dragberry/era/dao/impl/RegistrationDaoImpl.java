@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dragberry.era.common.registration.RegistrationSearchQuery;
 import org.dragberry.era.dao.RegistrationDao;
 import org.dragberry.era.domain.Customer;
+import org.dragberry.era.domain.FundsSource;
 import org.dragberry.era.domain.Registration;
 import org.springframework.stereotype.Repository;
 
@@ -54,7 +55,7 @@ public class RegistrationDaoImpl extends AbstractDao<Registration> implements Re
 			where.add(cb.equal(regRoot.get("specialty").get("entityKey"), query.getSpecialtyId()));
 		}
 		if (query.getFundsSource() != null) {
-			where.add(cb.equal(regRoot.get("fundsSource"), Registration.FundsSource.valueOf(query.getFundsSource())));
+			where.add(cb.equal(regRoot.get("fundsSource"), FundsSource.resolve(query.getFundsSource())));
 		}
 		cq.where(where.toArray(new Predicate[] {}));
 		cq.select(regRoot).distinct(true);
