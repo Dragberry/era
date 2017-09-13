@@ -1,7 +1,7 @@
 package org.dragberry.era.domain;
 
 import java.text.MessageFormat;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -54,7 +54,7 @@ public class Registration extends AbstractEntity {
 	private RegistrationPeriod registrationPeriod;
 	
 	@Column(name = "REGISTRATION_DATE")
-	private LocalDate registrationDate;
+	private LocalDateTime registrationDate;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "REGISTERED_BY", referencedColumnName = "USER_ACCOUNT_KEY")
@@ -82,11 +82,11 @@ public class Registration extends AbstractEntity {
 		this.entityKey = entityKey;
 	}
 
-	public LocalDate getRegistrationDate() {
+	public LocalDateTime getRegistrationDate() {
 		return registrationDate;
 	}
 
-	public void setRegistrationDate(LocalDate registrationDate) {
+	public void setRegistrationDate(LocalDateTime registrationDate) {
 		this.registrationDate = registrationDate;
 	}
 

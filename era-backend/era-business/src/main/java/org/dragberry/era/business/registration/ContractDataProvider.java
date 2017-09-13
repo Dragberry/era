@@ -28,6 +28,11 @@ public class ContractDataProvider implements DataProvider {
 		if (registration == null) {
 			return StringUtils.EMPTY;
 		}
+		String result = get(param);
+		return result != null ? result : StringUtils.EMPTY;
+	}
+	
+	private String get(String param) {
 		switch (param) {
 			case "lastName":
 				return registration.getEnrollee().getLastName();
@@ -57,7 +62,7 @@ public class ContractDataProvider implements DataProvider {
 				return registration.getEnrollee().getDocument().getIssuedBy();
 			default:
 				LOG.warn(MessageFormat.format("The parameter {0} does not exist for this report", param));
-				return StringUtils.EMPTY;	
+				return StringUtils.EMPTY;
 		}
 	}
 	

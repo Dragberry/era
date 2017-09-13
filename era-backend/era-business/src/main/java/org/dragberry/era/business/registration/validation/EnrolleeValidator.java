@@ -24,6 +24,7 @@ public class EnrolleeValidator implements Validator<Registration> {
 		String ENROLLEE_MIDDLE_NAME_IS_TOO_LONG = RegistrationCommon.errorCode("enrollee.middle-name-is-too-long");
 		String ENROLLEE_BIRTHDATE_IS_EMPTY = RegistrationCommon.errorCode("enrollee.birthdate-is-empty");
 		String ENROLLEE_BIRTHDAY_IS_TOO_YOUNG = RegistrationCommon.errorCode("enrollee.birthday-is-too-young");
+		String ENROLLEE_PHONE_IS_EMPTY = RegistrationCommon.errorCode("enrollee.contact-details.phone-is-empty");
 	}
 	
 	private interface FieldID {
@@ -31,6 +32,7 @@ public class EnrolleeValidator implements Validator<Registration> {
 		String ENROLEE_LAST_NAME = "eLastName";
 		String ENROLEE_MIDDLE_NAME = "eMiddleName";
 		String ENROLEE_BIRTHDATE = "eBirthdate";
+		String ENROLEE_PHONE = "ePhone";
 	}
 	
 	@Override
@@ -62,6 +64,10 @@ public class EnrolleeValidator implements Validator<Registration> {
 			if (enrollee.getBirthdate().isAfter(LocalDate.now().minusYears(age))) {
 				issues.add(Issues.create(Errors.ENROLLEE_BIRTHDAY_IS_TOO_YOUNG, FieldID.ENROLEE_BIRTHDATE, age));
 			}
+		}
+		// Phone
+		if (StringUtils.isBlank(enrollee.getPhone())) {
+			issues.add(Issues.create(Errors.ENROLLEE_PHONE_IS_EMPTY, FieldID.ENROLEE_PHONE));
 		}
 		return issues;
 	}

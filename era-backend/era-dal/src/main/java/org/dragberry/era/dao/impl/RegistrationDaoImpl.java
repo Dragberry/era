@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -33,7 +34,7 @@ public class RegistrationDaoImpl extends AbstractDao<Registration> implements Re
 		regRoot.fetch("enrollee");
 		regRoot.fetch("institution");
 		regRoot.fetch("specialty");
-		regRoot.fetch("certificate");
+		regRoot.fetch("certificate", JoinType.LEFT);
 		regRoot.fetch("registrationPeriod");
 		
 		List<Predicate> where = new ArrayList<>();

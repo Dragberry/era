@@ -1,6 +1,7 @@
 package org.dragberry.era.application;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Map;
 import java.util.Random;
@@ -28,7 +29,6 @@ import org.dragberry.era.domain.UserAccount;
 import org.dragberry.era.domain.Document.Type;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.jmx.support.RegistrationPolicy;
 
 public class Launcher {
 	
@@ -111,7 +111,7 @@ public class Launcher {
 		registration.setEnrollee(enr);
 		registration.setInstitution(eInstitution);
 		registration.setRegisteredBy(registeredBy);
-		registration.setRegistrationDate(LocalDate.now());
+		registration.setRegistrationDate(LocalDateTime.now());
 		registration.setSpecialty(specialityDao.findOne(1000L));
 		registration.setRegistrationPeriod(period);
 		registration.setFundsSource(Registration.FundsSource.BUDGET);
@@ -170,7 +170,7 @@ public class Launcher {
 		registration.setEnrollee(enr);
 		registration.setInstitution(eInstitution);
 		registration.setRegisteredBy(registeredBy);
-		registration.setRegistrationDate(LocalDate.now());
+		registration.setRegistrationDate(LocalDateTime.now());
 		registration.setSpecialty(specialityDao.findOne(1000L));
 		registration.setFundsSource(Registration.FundsSource.PAYER);
 		registration.setEducationForm(Registration.EducationForm.EXTRAMURAL);
@@ -236,7 +236,7 @@ public class Launcher {
 		registration.setEnrollee(enr);
 		registration.setInstitution(eInstitution);
 		registration.setRegisteredBy(registeredBy);
-		registration.setRegistrationDate(LocalDate.now());
+		registration.setRegistrationDate(LocalDateTime.now());
 		registration.setSpecialty(specialityDao.findOne(1000L));
 		registration.setRegistrationPeriod(period);
 		registration.setFundsSource(Registration.FundsSource.BUDGET);

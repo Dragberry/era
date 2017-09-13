@@ -1,5 +1,6 @@
 package org.dragberry.era.business.registration;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,6 +9,7 @@ import org.dragberry.era.common.IssueTO;
 import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
 import org.dragberry.era.common.person.AddressTO;
+import org.dragberry.era.common.person.ContactDetailsTO;
 import org.dragberry.era.common.person.DocumentTO;
 import org.dragberry.era.common.person.PersonCRUDTO;
 import org.dragberry.era.common.registration.RegistrationCRUDTO;
@@ -16,6 +18,7 @@ import org.dragberry.era.common.registration.RegistrationSearchQuery;
 import org.dragberry.era.common.registration.RegistrationTO;
 import org.dragberry.era.dao.CertificateDao;
 import org.dragberry.era.dao.EducationInstitutionDao;
+import org.dragberry.era.dao.PersonDao;
 import org.dragberry.era.dao.RegistrationDao;
 import org.dragberry.era.dao.RegistrationPeriodDao;
 import org.dragberry.era.dao.SpecialtyDao;
@@ -40,6 +43,8 @@ public class RegistrationServiceBean implements RegistrationService {
 	@Autowired
 	private EducationInstitutionDao educationInstitutionDao;
 	@Autowired
+	private PersonDao personDao;
+	@Autowired
 	private RegistrationDao registrationDao;
 	@Autowired
 	private RegistrationPeriodDao registrationPeriodDao;
@@ -63,7 +68,8 @@ public class RegistrationServiceBean implements RegistrationService {
 			to.setRegistrationDate(entity.getRegistrationDate());
 			to.setFundsSource(entity.getFundsSource().value);
 			to.setSpecialty(entity.getSpecialty().getTitle());
-			to.setAttestateAvg(certificateDao.getAverageMark(entity.getCertificate().getEntityKey()));
+			to.setAttestateAvg(entity.getCertificate() != null 
+					? certificateDao.getAverageMark(entity.getCertificate().getEntityKey()) : 0);
 			return to;
 		}).collect(Collectors.toList());
 	}
@@ -118,6 +124,11 @@ public class RegistrationServiceBean implements RegistrationService {
 				document.setIssueDate(documentTO.getIssueDate());
 				document.setIssuedBy(documentTO.getIssuedBy());
 			}
+			ContactDetailsTO contactDetails = enrolleeCRUD.getContactDetails();
+			if (contactDetails != null) {
+				enrollee.setPhone(contactDetails.getPhone());
+				enrollee.setEmail(contactDetails.getEmail());
+			}
 		}
 		if (registrationCRUD.getEducationInstitutionId() != null) {
 			registration.setInstitution(educationInstitutionDao.findOne(registrationCRUD.getEducationInstitutionId()));
@@ -138,9 +149,15 @@ public class RegistrationServiceBean implements RegistrationService {
 		if (registrationCRUD.getUserAccountId() != null) {
 			registration.setRegisteredBy(userAccountDao.findOne(registrationCRUD.getUserAccountId()));
 		}
+		if (registrationCRUD.getPeriodId() != null) {
+			registration.setRegistrationPeriod(registrationPeriodDao.findOne(registrationCRUD.getPeriodId()));
+		}
+		registration.setRegistrationDate(LocalDateTime.now());
 		
 		List<IssueTO> issues = validationService.validate(registration);
 		if (issues.isEmpty()) {
+			personDao.create(registration.getEnrollee());
+			enrolleeCRUD.setId(registration.getEnrollee().getEntityKey());
 			registrationDao.create(registration);
 			registrationCRUD.setId(registration.getEntityKey());
 		}
