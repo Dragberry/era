@@ -26,6 +26,8 @@ public class PersonCRUDTO extends AbstractCRUDTO {
 	private DocumentTO document;
 	
 	private AddressTO address;
+	
+	private ContactDetailsTO contactDetails;
 
 	public String getFirstName() {
 		return firstName;
@@ -73,6 +75,14 @@ public class PersonCRUDTO extends AbstractCRUDTO {
 
 	public void setAddress(AddressTO address) {
 		this.address = address;
+	}
+
+	public ContactDetailsTO getContactDetails() {
+		return contactDetails;
+	}
+
+	public void setContactDetails(ContactDetailsTO contactDetails) {
+		this.contactDetails = contactDetails;
 	}
 	
 }

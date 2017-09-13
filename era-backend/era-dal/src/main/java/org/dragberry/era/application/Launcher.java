@@ -1,6 +1,7 @@
 package org.dragberry.era.application;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Map;
 import java.util.Random;
@@ -19,6 +20,7 @@ import org.dragberry.era.domain.Address;
 import org.dragberry.era.domain.Certificate;
 import org.dragberry.era.domain.Document;
 import org.dragberry.era.domain.EducationInstitution;
+import org.dragberry.era.domain.FundsSource;
 import org.dragberry.era.domain.Person;
 import org.dragberry.era.domain.Registration;
 import org.dragberry.era.domain.RegistrationPeriod;
@@ -26,9 +28,9 @@ import org.dragberry.era.domain.RegistrationPeriod.Status;
 import org.dragberry.era.domain.Subject;
 import org.dragberry.era.domain.UserAccount;
 import org.dragberry.era.domain.Document.Type;
+import org.dragberry.era.domain.EducationForm;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.jmx.support.RegistrationPolicy;
 
 public class Launcher {
 	
@@ -111,11 +113,11 @@ public class Launcher {
 		registration.setEnrollee(enr);
 		registration.setInstitution(eInstitution);
 		registration.setRegisteredBy(registeredBy);
-		registration.setRegistrationDate(LocalDate.now());
+		registration.setRegistrationDate(LocalDateTime.now());
 		registration.setSpecialty(specialityDao.findOne(1000L));
 		registration.setRegistrationPeriod(period);
-		registration.setFundsSource(Registration.FundsSource.BUDGET);
-		registration.setEducationForm(Registration.EducationForm.FULL_TIME);
+		registration.setFundsSource(FundsSource.BUDGET);
+		registration.setEducationForm(EducationForm.FULL_TIME);
 		registrationDao.create(registration);
 	}
 	
@@ -170,10 +172,10 @@ public class Launcher {
 		registration.setEnrollee(enr);
 		registration.setInstitution(eInstitution);
 		registration.setRegisteredBy(registeredBy);
-		registration.setRegistrationDate(LocalDate.now());
+		registration.setRegistrationDate(LocalDateTime.now());
 		registration.setSpecialty(specialityDao.findOne(1000L));
-		registration.setFundsSource(Registration.FundsSource.PAYER);
-		registration.setEducationForm(Registration.EducationForm.EXTRAMURAL);
+		registration.setFundsSource(FundsSource.PAYER);
+		registration.setEducationForm(EducationForm.EXTRAMURAL);
 		registration.setRegistrationPeriod(period);
 		registrationDao.create(registration);
 	}
@@ -236,11 +238,11 @@ public class Launcher {
 		registration.setEnrollee(enr);
 		registration.setInstitution(eInstitution);
 		registration.setRegisteredBy(registeredBy);
-		registration.setRegistrationDate(LocalDate.now());
+		registration.setRegistrationDate(LocalDateTime.now());
 		registration.setSpecialty(specialityDao.findOne(1000L));
 		registration.setRegistrationPeriod(period);
-		registration.setFundsSource(Registration.FundsSource.BUDGET);
-		registration.setEducationForm(Registration.EducationForm.FULL_TIME);
+		registration.setFundsSource(FundsSource.BUDGET);
+		registration.setEducationForm(EducationForm.FULL_TIME);
 		registrationDao.create(registration);
 	}
 	

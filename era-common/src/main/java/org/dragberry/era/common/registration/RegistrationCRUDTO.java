@@ -8,7 +8,7 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 
 	private static final long serialVersionUID = 5031693673010499164L;
 	
-	private Long registrationPeriodId;
+	private Long periodId;
 	
 	private PersonCRUDTO enrollee;
 	
@@ -22,12 +22,12 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 
 	private CertificateCRUDTO certificate;
 
-	public Long getRegistrationPeriodId() {
-		return registrationPeriodId;
+	public Long getPeriodId() {
+		return periodId;
 	}
 
-	public void setRegistrationPeriodId(Long registrationPeriodId) {
-		this.registrationPeriodId = registrationPeriodId;
+	public void setPeriodId(Long periodId) {
+		this.periodId = periodId;
 	}
 
 	public PersonCRUDTO getEnrollee() {

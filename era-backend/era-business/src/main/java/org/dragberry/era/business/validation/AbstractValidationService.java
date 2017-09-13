@@ -12,7 +12,7 @@ public abstract class AbstractValidationService<E> implements ValidationService<
 	
 	@Override
 	public List<IssueTO> validate(E entity) {
-		return validators.stream().parallel().flatMap(validator -> validator.validate(entity).stream()).collect(Collectors.toList());
+		return validators.stream().flatMap(validator -> validator.validate(entity).stream()).collect(Collectors.toList());
 	}
 
 	@Override
