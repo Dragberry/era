@@ -1,6 +1,5 @@
 package org.dragberry.era.domain;
 
-import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,7 +27,10 @@ import org.hibernate.annotations.CascadeType;
 @NamedQueries({
 	@NamedQuery(
 			name = RegistrationPeriod.FIND_ACTIVE_PERIOD_FOR_CUSTOMER,
-			query = "select rp from RegistrationPeriod rp, Customer c where c.institution = rp.educationInstitution and c.entityKey = :customerKey"),
+			query = "select distinct rp from RegistrationPeriod rp left join fetch rp.specialties, Customer c where c.institution = rp.educationInstitution and c.entityKey = :customerKey and rp.status = :status"),
+	@NamedQuery(
+			name = RegistrationPeriod.FIND_PERIODS_FOR_CUSTOMER,
+			query = "select distinct rp from RegistrationPeriod rp left join fetch rp.specialties, Customer c where c.institution = rp.educationInstitution and c.entityKey = :customerKey"),
 	@NamedQuery(
 			name = RegistrationPeriod.FIND_SPECIALTIES_FOR_PERIOD,
 			query = "select distinct rs from Customer c, RegistrationPeriod rp, RegisteredSpecialty rs join fetch rs.specialty where c.institution = rp.educationInstitution and rp = rs.registrationPeriod and c.entityKey = :customerKey and rp.entityKey = :periodKey")
@@ -42,37 +44,13 @@ import org.hibernate.annotations.CascadeType;
 		valueColumnName = "GEN_VALUE",
 		initialValue = 1000,
 		allocationSize = 1)
-public class RegistrationPeriod extends AbstractEntity {
+public class RegistrationPeriod extends BaseEntity {
 	
 	private static final long serialVersionUID = 3047306263898450821L;
 
 	public final static String FIND_ACTIVE_PERIOD_FOR_CUSTOMER = "RegistrationPeriod.FindActivePeriodForCustomer";
+	public static final String FIND_PERIODS_FOR_CUSTOMER = "RegistrationPeriod.FindPeriodsForCustomer";
 	public final static String FIND_SPECIALTIES_FOR_PERIOD = "RegistrationPeriod.FindSpecialitiesForPeriod";
-	
-	private static final String UNKNOWN_VALUE_MSG = "Unknown Registration period status value: {0}!";
-	private static final String NPE_MSG = "Registration period status cannot be null!";
-	
-	public static enum Status {
-		NEW('N'), OPENED('O'), CLOSED('C');
-		
-		public final char value;
-		
-		private Status(char value) {
-			this.value = value;
-		}
-		
-		public static Status valueOf(Character value) {
-			if (value == null) {
-				throw new NullPointerException(NPE_MSG);
-			}
-			for (Status status : Status.values()) {
-				if (value.equals(status.value)) {
-					return status;
-				}
-			}
-			throw new IllegalArgumentException(MessageFormat.format(UNKNOWN_VALUE_MSG, value));
-		}
-	}
 	
 	@Id
 	@Column(name = "REGISTRATION_PERIOD_KEY")
@@ -156,6 +134,33 @@ public class RegistrationPeriod extends AbstractEntity {
 
 	public void setSpecialties(List<RegisteredSpecialty> specialties) {
 		this.specialties = specialties;
+	}
+
+	public static enum Status implements BaseEnum<Character> {
+		NEW('N'), OPENED('O'), CLOSED('C');
+		
+		public final Character value;
+		
+		private Status(Character value) {
+			this.value = value;
+		}
+		
+		public static Status valueOf(Character value) {
+			if (value == null) {
+				throw BaseEnum.npeException(Status.class);
+			}
+			for (Status status : Status.values()) {
+				if (value.equals(status.value)) {
+					return status;
+				}
+			}
+			throw BaseEnum.unknownValueException(Status.class, value);
+		}
+		
+		@Override
+		public Character getValue() {
+			return value;
+		}
 	}
 
 }

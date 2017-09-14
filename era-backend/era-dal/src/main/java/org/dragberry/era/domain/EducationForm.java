@@ -1,11 +1,11 @@
 package org.dragberry.era.domain;
 
-public enum EducationForm implements BaseEnum {
+public enum EducationForm implements BaseEnum<Character> {
 	FULL_TIME('F'), EXTRAMURAL('E');
 	
-	public final char value;
+	public final Character value;
 	
-	private EducationForm(char value) {
+	private EducationForm(Character value) {
 		this.value = value;
 	}
 	
@@ -19,5 +19,10 @@ public enum EducationForm implements BaseEnum {
 			}
 		}
 		throw BaseEnum.unknownValueException(EducationForm.class, value);
+	}
+	
+	@Override
+	public Character getValue() {
+		return value;
 	}
 }

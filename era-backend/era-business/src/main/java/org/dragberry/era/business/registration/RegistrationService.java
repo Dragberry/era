@@ -12,7 +12,9 @@ public interface RegistrationService {
 	
 	List<RegistrationTO> getRegistrationList(RegistrationSearchQuery query);
 
+	ResultTO<RegistrationCRUDTO> createRegistration(RegistrationCRUDTO registration);
+	
 	RegistrationPeriodTO getActiveRegistrationPeriod(Long customerKey);
 
-	ResultTO<RegistrationCRUDTO> createRegistration(RegistrationCRUDTO registration);
+	List<RegistrationPeriodTO> getRegistrationPeriodList(Long customerKey);
 }

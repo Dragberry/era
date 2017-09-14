@@ -11,6 +11,8 @@ public class AbstractCRUDTO implements Serializable {
 	private Long customerId;
 	
 	private Long userAccountId;
+	
+	private Long version;
 
 	public Long getId() {
 		return id;
@@ -34,6 +36,14 @@ public class AbstractCRUDTO implements Serializable {
 
 	public void setUserAccountId(Long userAccountId) {
 		this.userAccountId = userAccountId;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 	
 }

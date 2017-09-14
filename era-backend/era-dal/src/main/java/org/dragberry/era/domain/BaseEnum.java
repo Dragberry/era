@@ -2,7 +2,7 @@ package org.dragberry.era.domain;
 
 import java.text.MessageFormat;
 
-public interface BaseEnum {
+public interface BaseEnum<E> {
 
 	String UNKNOWN_VALUE_MSG = "Unknown {0} value: {1}!";
 	String NPE_MSG = "{0} cannot be null!";
@@ -14,5 +14,7 @@ public interface BaseEnum {
 	static RuntimeException npeException(Class<?> clazz) {
 		return new NullPointerException(MessageFormat.format(NPE_MSG, clazz.getName()));
 	}
+	
+	E getValue();
 	
 }

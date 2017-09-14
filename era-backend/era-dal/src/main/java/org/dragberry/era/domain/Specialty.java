@@ -23,7 +23,7 @@ import org.dragberry.era.domain.converter.SpecialtyStatusConverter;
 		valueColumnName = "GEN_VALUE",
 		initialValue = 1000,
 		allocationSize = 1)
-public class Specialty extends AbstractEntity {
+public class Specialty extends BaseEntity {
 
 	private static final long serialVersionUID = 6491824262933007676L;
 	

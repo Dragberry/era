@@ -1,20 +1,19 @@
 package org.dragberry.era.common.registration;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.dragberry.era.common.AbstractCRUDTO;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
-public class RegistrationPeriodTO implements Serializable {
+public class RegistrationPeriodCRUDTO extends AbstractCRUDTO {
 
-	private static final long serialVersionUID = 9168697782853035403L;
-
-	private Long id;
+	private static final long serialVersionUID = -382829832026992157L;
 	
 	private String title;
 	
@@ -26,17 +25,11 @@ public class RegistrationPeriodTO implements Serializable {
 	@JsonSerialize(using = LocalDateSerializer.class)
 	private LocalDate dateTo;
 	
-	private Character status;
+	private String status;
 	
-	private List<RegisteredSpecialtyTO> specialties = new ArrayList<>();
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
+	private Long educationInstitutionId;
+	
+	private List<RegisteredSpecialtyCRUDTO> specialties = new ArrayList<>();
 
 	public String getTitle() {
 		return title;
@@ -62,20 +55,28 @@ public class RegistrationPeriodTO implements Serializable {
 		this.dateTo = dateTo;
 	}
 
-	public Character getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(Character status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
-	public List<RegisteredSpecialtyTO> getSpecialties() {
+	public Long getEducationInstitutionId() {
+		return educationInstitutionId;
+	}
+
+	public void setEducationInstitutionId(Long educationInstitutionId) {
+		this.educationInstitutionId = educationInstitutionId;
+	}
+
+	public List<RegisteredSpecialtyCRUDTO> getSpecialties() {
 		return specialties;
 	}
 
-	public void setSpecialties(List<RegisteredSpecialtyTO> specialties) {
+	public void setSpecialties(List<RegisteredSpecialtyCRUDTO> specialties) {
 		this.specialties = specialties;
 	}
-	
+
 }

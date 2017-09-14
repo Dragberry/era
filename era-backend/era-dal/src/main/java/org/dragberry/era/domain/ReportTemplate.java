@@ -29,7 +29,7 @@ import org.dragberry.era.domain.converter.ReportTemplateTypeConverter;
 		valueColumnName = "GEN_VALUE",
 		initialValue = 1000,
 		allocationSize = 1)
-public class ReportTemplate extends AbstractEntity {
+public class ReportTemplate extends BaseEntity {
 
 	private static final long serialVersionUID = 1996752534212078539L;
 	

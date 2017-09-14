@@ -1,6 +1,6 @@
 package org.dragberry.era.domain;
 
-public enum EducationBase implements BaseEnum {
+public enum EducationBase implements BaseEnum<String> {
 
 	L9("09"), L11("11");
 	
@@ -20,5 +20,10 @@ public enum EducationBase implements BaseEnum {
 			}
 		}
 		throw BaseEnum.unknownValueException(EducationBase.class, value);
+	}
+	
+	@Override
+	public String getValue() {
+		return value;
 	}
 }

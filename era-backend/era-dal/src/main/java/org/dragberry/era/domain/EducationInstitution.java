@@ -18,7 +18,7 @@ import javax.persistence.TableGenerator;
 		valueColumnName = "GEN_VALUE",
 		initialValue = 1000,
 		allocationSize = 1)
-public class EducationInstitution extends AbstractEntity {
+public class EducationInstitution extends BaseEntity {
 
 	private static final long serialVersionUID = 4453873327596382695L;
 

@@ -11,4 +11,6 @@ public interface RegistrationPeriodDao extends DataAccessObject<RegistrationPeri
 	
 	List<RegisteredSpecialty> findSpecialtiesForPeriod(Long customerKey, Long periodKey);
 
+	List<RegistrationPeriod> fetchList(Long customerId);
+
 }

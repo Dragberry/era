@@ -20,15 +20,15 @@ import org.dragberry.era.security.Roles;
 import org.dragberry.era.web.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/api/registrations")
 public class RegistrationController {
 	
@@ -71,6 +71,8 @@ public class RegistrationController {
 		return ResponseEntity.ok(Results.create(registrationService.getActiveRegistrationPeriod(accessContoll.getLoggedUser().getCustomerId())));
 	}
 	
+	
+	
 	@GetMapping("/get-contract/{contractId}/template/{templateId}")
 	public void downloadRegistrationContract(
 			HttpServletResponse response,
@@ -88,6 +90,13 @@ public class RegistrationController {
 		} catch (IOException exc) {
 			exc.printStackTrace();
 		}
+	}
+	
+	@GetMapping("/get-periods")
+	public ResponseEntity<?> getPeriods() {
+//		accessContoll.checkPermission(Roles.RegistrationPeriods.VIEW);
+		return ResponseEntity.ok(Results.create(
+				registrationService.getRegistrationPeriodList(accessContoll.getLoggedUser().getCustomerId())));
 	}
 	
 	@PostMapping("/create")

@@ -12,6 +12,7 @@ import org.dragberry.era.common.person.AddressTO;
 import org.dragberry.era.common.person.ContactDetailsTO;
 import org.dragberry.era.common.person.DocumentTO;
 import org.dragberry.era.common.person.PersonCRUDTO;
+import org.dragberry.era.common.registration.RegisteredSpecialtyTO;
 import org.dragberry.era.common.registration.RegistrationCRUDTO;
 import org.dragberry.era.common.registration.RegistrationPeriodTO;
 import org.dragberry.era.common.registration.RegistrationSearchQuery;
@@ -25,6 +26,7 @@ import org.dragberry.era.dao.SpecialtyDao;
 import org.dragberry.era.dao.UserAccountDao;
 import org.dragberry.era.domain.Address;
 import org.dragberry.era.domain.Document;
+import org.dragberry.era.domain.EducationBase;
 import org.dragberry.era.domain.EducationForm;
 import org.dragberry.era.domain.FundsSource;
 import org.dragberry.era.domain.Person;
@@ -74,18 +76,6 @@ public class RegistrationServiceBean implements RegistrationService {
 		}).collect(Collectors.toList());
 	}
 	
-	@Override
-	public RegistrationPeriodTO getActiveRegistrationPeriod(Long customerKey) {
-		RegistrationPeriod period = registrationPeriodDao.findActivePeriodForCustomer(customerKey);
-		if (period != null) {
-			RegistrationPeriodTO to = new RegistrationPeriodTO();
-			to.setId(period.getEntityKey());
-			to.setTitle(period.getTitle());
-			return to;
-		}
-		return null;
-	}
-
 	@Override
 	@Transactional
 	public ResultTO<RegistrationCRUDTO> createRegistration(RegistrationCRUDTO registrationCRUD) {
@@ -162,5 +152,41 @@ public class RegistrationServiceBean implements RegistrationService {
 			registrationCRUD.setId(registration.getEntityKey());
 		}
 		return Results.create(registrationCRUD, issues);
+	}
+	
+	@Override
+	@Transactional
+	public RegistrationPeriodTO getActiveRegistrationPeriod(Long customerKey) {
+		RegistrationPeriod period = registrationPeriodDao.findActivePeriodForCustomer(customerKey);
+		return period != null ? convertPeriod(period) : null;
+	}
+	
+	@Override
+	@Transactional
+	public List<RegistrationPeriodTO> getRegistrationPeriodList(Long customerKey) {
+		return registrationPeriodDao.fetchList(customerKey).stream()
+				.map(RegistrationServiceBean::convertPeriod)
+				.collect(Collectors.toList());
+	}
+	
+	private static RegistrationPeriodTO convertPeriod(RegistrationPeriod entity) {
+		RegistrationPeriodTO to = new RegistrationPeriodTO();
+		to.setId(entity.getEntityKey());
+		to.setTitle(entity.getTitle());
+		to.setDateFrom(entity.getFrom());
+		to.setDateTo(entity.getTo());
+		to.setStatus(entity.getStatus().value);
+		to.setSpecialties(entity.getSpecialties().stream().map(spec -> {
+			RegisteredSpecialtyTO specTo = new RegisteredSpecialtyTO();
+			specTo.setSpecialty(spec.getSpecialty().getTitle());
+			specTo.setSeparateByEducationBase(spec.getSeparateByEducationBase());
+			specTo.setEducationBases(spec.getEducationBases().stream().map(EducationBase::getValue).collect(Collectors.toSet()));
+			specTo.setSeparateByEducationForm(spec.getSeparateByEducationForm());
+			specTo.setEducationForms(spec.getEducationForms().stream().map(EducationForm::getValue).collect(Collectors.toSet()));
+			specTo.setSeparateByFundsSource(spec.getSeparateByFundsSource());
+			specTo.setFundsSources(spec.getFundsSources().stream().map(FundsSource::getValue).collect(Collectors.toSet()));
+			return specTo;
+		}).collect(Collectors.toList()));
+		return to;
 	}
 }

@@ -1,11 +1,11 @@
 package org.dragberry.era.domain;
 
-public enum FundsSource implements BaseEnum {
+public enum FundsSource implements BaseEnum<Character> {
 	BUDGET('B'), PAYER('P');
 	
-	public final char value;
+	public final Character value;
 	
-	private FundsSource(char value) {
+	private FundsSource(Character value) {
 		this.value = value;
 	}
 	
@@ -19,5 +19,10 @@ public enum FundsSource implements BaseEnum {
 			}
 		}
 		throw BaseEnum.unknownValueException(FundsSource.class, value);
+	}
+	
+	@Override
+	public Character getValue() {
+		return value;
 	}
 }

@@ -32,7 +32,7 @@ import javax.persistence.TableGenerator;
 		valueColumnName = "GEN_VALUE",
 		initialValue = 1000,
 		allocationSize = 1)
-public class Customer extends AbstractEntity {
+public class Customer extends BaseEntity {
 	
 	private static final long serialVersionUID = -2951173904850762419L;
 	

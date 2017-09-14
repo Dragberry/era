@@ -9,6 +9,10 @@ public interface Roles {
 		String DELETE = "ROLE_REGISTRATIONS_DELETE";
 	}
 	
+	interface RegistrationPeriods {
+		String VIEW = "ROLE_REGISTRATIONPERIODS_VIEW";
+	}
+	
 	interface UserAccounts {
 		String VIEW = "ROLE_USERACCOUNTS_VIEW";
 		String CREATE = "ROLE_USERACCOUNTS_CREATE";
