@@ -148,12 +148,20 @@ public class RegistrationServiceBean implements RegistrationService {
 		if (issues.isEmpty()) {
 			personDao.create(registration.getEnrollee());
 			enrolleeCRUD.setId(registration.getEnrollee().getEntityKey());
+			
+			Long registrationId = getIdForRegistration(registration);
+			registration.setRegistrationId(registrationId);
+			
 			registrationDao.create(registration);
 			registrationCRUD.setId(registration.getEntityKey());
 		}
 		return Results.create(registrationCRUD, issues);
 	}
 	
+	private Long getIdForRegistration(Registration registration) {
+		return registrationDao.findMaxRegistrationId(registration);
+	}
+
 	@Override
 	@Transactional
 	public RegistrationPeriodTO getActiveRegistrationPeriod(Long customerKey) {

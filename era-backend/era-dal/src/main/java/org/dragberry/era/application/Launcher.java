@@ -39,7 +39,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class Launcher {
 	
 	public static void main(String[] args) {
-		try(ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(DataConfig.class)) {
+		init(DataConfig.class);
+	}
+	
+	public static void init(Class<?> config) {
+		try(ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(config)) {
 			PersonDao personDao = context.getBean(PersonDao.class);
 			CertificateDao certificateDao = context.getBean(CertificateDao.class);
 			SubjectDao subjectDao = context.getBean(SubjectDao.class);
@@ -58,6 +62,34 @@ public class Launcher {
 			third(personDao, certificateDao, subjectDao, specialityDao, userAccountDao, einstitutionDao,
 					registrationPeriodDao, registrationDao, registeredSpecialtyDao);
 		}
+	}
+	
+	private static Person person() {
+		Person enr = new Person();
+		enr.setFirstName(RandomProvider.getName());
+		enr.setMiddleName(RandomProvider.getMiddleName());
+		enr.setLastName(RandomProvider.getSurname());
+		enr.setBirthdate(RandomProvider.getBirthDate());
+		enr.setPhone(RandomProvider.getPhone());
+		enr.setEmail(RandomProvider.getMail());
+		
+		Document doc = new Document();
+		doc.setType(Type.PASSPORT);
+		doc.setIssueDate(RandomProvider.getDate());
+		doc.setIssuedBy(RandomProvider.getRUVD());
+		doc.setId(RandomProvider.getString(14));
+		doc.setDocumentId(RandomProvider.getString(14));
+		enr.setDocument(doc);
+		
+		Address addr = new Address();
+		addr.setCity(RandomProvider.getCity());
+		addr.setCountry("BY");
+		addr.setFlat(RandomProvider.getNumber());
+		addr.setHouse(RandomProvider.getNumber());
+		addr.setStreet(RandomProvider.getStreet());
+		addr.setZipCode(RandomProvider.getString(6));
+		enr.setAddress(addr);
+		return enr;
 	}
 	
 	private static void third(PersonDao personDao, CertificateDao certificateDao, SubjectDao subjectDao,
@@ -111,14 +143,18 @@ public class Launcher {
 		period.setTitle("2017/2018 Учебный год");
 		period.setStatus(Status.OPENED);
 
-		specialityDao.fetchList().stream().map(spec -> {
+		period.setSpecialties(specialityDao.fetchList().stream().map(spec -> {
 			RegisteredSpecialty rSpec = new RegisteredSpecialty();
 			rSpec.setSpecialty(spec);
+			rSpec.setRegistrationPeriod(period);
 			rSpec.setSeparateByEducationBase(true);
+			rSpec.setEducationBases(EnumSet.allOf(EducationBase.class));
 			rSpec.setSeparateByEducationForm(true);
+			rSpec.setEducationForms(EnumSet.allOf(EducationForm.class));
 			rSpec.setSeparateByFundsSource(false);
+			rSpec.setFundsSources(EnumSet.allOf(FundsSource.class));
 			return rSpec;
-		}).collect(Collectors.toList());
+		}).collect(Collectors.toList()));
 		
 		registrationPeriodDao.create(period);
 		
@@ -128,7 +164,8 @@ public class Launcher {
 		registration.setInstitution(eInstitution);
 		registration.setRegisteredBy(registeredBy);
 		registration.setRegistrationDate(LocalDateTime.now());
-		registration.setSpecialty(specialityDao.findOne(1000L));
+		registration.setSpecialty(specialityDao.findOne(1001L));
+		registration.setRegistrationId(1L);
 		registration.setRegistrationPeriod(period);
 		registration.setFundsSource(FundsSource.BUDGET);
 		registration.setEducationForm(EducationForm.FULL_TIME);
@@ -188,6 +225,7 @@ public class Launcher {
 		registration.setRegisteredBy(registeredBy);
 		registration.setRegistrationDate(LocalDateTime.now());
 		registration.setSpecialty(specialityDao.findOne(1000L));
+		registration.setRegistrationId(1L);
 		registration.setFundsSource(FundsSource.PAYER);
 		registration.setEducationForm(EducationForm.EXTRAMURAL);
 		registration.setRegistrationPeriod(period);
@@ -267,6 +305,7 @@ public class Launcher {
 		registration.setRegisteredBy(registeredBy);
 		registration.setRegistrationDate(LocalDateTime.now());
 		registration.setSpecialty(specialityDao.findOne(1000L));
+		registration.setRegistrationId(1L);
 		registration.setRegistrationPeriod(period);
 		registration.setFundsSource(FundsSource.BUDGET);
 		registration.setEducationForm(EducationForm.FULL_TIME);

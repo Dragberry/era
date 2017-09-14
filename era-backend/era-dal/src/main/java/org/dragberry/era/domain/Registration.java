@@ -36,6 +36,9 @@ public class Registration extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "REGISTRATION_GEN")
 	private Long entityKey;
 	
+	@Column(name = "REGISTRATION_ID")
+	private Long registrationId;
+	
 	@Column(name = "FUNDS_SOURCE")
 	@Convert(converter = FundsSourceConverter.class)
 	private FundsSource fundsSource;
@@ -151,6 +154,14 @@ public class Registration extends BaseEntity {
 
 	public void setRegistrationPeriod(RegistrationPeriod registrationPeriod) {
 		this.registrationPeriod = registrationPeriod;
+	}
+
+	public Long getRegistrationId() {
+		return registrationId;
+	}
+
+	public void setRegistrationId(Long registrationId) {
+		this.registrationId = registrationId;
 	}
 	
 }

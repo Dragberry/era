@@ -3,6 +3,7 @@ package org.dragberry.era.dao.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -61,5 +62,20 @@ public class RegistrationDaoImpl extends AbstractDao<Registration> implements Re
 		cq.select(regRoot).distinct(true);
 		
 		return getEntityManager().createQuery(cq).getResultList();
+	}
+	
+	@Override
+	public long findMaxRegistrationId(Registration registration) {
+		CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<Registration> regRoot = cq.from(Registration.class);
+		
+		List<Predicate> where = new ArrayList<>();
+		where.add(cb.equal(regRoot.get("registrationPeriod"), registration.getRegistrationPeriod()));
+		where.add(cb.equal(regRoot.get("specialty"), registration.getSpecialty()));
+		
+		// Criteria
+		cq.select(cb.max(regRoot.get("registrationId"))).where(where.toArray(new Predicate[] {}));
+		return Optional.ofNullable(getEntityManager().createQuery(cq).getSingleResult()).orElse(0L);
 	}
 }
