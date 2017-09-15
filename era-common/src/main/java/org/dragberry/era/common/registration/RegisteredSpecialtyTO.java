@@ -8,6 +8,8 @@ public class RegisteredSpecialtyTO implements Serializable {
 
 	private static final long serialVersionUID = 8050985848644030995L;
 	
+	private Long id;
+	
 	private String specialty;
 	
 	private Boolean separateByEducationBase;
@@ -21,6 +23,14 @@ public class RegisteredSpecialtyTO implements Serializable {
 	private Boolean separateByFundsSource;
 	
 	private Set<Character> fundsSources = new HashSet<>();
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getSpecialty() {
 		return specialty;

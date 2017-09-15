@@ -113,6 +113,7 @@ public class RegistrationServiceBean implements RegistrationService {
 				document.setDocumentId(documentTO.getDocumentId());
 				document.setIssueDate(documentTO.getIssueDate());
 				document.setIssuedBy(documentTO.getIssuedBy());
+				document.setCitizenhip(documentTO.getCitizenship());
 			}
 			ContactDetailsTO contactDetails = enrolleeCRUD.getContactDetails();
 			if (contactDetails != null) {
@@ -186,6 +187,7 @@ public class RegistrationServiceBean implements RegistrationService {
 		to.setStatus(entity.getStatus().value);
 		to.setSpecialties(entity.getSpecialties().stream().map(spec -> {
 			RegisteredSpecialtyTO specTo = new RegisteredSpecialtyTO();
+			specTo.setId(spec.getEntityKey());
 			specTo.setSpecialty(spec.getSpecialty().getTitle());
 			specTo.setSeparateByEducationBase(spec.getSeparateByEducationBase());
 			specTo.setEducationBases(spec.getEducationBases().stream().map(EducationBase::getValue).collect(Collectors.toSet()));

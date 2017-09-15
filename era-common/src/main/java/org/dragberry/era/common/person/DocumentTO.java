@@ -23,6 +23,16 @@ public class DocumentTO implements Serializable {
 	private LocalDate issueDate;
 	
 	private String issuedBy;
+	
+	private String citizenship;
+	
+	public String getCitizenship() {
+		return citizenship;
+	}
+
+	public void setCitizenship(String citizenship) {
+		this.citizenship = citizenship;
+	}
 
 	public Character getType() {
 		return type;
