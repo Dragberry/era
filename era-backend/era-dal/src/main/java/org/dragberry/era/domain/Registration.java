@@ -1,6 +1,7 @@
 package org.dragberry.era.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -10,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -17,6 +20,7 @@ import javax.persistence.TableGenerator;
 import org.dragberry.era.domain.converter.EducationBaseConverter;
 import org.dragberry.era.domain.converter.EducationFormConverter;
 import org.dragberry.era.domain.converter.FundsSourceConverter;
+import org.dragberry.era.domain.converter.RegistrationStatusConverter;
 
 @Entity
 @Table(name = "REGISTRATION")
@@ -52,6 +56,9 @@ public class Registration extends BaseEntity {
 	@Convert(converter = EducationBaseConverter.class)
 	private EducationBase educationBase;
 	
+	@Column(name = "NOTE")
+	private String note;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ENROLLEE_KEY", referencedColumnName = "PERSON_KEY")
 	private Person enrollee;
@@ -78,6 +85,16 @@ public class Registration extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CERTIFICATE_KEY", referencedColumnName = "CERTIFICATE_KEY")
 	private Certificate certificate;
+	
+	@Column(name = "STATUS")
+	@Convert(converter = RegistrationStatusConverter.class)
+	private Status status;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "REGISTRATION_BENEFIT", 
+        joinColumns = @JoinColumn(name = "REGISTRATION_KEY", referencedColumnName = "REGISTRATION_KEY"), 
+        inverseJoinColumns = @JoinColumn(name = "BENEFIT_KEY", referencedColumnName = "BENEFIT_KEY"))
+	private List<Benefit> benefits;
 	
 	@Override
 	public Long getEntityKey() {
@@ -176,5 +193,55 @@ public class Registration extends BaseEntity {
 	public void setEducationBase(EducationBase educationBase) {
 		this.educationBase = educationBase;
 	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
 	
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public List<Benefit> getBenefits() {
+		return benefits;
+	}
+
+	public void setBenefits(List<Benefit> benefits) {
+		this.benefits = benefits;
+	}
+
+	public static enum Status implements BaseEnum<Character> {
+		PROCESSING('P'), AWAITING('W'), ACCEPTED('A'), CANCELED('C');
+		
+		public final Character value;
+		
+		private Status(Character value) {
+			this.value = value;
+		}
+		
+		public static Status resolve(Character value) {
+			if (value == null) {
+				throw BaseEnum.npeException(Status.class);
+			}
+			for (Status src : Status.values()) {
+				if (value.equals(src.value)) {
+					return src;
+				}
+			}
+			throw BaseEnum.unknownValueException(Status.class, value);
+		}
+		
+		@Override
+		public Character getValue() {
+			return value;
+		}
+	}
 }

@@ -1,5 +1,6 @@
 package org.dragberry.era.domain;
 
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
@@ -9,6 +10,7 @@ public abstract class BaseEntity extends AbstractEntity {
 	private static final long serialVersionUID = -6408937559886379887L;
 	
 	@Version
+	@Column(name = "VERSION")
 	private Long version;
 
 	public Long getVersion() {

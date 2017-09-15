@@ -55,6 +55,9 @@ public class Document implements Serializable {
 	
 	@Column(name = "DOCUMENT_ISSUED_BY")
 	private String issuedBy;
+	
+	@Column(name = "CITIZENSHIP")
+	private String citizenhip;
 
 	public Type getType() {
 		return type;
@@ -94,6 +97,14 @@ public class Document implements Serializable {
 
 	public void setIssuedBy(String issuedBy) {
 		this.issuedBy = issuedBy;
+	}
+
+	public String getCitizenhip() {
+		return citizenhip;
+	}
+
+	public void setCitizenhip(String citizenhip) {
+		this.citizenhip = citizenhip;
 	}
 	
 }

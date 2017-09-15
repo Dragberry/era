@@ -3,11 +3,13 @@ package org.dragberry.era.application;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import org.dragberry.era.dao.BenefitDao;
 import org.dragberry.era.dao.CertificateDao;
 import org.dragberry.era.dao.EducationInstitutionDao;
 import org.dragberry.era.dao.PersonDao;
@@ -17,6 +19,7 @@ import org.dragberry.era.dao.SpecialtyDao;
 import org.dragberry.era.dao.SubjectDao;
 import org.dragberry.era.dao.UserAccountDao;
 import org.dragberry.era.domain.Address;
+import org.dragberry.era.domain.Benefit;
 import org.dragberry.era.domain.Certificate;
 import org.dragberry.era.domain.Document;
 import org.dragberry.era.domain.EducationBase;
@@ -54,6 +57,8 @@ public class DummyDataBean {
 	private RegistrationPeriodDao registrationPeriodDao;
 	@Autowired
 	private RegistrationDao registrationDao;
+	@Autowired
+	private BenefitDao benefitDao;
 	
 	private UserAccount registeredBy;
 	private EducationInstitution eInstitution;
@@ -71,10 +76,14 @@ public class DummyDataBean {
 		registrationPeriodDao.create(period);
 		
 		// All separated
-		createRegistration(1, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.BUDGET);
-		createRegistration(2, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.BUDGET);
-		createRegistration(3, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.BUDGET);
-		createRegistration(1, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.PAYER);
+		createRegistration(1, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.BUDGET,
+				benefitDao.findOne(1000L));
+		createRegistration(2, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.BUDGET,
+				benefitDao.findOne(1000L), benefitDao.findOne(1001L));
+		createRegistration(3, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.BUDGET,
+				benefitDao.findOne(1007L));
+		createRegistration(1, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.PAYER,
+				benefitDao.findOne(1000L), benefitDao.findOne(1007L));
 		createRegistration(2, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.PAYER);
 		createRegistration(3, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.PAYER);
 		createRegistration(1, 0, EducationForm.FULL_TIME, EducationBase.L11, FundsSource.BUDGET);
@@ -150,17 +159,17 @@ public class DummyDataBean {
 		
 	}
 	
-	private void createRegistration(long id, int specId, EducationForm form, EducationBase base, FundsSource source) {
+	private void createRegistration(long id, int specId, EducationForm form, EducationBase base, FundsSource source, Benefit... benefits) {
 		Person person = person();
 		personDao.create(person);
 		Certificate certificate = certificate(person);
 		certificateDao.create(certificate);
-		Registration registration = registration(id, specId, form, base, source, person, certificate);
+		Registration registration = registration(id, specId, form, base, source, person, certificate, benefits);
 		registrationDao.create(registration);
 	}
 
 	private Registration registration(long id, int specId, EducationForm form, EducationBase base, FundsSource source,
-			Person enr, Certificate certificate) {
+			Person enr, Certificate certificate, Benefit... benefits) {
 		Registration registration = new Registration();
 		registration.setCertificate(certificate);
 		registration.setEnrollee(enr);
@@ -173,6 +182,8 @@ public class DummyDataBean {
 		registration.setFundsSource(source);
 		registration.setEducationForm(form);
 		registration.setEducationBase(base);
+		registration.setBenefits(Arrays.asList(benefits));
+		registration.setStatus(Registration.Status.PROCESSING);
 		return registration;
 	}
 	
@@ -253,6 +264,7 @@ public class DummyDataBean {
 		enr.setEmail(RandomProvider.getMail());
 		
 		Document doc = new Document();
+		doc.setCitizenhip("BY");
 		doc.setType(Type.PASSPORT);
 		doc.setIssueDate(RandomProvider.getDate());
 		doc.setIssuedBy(RandomProvider.getRUVD());

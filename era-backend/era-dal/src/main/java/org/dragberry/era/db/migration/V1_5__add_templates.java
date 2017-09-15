@@ -12,7 +12,7 @@ import org.springframework.jdbc.support.lob.LobHandler;
 
 import com.googlecode.flyway.core.api.migration.spring.SpringJdbcMigration;
 
-public class V1_3__add_templates implements SpringJdbcMigration  {
+public class V1_5__add_templates implements SpringJdbcMigration  {
 
 	private static final String SELECT_REPORT_TEMPLATE_GEN_VALUE = "SELECT MAX(GEN_VALUE) FROM GENERATOR WHERE GEN_NAME = 'REPORT_TEMPLATE_GEN';";
 	private static final String SELECT_INSTITUTION_KEY = "SELECT EDUCATION_INSTITUTION_KEY FROM EDUCATION_INSTITUTION WHERE NAME = 'Филиал БГУИР \"Минский радиотехнический колледж\"';";

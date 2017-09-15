@@ -2,13 +2,18 @@ package org.dragberry.era.dao.impl;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
+
 import org.dragberry.era.application.DummyDataBeanTest;
 import org.dragberry.era.application.config.DataConfigTest;
 import org.dragberry.era.dao.RegistrationDao;
 import org.dragberry.era.dao.RegistrationPeriodDao;
+import org.dragberry.era.domain.Benefit;
 import org.dragberry.era.domain.EducationBase;
 import org.dragberry.era.domain.EducationForm;
 import org.dragberry.era.domain.FundsSource;
+import org.dragberry.era.domain.OutOfCompetition;
+import org.dragberry.era.domain.Prerogative;
 import org.dragberry.era.domain.Registration;
 import org.dragberry.era.domain.RegistrationPeriod;
 import org.junit.Test;
@@ -205,5 +210,43 @@ public class RegistrationDaoImplTest extends DummyDataBeanTest {
 		reg.setRegistrationPeriod(period);
 		reg.setSpecialty(period.getSpecialties().get(5).getSpecialty());
 		assertEquals(24L, registrationDao.findMaxRegistrationId(reg));
+	}
+	
+	@Test
+	@Transactional
+	public void testGetBenefits1_0() {
+		Registration reg = registrationDao.findOne(1000L);
+		List<Benefit> benefits = reg.getBenefits();
+		assertEquals(1, benefits.size());
+		assertEquals(Prerogative.class, benefits.get(0).getClass());
+	}
+	
+	@Test
+	@Transactional
+	public void testGetBenefits2_0() {
+		Registration reg = registrationDao.findOne(1001L);
+		List<Benefit> benefits = reg.getBenefits();
+		assertEquals(2, benefits.size());
+		assertEquals(Prerogative.class, benefits.get(0).getClass());
+		assertEquals(Prerogative.class, benefits.get(1).getClass());
+	}
+	
+	@Test
+	@Transactional
+	public void testGetBenefits2() {
+		Registration reg = registrationDao.findOne(1002L);
+		List<Benefit> benefits = reg.getBenefits();
+		assertEquals(1, benefits.size());
+		assertEquals(OutOfCompetition.class, benefits.get(0).getClass());
+	}
+	
+	@Test
+	@Transactional
+	public void testGetBenefits1_1() {
+		Registration reg = registrationDao.findOne(1003L);
+		List<Benefit> benefits = reg.getBenefits();
+		assertEquals(2, benefits.size());
+		assertEquals(Prerogative.class, benefits.get(0).getClass());
+		assertEquals(OutOfCompetition.class, benefits.get(1).getClass());
 	}
 }
