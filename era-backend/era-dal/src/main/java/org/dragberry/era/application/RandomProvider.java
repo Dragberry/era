@@ -60,19 +60,19 @@ public class RandomProvider {
 	}
 	
 	public static LocalDate getBirthDate() {
-		return LocalDate.of(CURRENT_YEAR - 15, Month.of(RANDOM.nextInt(12)), RANDOM.nextInt(28));
+		return LocalDate.of(CURRENT_YEAR - 15, Month.of(1 + RANDOM.nextInt(12)), 1 + RANDOM.nextInt(28));
 	}
 	
 	public static LocalDate getDate() {
-		return LocalDate.of(CURRENT_YEAR - 2, Month.of(RANDOM.nextInt(12)), RANDOM.nextInt(28));
+		return LocalDate.of(CURRENT_YEAR - 2, Month.of(1 + RANDOM.nextInt(12)), 1 + RANDOM.nextInt(28));
 	}
 
-	public static StringBuffer getStringBuffer(String start, int length) {
+	public static StringBuffer getStringBuffer(int length) {
 		return getStringBuffer("", length);
 	}
 	
-	public static StringBuffer getStringBuffer(int length) {
-		StringBuffer sb = new StringBuffer(); 
+	public static StringBuffer getStringBuffer(String start, int length) {
+		StringBuffer sb = new StringBuffer(start); 
 		for (int i = 0; i < length; i++) {
 			sb.append(RANDOM.nextInt(10));
 		}
@@ -93,6 +93,14 @@ public class RandomProvider {
 
 	public static String getMail() {
 		return getStringBuffer("m", 7).append("@mail.com").toString();
+	}
+
+	public static String getSchool() {
+		return getString("СШ №", 2);
+	}
+
+	public static Integer getYear() {
+		return 2010 + RANDOM.nextInt(5);
 	}
 
 }

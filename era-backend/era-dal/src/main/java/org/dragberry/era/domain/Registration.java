@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.dragberry.era.domain.converter.EducationBaseConverter;
 import org.dragberry.era.domain.converter.EducationFormConverter;
 import org.dragberry.era.domain.converter.FundsSourceConverter;
 
@@ -46,6 +47,10 @@ public class Registration extends BaseEntity {
 	@Column(name = "EDUCATION_FORM")
 	@Convert(converter = EducationFormConverter.class)
 	private EducationForm educationForm;
+	
+	@Column(name = "EDUCATION_BASE")
+	@Convert(converter = EducationBaseConverter.class)
+	private EducationBase educationBase;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ENROLLEE_KEY", referencedColumnName = "PERSON_KEY")
@@ -162,6 +167,14 @@ public class Registration extends BaseEntity {
 
 	public void setRegistrationId(Long registrationId) {
 		this.registrationId = registrationId;
+	}
+
+	public EducationBase getEducationBase() {
+		return educationBase;
+	}
+
+	public void setEducationBase(EducationBase educationBase) {
+		this.educationBase = educationBase;
 	}
 	
 }

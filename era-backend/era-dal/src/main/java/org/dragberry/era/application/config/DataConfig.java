@@ -5,6 +5,7 @@ import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.dragberry.era.application.DummyDataBean;
 import org.dragberry.era.dao.DataAccessObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +24,7 @@ import com.googlecode.flyway.core.Flyway;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan(basePackageClasses = DataAccessObject.class)
+@ComponentScan(basePackageClasses = {DataAccessObject.class, DummyDataBean.class})
 @PropertySources({ @PropertySource("classpath:database.properties") })
 public class DataConfig {
 
