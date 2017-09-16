@@ -16,6 +16,8 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 	
 	private Character educationForm;
 	
+	private String educationBase;
+	
 	private Long educationInstitutionId;
 	
 	private Long specialtyId;
@@ -76,6 +78,14 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 
 	public void setEducationForm(Character educationForm) {
 		this.educationForm = educationForm;
+	}
+
+	public String getEducationBase() {
+		return educationBase;
+	}
+
+	public void setEducationBase(String educationBase) {
+		this.educationBase = educationBase;
 	}
 
 }

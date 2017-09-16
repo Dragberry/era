@@ -137,6 +137,11 @@ public class RegistrationServiceBean implements RegistrationService {
 		} catch (Exception exc) {
 			registration.setEducationForm(null);
 		}
+		try {
+			registration.setEducationBase(EducationBase.resolve(registrationCRUD.getEducationBase()));
+		} catch (Exception exc) {
+			registration.setEducationForm(null);
+		}
 		if (registrationCRUD.getUserAccountId() != null) {
 			registration.setRegisteredBy(userAccountDao.findOne(registrationCRUD.getUserAccountId()));
 		}

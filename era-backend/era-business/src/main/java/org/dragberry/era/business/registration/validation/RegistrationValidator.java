@@ -26,8 +26,13 @@ public class RegistrationValidator implements Validator<Registration> {
 		String NO_ACTIVE_REGISTRATION_PERIOD = RegistrationCommon.errorCode("no-active-registration-period");
 		String EDUCATION_INSTITUTION_IS_EMPTY = RegistrationCommon.errorCode("education-institution-is-empty");
 		String SPECIALTY_IS_EMPTY = RegistrationCommon.errorCode("specialty-is-empty");
+		String SPECIALTY_IS_WRONG = RegistrationCommon.errorCode("specialty-is-wrong");
 		String FUNDS_SOURCE_IS_EMPTY = RegistrationCommon.errorCode("funds-source-is-empty");
+		String FUNDS_SOURCE_IS_NOT_AVAILABLE = RegistrationCommon.errorCode("funds-source-is-not-available");
 		String EDUCATION_FORM_IS_EMPTY = RegistrationCommon.errorCode("education-form-is-empty");
+		String EDUCATION_FORM_IS_NOT_AVAILABLE  = RegistrationCommon.errorCode("education-form-is-not-available");
+		String EDUCATION_BASE_IS_EMPTY = RegistrationCommon.errorCode("education-base-is-empty");
+		String EDUCATION_BASE_IS_NOT_AVAILABLE  = RegistrationCommon.errorCode("education-base-is-not-available");
 		String EDUCATION_INSTITUTION_IS_WRONG = RegistrationCommon.errorCode("education-institution-is-wrong");
 	}
 	
@@ -36,15 +41,17 @@ public class RegistrationValidator implements Validator<Registration> {
 		String SPECIALTY = "specialty";
 		String FUNDS_SOURCE = "fundsSource";
 		String EDUCATION_FORM = "educationForm";
+		String EDUCATION_BASE = "educationBase";
 	}
 	
 	@Override
 	public List<IssueTO> validate(Registration entity) {
 		List<IssueTO> issues = new ArrayList<>();
+		RegistrationPeriod period = null;
 		if (entity.getInstitution() == null) {
 			issues.add(Issues.create(Errors.EDUCATION_INSTITUTION_IS_EMPTY, FieldID.EDUCATION_INSTITUTION));
 		} else {
-			RegistrationPeriod period = registrationPeriodDao.findActivePeriodForCustomer(accessControl.getLoggedUser().getCustomerId());
+			period = registrationPeriodDao.findActivePeriodForCustomer(accessControl.getLoggedUser().getCustomerId());
 			if (period == null) {
 				issues.add(Issues.create(Errors.NO_ACTIVE_REGISTRATION_PERIOD));
 			} else {
@@ -55,12 +62,35 @@ public class RegistrationValidator implements Validator<Registration> {
 		}
 		if (entity.getSpecialty() == null) {
 			issues.add(Issues.create(Errors.SPECIALTY_IS_EMPTY, FieldID.SPECIALTY));
+		} else {
+			if (period != null && !period.getSpecialties().stream()
+					.anyMatch(spec -> spec.getSpecialty().getEntityKey().equals(entity.getSpecialty().getEntityKey()))) {
+				issues.add(Issues.create(Errors.SPECIALTY_IS_WRONG, FieldID.SPECIALTY));
+			}
 		}
 		if (entity.getFundsSource() == null) {
 			issues.add(Issues.create(Errors.FUNDS_SOURCE_IS_EMPTY, FieldID.FUNDS_SOURCE));
+		} else {
+			if (period != null && !period.getSpecialties().stream()
+					.anyMatch(spec -> spec.getFundsSources().contains(entity.getFundsSource()))) {
+				issues.add(Issues.create(Errors.FUNDS_SOURCE_IS_NOT_AVAILABLE, FieldID.FUNDS_SOURCE));
+			}
 		}
 		if (entity.getEducationForm() == null) {
 			issues.add(Issues.create(Errors.EDUCATION_FORM_IS_EMPTY, FieldID.EDUCATION_FORM));
+		} else {
+			if (period != null && !period.getSpecialties().stream()
+					.anyMatch(spec -> spec.getEducationForms().contains(entity.getEducationForm()))) {
+				issues.add(Issues.create(Errors.EDUCATION_FORM_IS_NOT_AVAILABLE, FieldID.EDUCATION_FORM));
+			}
+		}
+		if (entity.getEducationBase() == null) {
+			issues.add(Issues.create(Errors.EDUCATION_BASE_IS_EMPTY, FieldID.EDUCATION_BASE));
+		} else {
+			if (period != null && !period.getSpecialties().stream()
+					.anyMatch(spec -> spec.getEducationBases().contains(entity.getEducationBase()))) {
+				issues.add(Issues.create(Errors.EDUCATION_BASE_IS_NOT_AVAILABLE, FieldID.EDUCATION_BASE));
+			}
 		}
 		return issues;
 	}

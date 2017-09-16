@@ -234,11 +234,11 @@ public class DummyDataBean {
 					break;
 				case 1004:
 					rSpec.setSeparateByEducationBase(false);
-					rSpec.setEducationBases(EnumSet.allOf(EducationBase.class));
+					rSpec.setEducationBases(EnumSet.of(EducationBase.L9));
 					rSpec.setSeparateByEducationForm(true);
-					rSpec.setEducationForms(EnumSet.allOf(EducationForm.class));
+					rSpec.setEducationForms(EnumSet.of(EducationForm.FULL_TIME));
 					rSpec.setSeparateByFundsSource(false);
-					rSpec.setFundsSources(EnumSet.allOf(FundsSource.class));
+					rSpec.setFundsSources(EnumSet.of(FundsSource.BUDGET));
 					break;
 				case 1005:
 					rSpec.setSeparateByEducationBase(false);
