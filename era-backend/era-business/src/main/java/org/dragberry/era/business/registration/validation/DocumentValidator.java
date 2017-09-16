@@ -6,15 +6,20 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dragberry.era.business.CountryService;
 import org.dragberry.era.business.validation.Validator;
 import org.dragberry.era.common.IssueTO;
 import org.dragberry.era.common.Issues;
 import org.dragberry.era.domain.Document;
 import org.dragberry.era.domain.Registration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DocumentValidator implements Validator<Registration> {
+	
+	@Autowired
+	private CountryService countryService;
 
 	private interface Errors extends RegistrationCommon {
 		String DOCUMENT_IS_EMPTY = RegistrationCommon.errorCode("enrollee.document.details-is-empty");
@@ -27,6 +32,8 @@ public class DocumentValidator implements Validator<Registration> {
 		String DOCUMENT_ISSUE_DATE_IS_IN_FUTURE = RegistrationCommon.errorCode("enrollee.document.issue-date-is-in-future");
 		String DOCUMENT_ISSUED_BY_IS_EMPTY = RegistrationCommon.errorCode("enrollee.document.issued-by-is-empty");
 		String DOCUMENT_ISSUED_BY_IS_TOO_LONG = RegistrationCommon.errorCode("enrollee.document.issued-by-is-too-long");
+		String DOCUMENT_CITIZENSHIP_IS_EMPTY = RegistrationCommon.errorCode("enrollee.document.citizenship-is-empty");
+		String DOCUMENT_CITIZENSHIP_IS_INVALID = RegistrationCommon.errorCode("enrollee.document.citizenship-is-invalid");
 	}
 	
 	private interface FieldID {
@@ -35,6 +42,7 @@ public class DocumentValidator implements Validator<Registration> {
 		String DOCUMENT_DOCUMENT_ID = "dDocumentId";
 		String DOCUMENT_ISSUE_DATE = "dIssueDate";
 		String DOCUMENT_ISSUED_BY = "dIssuedBy";
+		String DOCUMENT_CITIZENSHIP = "dCitizenship";
 	}
 	
 	@Override
@@ -77,6 +85,14 @@ public class DocumentValidator implements Validator<Registration> {
 				issues.add(Issues.create(Errors.DOCUMENT_ISSUED_BY_IS_EMPTY, FieldID.DOCUMENT_ISSUED_BY));
 			} else {
 				issues.addAll(validateFieldMaxLength(document.getIssuedBy(), 32, Errors.DOCUMENT_ISSUED_BY_IS_TOO_LONG, FieldID.DOCUMENT_ISSUED_BY));
+			}
+			// Document citizenship
+			if (StringUtils.isBlank(document.getCitizenhip())) {
+				issues.add(Issues.create(Errors.DOCUMENT_CITIZENSHIP_IS_EMPTY, FieldID.DOCUMENT_CITIZENSHIP));
+			} else {
+				if (!countryService.getCountryCodes().contains(document.getCitizenhip())) {
+					issues.add(Issues.create(Errors.DOCUMENT_CITIZENSHIP_IS_INVALID, FieldID.DOCUMENT_CITIZENSHIP));
+				}
 			}
 		}
 		

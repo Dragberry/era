@@ -2,6 +2,7 @@ package org.dragberry.era.common;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class IssueTO implements Serializable {
@@ -34,6 +35,26 @@ public class IssueTO implements Serializable {
 	
 	public String getFieldId() {
 		return fieldId;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuffer sb =  new StringBuffer("Issue: {errorCode: ").append(errorCode);
+		if (params != null && params.size() > 0) {
+			sb.append(", params: [");
+			Iterator<Object> iter = params.iterator();
+			while (iter.hasNext()) {
+				sb.append(iter.next());
+				if (iter.hasNext()) {
+					sb.append(", ");
+				}
+			}
+			sb.append("]");
+		}
+		if (fieldId != null) {
+			sb.append(", fieldId: ").append(fieldId);
+		}
+		return sb.append("}").toString();
 	}
 
 }
