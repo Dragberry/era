@@ -20,8 +20,8 @@ public class BenefitDaoImplTest extends DummyDataBean {
 	private BenefitDao benefitDao;
 	
 	@Test
-	public void test() {
-		assertNotNull(benefitDao.findOne(1000L));
+	public void testFetchActiveBenefits() {
+		benefitDao.fetchActiveBenefits().forEach(b -> assertFalse("Deleted benefit in the list: " + b.getEntityKey(), b.getDeleted()));
 	}
-
+	
 }

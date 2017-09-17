@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -16,6 +18,11 @@ import javax.persistence.TableGenerator;
 @Table(name = "BENEFIT")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE")
+@NamedQueries({
+	@NamedQuery(
+			name = Benefit.FETCH_ACTIVE_BENEFITS,
+			query = "select b from Benefit b where b.deleted = false")
+})
 @TableGenerator(
 		name = "BENEFIT_GEN", 
 		table = "GENERATOR",
@@ -27,6 +34,8 @@ import javax.persistence.TableGenerator;
 public abstract class Benefit extends BaseEntity {
 
 	private static final long serialVersionUID = 2424023309695254630L;
+	
+	public static final String FETCH_ACTIVE_BENEFITS = "Benefit.FetchActiveBenefits";
 	
 	@Id
 	@Column(name = "BENEFIT_KEY")

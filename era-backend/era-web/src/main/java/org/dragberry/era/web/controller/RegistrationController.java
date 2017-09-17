@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.dragberry.era.business.benefit.BenefitService;
 import org.dragberry.era.business.registration.ContractService;
 import org.dragberry.era.business.registration.RegistrationService;
 import org.dragberry.era.business.reporting.ReportingService;
@@ -39,6 +40,8 @@ public class RegistrationController {
 	private AccessControl accessContoll;
 	
 	@Autowired
+	private BenefitService benefitServiceBean;
+	@Autowired
 	private ContractService contractService;
 	@Autowired
 	private RegistrationService registrationService;
@@ -71,8 +74,6 @@ public class RegistrationController {
 		return ResponseEntity.ok(Results.create(registrationService.getActiveRegistrationPeriod(accessContoll.getLoggedUser().getCustomerId())));
 	}
 	
-	
-	
 	@GetMapping("/get-contract/{contractId}/template/{templateId}")
 	public void downloadRegistrationContract(
 			HttpServletResponse response,
@@ -97,6 +98,11 @@ public class RegistrationController {
 //		accessContoll.checkPermission(Roles.RegistrationPeriods.VIEW);
 		return ResponseEntity.ok(Results.create(
 				registrationService.getRegistrationPeriodList(accessContoll.getLoggedUser().getCustomerId())));
+	}
+	
+	@GetMapping("/get-benefits")
+	public ResponseEntity<?> getBenefitList() {
+		return ResponseEntity.ok(Results.create(benefitServiceBean.getActiveBenefits()));
 	}
 	
 	@PostMapping("/create")
