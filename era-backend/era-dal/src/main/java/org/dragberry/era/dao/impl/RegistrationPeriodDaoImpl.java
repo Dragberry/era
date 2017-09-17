@@ -26,13 +26,12 @@ public class RegistrationPeriodDaoImpl extends AbstractDao<RegistrationPeriod> i
 	}
 
 	@Override
-	public RegistrationPeriod findActivePeriodForCustomer(Long customerKey) {
-		List<RegistrationPeriod> result = getEntityManager()
+	public List<RegistrationPeriod> findActivePeriodsForCustomer(Long customerKey) {
+		return getEntityManager()
 				.createNamedQuery(RegistrationPeriod.FIND_ACTIVE_PERIOD_FOR_CUSTOMER, getEntityType())
 				.setParameter(CUSTOMER_KEY, customerKey)
 				.setParameter(STATUS, Status.OPENED)
 				.getResultList();
-		return result.size() > 0 ? result.get(0) : null;
 	}
 
 	@Override

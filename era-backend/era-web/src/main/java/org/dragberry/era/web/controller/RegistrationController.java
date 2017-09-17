@@ -12,7 +12,6 @@ import org.dragberry.era.business.reporting.ReportingService;
 import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
 import org.dragberry.era.common.registration.RegistrationCRUDTO;
-import org.dragberry.era.common.registration.RegistrationPeriodTO;
 import org.dragberry.era.common.registration.RegistrationSearchQuery;
 import org.dragberry.era.common.registration.RegistrationTO;
 import org.dragberry.era.common.reporting.ReportTemplateInfoTO;
@@ -69,9 +68,9 @@ public class RegistrationController {
 		return ResponseEntity.ok(Results.create(reportingService.getReportsForCustomer(accessContoll.getLoggedUser().getId())));
 	}
 	
-	@GetMapping("/get-active-period")
-	public ResponseEntity<ResultTO<RegistrationPeriodTO>> getActivePeriod() {
-		return ResponseEntity.ok(Results.create(registrationService.getActiveRegistrationPeriod(accessContoll.getLoggedUser().getCustomerId())));
+	@GetMapping("/get-active-periods")
+	public ResponseEntity<?> getActivePeriods() {
+		return ResponseEntity.ok(Results.create(registrationService.getActiveRegistrationPeriods(accessContoll.getLoggedUser().getCustomerId())));
 	}
 	
 	@GetMapping("/get-contract/{contractId}/template/{templateId}")

@@ -23,7 +23,9 @@ public class RegistrationValidator implements Validator<Registration> {
 	private RegistrationPeriodDao registrationPeriodDao;
 	
 	private interface Errors extends RegistrationCommon {
-		String NO_ACTIVE_REGISTRATION_PERIOD = RegistrationCommon.errorCode("no-active-registration-period");
+		String NO_REGISTRATION_PERIOD = RegistrationCommon.errorCode("no-registration-period");
+		String REGISTRATION_PERIOD_IS_WRONG = RegistrationCommon.errorCode("registration-period-is-wrong");
+		String REGISTRATION_PERIOD_IS_NOT_OPENED = RegistrationCommon.errorCode("registration-period-is-not-opened");
 		String EDUCATION_INSTITUTION_IS_EMPTY = RegistrationCommon.errorCode("education-institution-is-empty");
 		String SPECIALTY_IS_EMPTY = RegistrationCommon.errorCode("specialty-is-empty");
 		String SPECIALTY_IS_WRONG = RegistrationCommon.errorCode("specialty-is-wrong");
@@ -47,14 +49,21 @@ public class RegistrationValidator implements Validator<Registration> {
 	@Override
 	public List<IssueTO> validate(Registration entity) {
 		List<IssueTO> issues = new ArrayList<>();
-		RegistrationPeriod period = null;
+		RegistrationPeriod period = entity.getRegistrationPeriod();
 		if (entity.getInstitution() == null) {
 			issues.add(Issues.create(Errors.EDUCATION_INSTITUTION_IS_EMPTY, FieldID.EDUCATION_INSTITUTION));
 		} else {
-			period = registrationPeriodDao.findActivePeriodForCustomer(accessControl.getLoggedUser().getCustomerId());
+			List<RegistrationPeriod> periods = registrationPeriodDao.findActivePeriodsForCustomer(accessControl.getLoggedUser().getCustomerId());
 			if (period == null) {
-				issues.add(Issues.create(Errors.NO_ACTIVE_REGISTRATION_PERIOD));
+				issues.add(Issues.create(Errors.NO_REGISTRATION_PERIOD));
 			} else {
+				if (!periods.stream().anyMatch(p -> p.getEntityKey().equals(period.getEntityKey()))) {
+					issues.add(Issues.create(Errors.REGISTRATION_PERIOD_IS_WRONG));
+				} else {
+					if (period.getStatus() != RegistrationPeriod.Status.OPENED) {
+						issues.add(Issues.create(Errors.REGISTRATION_PERIOD_IS_NOT_OPENED));
+					}
+				}
 				if (!period.getEducationInstitution().getEntityKey().equals(entity.getInstitution().getEntityKey())) {
 					issues.add(Issues.create(Errors.EDUCATION_INSTITUTION_IS_WRONG, FieldID.EDUCATION_INSTITUTION));
 				}

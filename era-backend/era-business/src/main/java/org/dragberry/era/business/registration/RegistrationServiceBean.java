@@ -168,11 +168,12 @@ public class RegistrationServiceBean implements RegistrationService {
 		return registrationDao.findMaxRegistrationId(registration);
 	}
 
-	@Override
+	@Override 
 	@Transactional
-	public RegistrationPeriodTO getActiveRegistrationPeriod(Long customerKey) {
-		RegistrationPeriod period = registrationPeriodDao.findActivePeriodForCustomer(customerKey);
-		return period != null ? convertPeriod(period) : null;
+	public List<RegistrationPeriodTO> getActiveRegistrationPeriods(Long customerKey) {
+		return registrationPeriodDao.findActivePeriodsForCustomer(customerKey).stream()
+				.map(RegistrationServiceBean::convertPeriod)
+				.collect(Collectors.toList());
 	}
 	
 	@Override
@@ -182,7 +183,7 @@ public class RegistrationServiceBean implements RegistrationService {
 				.map(RegistrationServiceBean::convertPeriod)
 				.collect(Collectors.toList());
 	}
-	
+
 	private static RegistrationPeriodTO convertPeriod(RegistrationPeriod entity) {
 		RegistrationPeriodTO to = new RegistrationPeriodTO();
 		to.setId(entity.getEntityKey());
