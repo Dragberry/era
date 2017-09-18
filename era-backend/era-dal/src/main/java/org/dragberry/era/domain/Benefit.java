@@ -21,7 +21,10 @@ import javax.persistence.TableGenerator;
 @NamedQueries({
 	@NamedQuery(
 			name = Benefit.FETCH_ACTIVE_BENEFITS,
-			query = "select b from Benefit b where b.deleted = false")
+			query = "select b from Benefit b where b.deleted = false"),
+	@NamedQuery(
+			name = Benefit.FIND_BENEFITS_BY_KEYS,
+			query = "select b from Benefit b where TYPE(b) = :type and b.entityKey in :entityKeys")
 })
 @TableGenerator(
 		name = "BENEFIT_GEN", 
@@ -36,6 +39,7 @@ public abstract class Benefit extends BaseEntity {
 	private static final long serialVersionUID = 2424023309695254630L;
 	
 	public static final String FETCH_ACTIVE_BENEFITS = "Benefit.FetchActiveBenefits";
+	public static final String FIND_BENEFITS_BY_KEYS = "Benefit.FetchBenefitsByKeys";
 	
 	@Id
 	@Column(name = "BENEFIT_KEY")

@@ -1,5 +1,8 @@
 package org.dragberry.era.common.registration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dragberry.era.common.AbstractCRUDTO;
 import org.dragberry.era.common.certificate.CertificateCRUDTO;
 import org.dragberry.era.common.person.PersonCRUDTO;
@@ -23,6 +26,10 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 	private Long specialtyId;
 
 	private CertificateCRUDTO certificate;
+	
+	private List<Long> prerogatives = new ArrayList<>();
+	
+	private List<Long> outOfCompetitions = new ArrayList<>();
 
 	public Long getPeriodId() {
 		return periodId;
@@ -86,6 +93,22 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 
 	public void setEducationBase(String educationBase) {
 		this.educationBase = educationBase;
+	}
+
+	public List<Long> getPrerogatives() {
+		return prerogatives;
+	}
+
+	public void setPrerogatives(List<Long> prerogatives) {
+		this.prerogatives = prerogatives;
+	}
+
+	public List<Long> getOutOfCompetitions() {
+		return outOfCompetitions;
+	}
+
+	public void setOutOfCompetitions(List<Long> outOfCompetitions) {
+		this.outOfCompetitions = outOfCompetitions;
 	}
 
 }

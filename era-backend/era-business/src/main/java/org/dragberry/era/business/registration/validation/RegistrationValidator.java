@@ -1,12 +1,17 @@
 package org.dragberry.era.business.registration.validation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.dragberry.era.business.validation.Validator;
 import org.dragberry.era.common.IssueTO;
 import org.dragberry.era.common.Issues;
 import org.dragberry.era.dao.RegistrationPeriodDao;
+import org.dragberry.era.domain.Benefit;
 import org.dragberry.era.domain.Registration;
 import org.dragberry.era.domain.RegistrationPeriod;
 import org.dragberry.era.security.AccessControl;
@@ -15,6 +20,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RegistrationValidator implements Validator<Registration> {
+	
+	private static final String COMMA = ", ";
+	private static final String BRACKET_L = "[";
+	private static final String BRACKET_R = "]";
+	private static final String BRACKETS= BRACKET_L + BRACKET_R;
 
 	@Autowired
 	private AccessControl accessControl;
@@ -36,6 +46,8 @@ public class RegistrationValidator implements Validator<Registration> {
 		String EDUCATION_BASE_IS_EMPTY = RegistrationCommon.errorCode("education-base-is-empty");
 		String EDUCATION_BASE_IS_NOT_AVAILABLE  = RegistrationCommon.errorCode("education-base-is-not-available");
 		String EDUCATION_INSTITUTION_IS_WRONG = RegistrationCommon.errorCode("education-institution-is-wrong");
+		String PREROGATIVE_IS_DELETED = RegistrationCommon.errorCode("prerogative-is-deleted");
+		String OUT_OF_COMPETITION_IS_DELETED = RegistrationCommon.errorCode("out-of-competition-is-deleted");
 	}
 	
 	private interface FieldID {
@@ -44,6 +56,8 @@ public class RegistrationValidator implements Validator<Registration> {
 		String FUNDS_SOURCE = "fundsSource";
 		String EDUCATION_FORM = "educationForm";
 		String EDUCATION_BASE = "educationBase";
+		String PREROGATIVES = "prerogatives";
+		String OUT_OF_COMPETITIONS = "outOfCompetitions";
 	}
 	
 	@Override
@@ -101,7 +115,24 @@ public class RegistrationValidator implements Validator<Registration> {
 				issues.add(Issues.create(Errors.EDUCATION_BASE_IS_NOT_AVAILABLE, FieldID.EDUCATION_BASE));
 			}
 		}
+		
+		issues.addAll(validateBenefits(entity.getPrerogatives(), Errors.PREROGATIVE_IS_DELETED,  FieldID.PREROGATIVES));
+		issues.addAll(validateBenefits(entity.getOutOfCompetitions(), Errors.OUT_OF_COMPETITION_IS_DELETED,  FieldID.OUT_OF_COMPETITIONS));
+		
 		return issues;
+	}
+	
+	private static List<IssueTO> validateBenefits(List<Benefit> benefits, String msg, String fieldID) {
+		if (CollectionUtils.isNotEmpty(benefits)) {
+			String deleted = benefits.stream()
+				.filter(Benefit::getDeleted)
+				.map(Benefit::getName)
+				.collect(Collectors.joining(COMMA, BRACKET_L, BRACKET_R));
+			if (!deleted.equals(BRACKETS)) {
+				return Arrays.asList(Issues.create(msg, fieldID, deleted));
+			}
+		}
+		return Collections.emptyList();
 	}
 
 }

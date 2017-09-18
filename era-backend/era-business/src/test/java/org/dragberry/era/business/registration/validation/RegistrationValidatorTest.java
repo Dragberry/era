@@ -15,6 +15,8 @@ import org.dragberry.era.domain.EducationBase;
 import org.dragberry.era.domain.EducationForm;
 import org.dragberry.era.domain.EducationInstitution;
 import org.dragberry.era.domain.FundsSource;
+import org.dragberry.era.domain.OutOfCompetition;
+import org.dragberry.era.domain.Prerogative;
 import org.dragberry.era.domain.RegisteredSpecialty;
 import org.dragberry.era.domain.Registration;
 import org.dragberry.era.domain.RegistrationPeriod;
@@ -67,7 +69,26 @@ public class RegistrationValidatorTest {
 		registration.setEducationBase(base);
 		registration.setEducationForm(form);
 		registration.setFundsSource(source);
+		
+		registration.setPrerogatives(Arrays.asList(prerogative(1L, "P1", false)));
+		registration.setOutOfCompetitions(Arrays.asList(outOfCompetition(2L, "O1", false)));
 		return registration;
+	}
+	
+	private Prerogative prerogative(Long key, String name, boolean deleted) {
+		Prerogative p1 = new Prerogative();
+		p1.setEntityKey(key);
+		p1.setName(name);
+		p1.setDeleted(deleted);
+		return p1;
+	}
+	
+	private OutOfCompetition outOfCompetition(Long key, String name, boolean deleted) {
+		OutOfCompetition o1 = new OutOfCompetition();
+		o1.setEntityKey(key);
+		o1.setName(name);
+		o1.setDeleted(deleted);
+		return o1;
 	}
 	
 	private RegistrationPeriod period(Long periodKey, Long institutionKey, Long specialtyKey, Set<EducationBase> bases, Set<EducationForm> forms, Set<FundsSource> sources) {
@@ -278,4 +299,41 @@ public class RegistrationValidatorTest {
 		assertEquals(0, result.get(0).getParams().size());
 	}
 
+	@Test
+	public void testValidatePrerogativeIsDeleted() {
+		RegistrationPeriod period = period(1000l, 1000l, 1000l, EnumSet.allOf(EducationBase.class), EnumSet.allOf(EducationForm.class), EnumSet.allOf(FundsSource.class));
+		Mockito.when(accessControl.getLoggedUser()).thenReturn(loggedUser);
+		Mockito.when(registrationPeriodDao.findActivePeriodsForCustomer(1000L))
+			.thenReturn(periods(period));
+		
+		Registration reg = registration(period, 1000L, 1000L, EducationBase.L9, EducationForm.FULL_TIME, FundsSource.BUDGET);
+		reg.setPrerogatives(Arrays.asList(prerogative(1L, "P1", false), prerogative(1L, "P2", true), prerogative(1L, "P3", true)));
+		List<IssueTO> result = validator.validate(reg);
+		
+		assertEquals(result.toString(), 1, result.size());
+		assertEquals("validation.registration.prerogative-is-deleted", result.get(0).getErrorCode());
+		assertEquals("prerogatives", result.get(0).getFieldId());
+		assertEquals(1, result.get(0).getParams().size());
+		assertEquals("[P2, P3]", result.get(0).getParams().get(0));
+	}
+	
+	@Test
+	public void testValidateOutOfCompetitionIsDeleted() {
+		RegistrationPeriod period = period(1000l, 1000l, 1000l, EnumSet.allOf(EducationBase.class), EnumSet.allOf(EducationForm.class), EnumSet.allOf(FundsSource.class));
+		Mockito.when(accessControl.getLoggedUser()).thenReturn(loggedUser);
+		Mockito.when(registrationPeriodDao.findActivePeriodsForCustomer(1000L))
+			.thenReturn(periods(period));
+		
+		Registration reg = registration(period, 1000L, 1000L, EducationBase.L9, EducationForm.FULL_TIME, FundsSource.BUDGET);
+		reg.setOutOfCompetitions(Arrays.asList(outOfCompetition(1L, "O1", false), outOfCompetition(1L, "O2", true), outOfCompetition(1L, "O3", true)));
+		List<IssueTO> result = validator.validate(reg);
+		
+		assertEquals(result.toString(), 1, result.size());
+		assertEquals("validation.registration.out-of-competition-is-deleted", result.get(0).getErrorCode());
+		assertEquals("outOfCompetitions", result.get(0).getFieldId());
+		assertEquals(1, result.get(0).getParams().size());
+		assertEquals("[O2, O3]", result.get(0).getParams().get(0));
+	}
+
+	
 }

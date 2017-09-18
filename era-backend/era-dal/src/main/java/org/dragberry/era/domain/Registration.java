@@ -94,7 +94,12 @@ public class Registration extends BaseEntity {
     @JoinTable(name = "REGISTRATION_BENEFIT", 
         joinColumns = @JoinColumn(name = "REGISTRATION_KEY", referencedColumnName = "REGISTRATION_KEY"), 
         inverseJoinColumns = @JoinColumn(name = "BENEFIT_KEY", referencedColumnName = "BENEFIT_KEY"))
-	private List<Benefit> benefits;
+	private List<Benefit> prerogatives;
+	@ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "REGISTRATION_BENEFIT", 
+        joinColumns = @JoinColumn(name = "REGISTRATION_KEY", referencedColumnName = "REGISTRATION_KEY"), 
+        inverseJoinColumns = @JoinColumn(name = "BENEFIT_KEY", referencedColumnName = "BENEFIT_KEY"))
+	private List<Benefit> outOfCompetitions;
 	
 	@Override
 	public Long getEntityKey() {
@@ -210,12 +215,20 @@ public class Registration extends BaseEntity {
 		this.status = status;
 	}
 
-	public List<Benefit> getBenefits() {
-		return benefits;
+	public List<Benefit> getPrerogatives() {
+		return prerogatives;
 	}
 
-	public void setBenefits(List<Benefit> benefits) {
-		this.benefits = benefits;
+	public void setPrerogatives(List<Benefit> prerogatives) {
+		this.prerogatives = prerogatives;
+	}
+
+	public List<Benefit> getOutOfCompetitions() {
+		return outOfCompetitions;
+	}
+
+	public void setOutOfCompetitions(List<Benefit> outOfCompetitions) {
+		this.outOfCompetitions = outOfCompetitions;
 	}
 
 	public static enum Status implements BaseEnum<Character> {

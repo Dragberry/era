@@ -12,13 +12,11 @@ import org.dragberry.era.business.useraccount.UserAccountService;
 import org.dragberry.era.web.utils.TimeProvider;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-//@Configuration
-//@PropertySources({ @PropertySource("classpath:config.properties") })
+@PropertySources({ @PropertySource("classpath:config.properties") })
 public class TestContext {
 	
 	@Bean
