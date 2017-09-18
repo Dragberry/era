@@ -8,6 +8,8 @@ import org.dragberry.era.business.validation.ValidationService;
 import org.dragberry.era.common.IssueTO;
 import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
+import org.dragberry.era.common.certificate.CertificateCRUDTO;
+import org.dragberry.era.common.certificate.SubjectMarkTO;
 import org.dragberry.era.common.person.AddressTO;
 import org.dragberry.era.common.person.ContactDetailsTO;
 import org.dragberry.era.common.person.DocumentTO;
@@ -24,8 +26,10 @@ import org.dragberry.era.dao.PersonDao;
 import org.dragberry.era.dao.RegistrationDao;
 import org.dragberry.era.dao.RegistrationPeriodDao;
 import org.dragberry.era.dao.SpecialtyDao;
+import org.dragberry.era.dao.SubjectDao;
 import org.dragberry.era.dao.UserAccountDao;
 import org.dragberry.era.domain.Address;
+import org.dragberry.era.domain.Certificate;
 import org.dragberry.era.domain.Document;
 import org.dragberry.era.domain.EducationBase;
 import org.dragberry.era.domain.EducationForm;
@@ -57,6 +61,8 @@ public class RegistrationServiceBean implements RegistrationService {
 	private RegistrationPeriodDao registrationPeriodDao;
 	@Autowired
 	private SpecialtyDao specialtyDao;
+	@Autowired
+	private SubjectDao subjectDao;
 	@Autowired
 	private UserAccountDao userAccountDao;
 	
@@ -157,6 +163,18 @@ public class RegistrationServiceBean implements RegistrationService {
 		
 		registration.setPrerogatives(benefitDao.fetchBenefits(Prerogative.class, registrationCRUD.getPrerogatives()));
 		registration.setOutOfCompetitions(benefitDao.fetchBenefits(OutOfCompetition.class, registrationCRUD.getOutOfCompetitions()));
+		
+		CertificateCRUDTO cert = registrationCRUD.getCertificate();
+		if (cert != null) {
+			Certificate certificate = new Certificate();
+			certificate.setEntityKey(cert.getId());
+			certificate.setYear(cert.getYear());
+			certificate.setEnrollee(registration.getEnrollee());
+			certificate.setMarks(cert.getMarks().stream().collect(Collectors.toMap(
+							sm -> subjectDao.findOne(sm.getSubject().getId()),
+							SubjectMarkTO::getMark)));
+			registration.setCertificate(certificate);
+		}
 		
 		List<IssueTO> issues = validationService.validate(registration);
 		if (issues.isEmpty()) {

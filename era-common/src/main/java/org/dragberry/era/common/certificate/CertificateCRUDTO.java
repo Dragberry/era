@@ -8,21 +8,11 @@ public class CertificateCRUDTO extends AbstractCRUDTO {
 
 	private static final long serialVersionUID = 817707147440284169L;
 	
-	private Long id;
-
 	private String institution;
 	
 	private Integer year;
 	
 	private List<SubjectMarkTO> marks;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getInstitution() {
 		return institution;
