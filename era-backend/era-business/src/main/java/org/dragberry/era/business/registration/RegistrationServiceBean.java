@@ -198,8 +198,8 @@ public class RegistrationServiceBean implements RegistrationService {
 		return Results.create(registrationCRUD, issues);
 	}
 	
-	private Long getIdForRegistration(Registration registration) {
-		return registrationDao.findMaxRegistrationId(registration);
+	private long getIdForRegistration(Registration registration) {
+		return registrationDao.findMaxRegistrationId(registration) + 1L;
 	}
 
 	@Override 
