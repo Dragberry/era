@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dragberry.era.common.institution.EducationInstitutionTO;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -27,6 +29,8 @@ public class RegistrationPeriodTO implements Serializable {
 	private LocalDate dateTo;
 	
 	private Character status;
+	
+	private EducationInstitutionTO educationInstitution;
 	
 	private List<RegisteredSpecialtyTO> specialties = new ArrayList<>();
 
@@ -76,6 +80,14 @@ public class RegistrationPeriodTO implements Serializable {
 
 	public void setSpecialties(List<RegisteredSpecialtyTO> specialties) {
 		this.specialties = specialties;
+	}
+
+	public EducationInstitutionTO getEducationInstitution() {
+		return educationInstitution;
+	}
+
+	public void setEducationInstitution(EducationInstitutionTO educationInstitution) {
+		this.educationInstitution = educationInstitution;
 	}
 	
 }

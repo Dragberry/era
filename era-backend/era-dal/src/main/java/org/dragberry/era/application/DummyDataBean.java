@@ -80,6 +80,9 @@ public class DummyDataBean {
 		period = period(eInstitution);
 		registrationPeriodDao.create(period);
 		
+		// The second period
+		registrationPeriodDao.create(period(einstitutionDao.findOne(1001l)));
+		
 		// All separated
 		createRegistration(1, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.BUDGET,
 				prerogativeDao.findOne(1000L));

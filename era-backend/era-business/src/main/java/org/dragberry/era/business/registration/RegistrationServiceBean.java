@@ -10,6 +10,7 @@ import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
 import org.dragberry.era.common.certificate.CertificateCRUDTO;
 import org.dragberry.era.common.certificate.SubjectMarkTO;
+import org.dragberry.era.common.institution.EducationInstitutionTO;
 import org.dragberry.era.common.person.AddressTO;
 import org.dragberry.era.common.person.ContactDetailsTO;
 import org.dragberry.era.common.person.DocumentTO;
@@ -37,6 +38,7 @@ import org.dragberry.era.domain.EducationForm;
 import org.dragberry.era.domain.FundsSource;
 import org.dragberry.era.domain.Person;
 import org.dragberry.era.domain.Registration;
+import org.dragberry.era.domain.Registration.Status;
 import org.dragberry.era.domain.RegistrationPeriod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -170,8 +172,9 @@ public class RegistrationServiceBean implements RegistrationService {
 			Certificate certificate = new Certificate();
 			certificate.setEntityKey(cert.getId());
 			certificate.setYear(cert.getYear());
+			certificate.setInstitution(cert.getInstitution());
 			certificate.setEnrollee(registration.getEnrollee());
-			certificate.setMarks(cert.getMarks().stream().collect(Collectors.toMap(
+			certificate.setMarks(cert.getMarks().stream().filter(sm -> sm.getMark() != null).collect(Collectors.toMap(
 							sm -> subjectDao.findOne(sm.getSubject().getId()),
 							SubjectMarkTO::getMark)));
 			registration.setCertificate(certificate);
@@ -182,9 +185,13 @@ public class RegistrationServiceBean implements RegistrationService {
 			personDao.create(registration.getEnrollee());
 			enrolleeCRUD.setId(registration.getEnrollee().getEntityKey());
 			
+			certificateDao.create(registration.getCertificate());
+			registrationCRUD.getCertificate().setId(registration.getCertificate().getEntityKey());
+			
 			Long registrationId = getIdForRegistration(registration);
 			registration.setRegistrationId(registrationId);
-			
+			registration.setStatus(Status.PROCESSING);
+
 			registrationDao.create(registration);
 			registrationCRUD.setId(registration.getEntityKey());
 		}
@@ -218,6 +225,11 @@ public class RegistrationServiceBean implements RegistrationService {
 		to.setDateFrom(entity.getFrom());
 		to.setDateTo(entity.getTo());
 		to.setStatus(entity.getStatus().value);
+		EducationInstitutionTO institution = new EducationInstitutionTO();
+		institution.setId(entity.getEducationInstitution().getEntityKey());
+		institution.setName(entity.getEducationInstitution().getName());
+		institution.setShortName(entity.getEducationInstitution().getShortName());
+		to.setEducationInstitution(institution);
 		to.setSpecialties(entity.getSpecialties().stream().map(spec -> {
 			RegisteredSpecialtyTO specTo = new RegisteredSpecialtyTO();
 			specTo.setId(spec.getEntityKey());
