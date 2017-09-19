@@ -91,15 +91,15 @@ public class Registration extends BaseEntity {
 	private Status status;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "REGISTRATION_BENEFIT", 
+    @JoinTable(name = "REGISTRATION_PREROGATIVE", 
         joinColumns = @JoinColumn(name = "REGISTRATION_KEY", referencedColumnName = "REGISTRATION_KEY"), 
-        inverseJoinColumns = @JoinColumn(name = "BENEFIT_KEY", referencedColumnName = "BENEFIT_KEY"))
-	private List<Benefit> prerogatives;
+        inverseJoinColumns = @JoinColumn(name = "PREROGATIVE_KEY", referencedColumnName = "PREROGATIVE_KEY"))
+	private List<Prerogative> prerogatives;
 	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "REGISTRATION_BENEFIT", 
+    @JoinTable(name = "REGISTRATION_OUT_OF_COMPETITION", 
         joinColumns = @JoinColumn(name = "REGISTRATION_KEY", referencedColumnName = "REGISTRATION_KEY"), 
-        inverseJoinColumns = @JoinColumn(name = "BENEFIT_KEY", referencedColumnName = "BENEFIT_KEY"))
-	private List<Benefit> outOfCompetitions;
+        inverseJoinColumns = @JoinColumn(name = "OUT_OF_COMPETITION_KEY", referencedColumnName = "OUT_OF_COMPETITION_KEY"))
+	private List<OutOfCompetition> outOfCompetitions;
 	
 	@Override
 	public Long getEntityKey() {
@@ -215,19 +215,19 @@ public class Registration extends BaseEntity {
 		this.status = status;
 	}
 
-	public List<Benefit> getPrerogatives() {
+	public List<Prerogative> getPrerogatives() {
 		return prerogatives;
 	}
 
-	public void setPrerogatives(List<Benefit> prerogatives) {
+	public void setPrerogatives(List<Prerogative> prerogatives) {
 		this.prerogatives = prerogatives;
 	}
 
-	public List<Benefit> getOutOfCompetitions() {
+	public List<OutOfCompetition> getOutOfCompetitions() {
 		return outOfCompetitions;
 	}
 
-	public void setOutOfCompetitions(List<Benefit> outOfCompetitions) {
+	public void setOutOfCompetitions(List<OutOfCompetition> outOfCompetitions) {
 		this.outOfCompetitions = outOfCompetitions;
 	}
 

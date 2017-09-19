@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.dragberry.era.domain.Benefit;
 
-public interface BenefitDao extends DataAccessObject<Benefit, Long> {
+public interface BenefitDao<B extends Benefit> extends DataAccessObject<B, Long> {
 
-	List<Benefit> fetchActiveBenefits();
-
-	List<Benefit> fetchBenefits(Class<? extends Benefit> type, List<Long> keys);
+	List<B> fetchActiveBenefits();
+	
+	List<B> fetchByKeys(List<Long> keys);
 }

@@ -122,7 +122,7 @@ public class RegistrationValidator implements Validator<Registration> {
 		return issues;
 	}
 	
-	private static List<IssueTO> validateBenefits(List<Benefit> benefits, String msg, String fieldID) {
+	private static List<IssueTO> validateBenefits(List<? extends Benefit> benefits, String msg, String fieldID) {
 		if (CollectionUtils.isNotEmpty(benefits)) {
 			String deleted = benefits.stream()
 				.filter(Benefit::getDeleted)

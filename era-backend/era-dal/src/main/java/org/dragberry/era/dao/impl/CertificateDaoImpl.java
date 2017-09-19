@@ -1,5 +1,7 @@
 package org.dragberry.era.dao.impl;
 
+import java.util.Optional;
+
 import org.dragberry.era.dao.CertificateDao;
 import org.dragberry.era.domain.Certificate;
 import org.springframework.stereotype.Repository;
@@ -15,10 +17,10 @@ public class CertificateDaoImpl extends AbstractDao<Certificate> implements Cert
 
 	@Override
 	public Double getAverageMark(Long certificateKey) {
-		return getEntityManager()
+		return Optional.ofNullable(getEntityManager()
 				.createNamedQuery(Certificate.GET_AVERAGE_MARK_QUERY, Double.class)
 				.setParameter(CERTIFICATE_KEY, certificateKey)
-				.getSingleResult();
+				.getSingleResult()).orElse(0.0);
 		
 	}
 

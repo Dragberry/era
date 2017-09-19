@@ -19,9 +19,10 @@ import org.dragberry.era.common.registration.RegistrationCRUDTO;
 import org.dragberry.era.common.registration.RegistrationPeriodTO;
 import org.dragberry.era.common.registration.RegistrationSearchQuery;
 import org.dragberry.era.common.registration.RegistrationTO;
-import org.dragberry.era.dao.BenefitDao;
+import org.dragberry.era.dao.PrerogativeDao;
 import org.dragberry.era.dao.CertificateDao;
 import org.dragberry.era.dao.EducationInstitutionDao;
+import org.dragberry.era.dao.OutOfCompetitionDao;
 import org.dragberry.era.dao.PersonDao;
 import org.dragberry.era.dao.RegistrationDao;
 import org.dragberry.era.dao.RegistrationPeriodDao;
@@ -34,9 +35,7 @@ import org.dragberry.era.domain.Document;
 import org.dragberry.era.domain.EducationBase;
 import org.dragberry.era.domain.EducationForm;
 import org.dragberry.era.domain.FundsSource;
-import org.dragberry.era.domain.OutOfCompetition;
 import org.dragberry.era.domain.Person;
-import org.dragberry.era.domain.Prerogative;
 import org.dragberry.era.domain.Registration;
 import org.dragberry.era.domain.RegistrationPeriod;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +47,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegistrationServiceBean implements RegistrationService {
 
 	@Autowired
-	private BenefitDao benefitDao;
+	private PrerogativeDao prerogativeDao;
+	@Autowired
+	private OutOfCompetitionDao outOfCompetitionDao;
 	@Autowired
 	private CertificateDao certificateDao;
 	@Autowired
@@ -161,8 +162,8 @@ public class RegistrationServiceBean implements RegistrationService {
 		}
 		registration.setRegistrationDate(LocalDateTime.now());
 		
-		registration.setPrerogatives(benefitDao.fetchBenefits(Prerogative.class, registrationCRUD.getPrerogatives()));
-		registration.setOutOfCompetitions(benefitDao.fetchBenefits(OutOfCompetition.class, registrationCRUD.getOutOfCompetitions()));
+		registration.setPrerogatives(prerogativeDao.fetchByKeys(registrationCRUD.getPrerogatives()));
+		registration.setOutOfCompetitions(outOfCompetitionDao.fetchByKeys(registrationCRUD.getOutOfCompetitions()));
 		
 		CertificateCRUDTO cert = registrationCRUD.getCertificate();
 		if (cert != null) {

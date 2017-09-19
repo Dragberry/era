@@ -2,12 +2,10 @@ package org.dragberry.era.business.benefit;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.Arrays;
 import org.dragberry.era.common.benefit.BenefitListTO;
-import org.dragberry.era.dao.BenefitDao;
-import org.dragberry.era.domain.Benefit;
+import org.dragberry.era.dao.OutOfCompetitionDao;
+import org.dragberry.era.dao.PrerogativeDao;
 import org.dragberry.era.domain.OutOfCompetition;
 import org.dragberry.era.domain.Prerogative;
 import org.junit.Test;
@@ -26,23 +24,23 @@ public class BenefitServiceBeanTest {
 	private static final String PREROGATIVE = "Prerogative";
 
 	@Mock
-	private BenefitDao benefitDao;
+	private PrerogativeDao prerogativeDao;
+	@Mock
+	private OutOfCompetitionDao outOfCompetitionDao;
 	
 	@InjectMocks
 	private BenefitServiceBean benefitServiceBean = new BenefitServiceBean();
 	
 	@Test
 	public void testFetchActiveBenefits() {
-		List<Benefit> list = new ArrayList<>();
-		Benefit p = new Prerogative();
+		Prerogative p = new Prerogative();
 		p.setEntityKey(_1000L);
 		p.setName(PREROGATIVE);
-		list.add(p);
-		Benefit o = new OutOfCompetition();
+		Mockito.when(prerogativeDao.fetchActiveBenefits()).thenReturn(Arrays.asList(p));
+		OutOfCompetition o = new OutOfCompetition();
 		o.setEntityKey(_1001L);
 		o.setName(OUT_OF_COMPETITION);
-		list.add(o);
-		Mockito.when(benefitDao.fetchActiveBenefits()).thenReturn(list);
+		Mockito.when(outOfCompetitionDao.fetchActiveBenefits()).thenReturn(Arrays.asList(o));
 			
 		BenefitListTO listTO = benefitServiceBean.getActiveBenefits();
 		assertNotNull(listTO);

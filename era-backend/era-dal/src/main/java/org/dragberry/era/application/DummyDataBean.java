@@ -9,9 +9,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import org.dragberry.era.dao.BenefitDao;
+import org.dragberry.era.dao.PrerogativeDao;
 import org.dragberry.era.dao.CertificateDao;
 import org.dragberry.era.dao.EducationInstitutionDao;
+import org.dragberry.era.dao.OutOfCompetitionDao;
 import org.dragberry.era.dao.PersonDao;
 import org.dragberry.era.dao.RegistrationDao;
 import org.dragberry.era.dao.RegistrationPeriodDao;
@@ -26,7 +27,9 @@ import org.dragberry.era.domain.EducationBase;
 import org.dragberry.era.domain.EducationForm;
 import org.dragberry.era.domain.EducationInstitution;
 import org.dragberry.era.domain.FundsSource;
+import org.dragberry.era.domain.OutOfCompetition;
 import org.dragberry.era.domain.Person;
+import org.dragberry.era.domain.Prerogative;
 import org.dragberry.era.domain.RegisteredSpecialty;
 import org.dragberry.era.domain.Registration;
 import org.dragberry.era.domain.RegistrationPeriod;
@@ -58,7 +61,9 @@ public class DummyDataBean {
 	@Autowired
 	private RegistrationDao registrationDao;
 	@Autowired
-	private BenefitDao benefitDao;
+	private PrerogativeDao prerogativeDao;
+	@Autowired
+	private OutOfCompetitionDao outOfCompetitionDao;
 	
 	private UserAccount registeredBy;
 	private EducationInstitution eInstitution;
@@ -77,13 +82,13 @@ public class DummyDataBean {
 		
 		// All separated
 		createRegistration(1, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.BUDGET,
-				benefitDao.findOne(1000L));
+				prerogativeDao.findOne(1000L));
 		createRegistration(2, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.BUDGET,
-				benefitDao.findOne(1000L), benefitDao.findOne(1001L));
+				prerogativeDao.findOne(1000L), prerogativeDao.findOne(1001L));
 		createRegistration(3, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.BUDGET,
-				benefitDao.findOne(1007L));
+				outOfCompetitionDao.findOne(1000L));
 		createRegistration(1, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.PAYER,
-				benefitDao.findOne(1000L), benefitDao.findOne(1007L));
+				prerogativeDao.findOne(1000L), outOfCompetitionDao.findOne(1000L));
 		createRegistration(2, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.PAYER);
 		createRegistration(3, 0, EducationForm.FULL_TIME, EducationBase.L9, FundsSource.PAYER);
 		createRegistration(1, 0, EducationForm.FULL_TIME, EducationBase.L11, FundsSource.BUDGET);
@@ -182,7 +187,8 @@ public class DummyDataBean {
 		registration.setFundsSource(source);
 		registration.setEducationForm(form);
 		registration.setEducationBase(base);
-		registration.setBenefits(Arrays.asList(benefits));
+		registration.setPrerogatives(Arrays.stream(benefits).filter(b -> b instanceof Prerogative).map(b -> (Prerogative) b).collect(Collectors.toList()));
+		registration.setOutOfCompetitions(Arrays.stream(benefits).filter(b -> b instanceof OutOfCompetition).map(b -> (OutOfCompetition) b).collect(Collectors.toList()));
 		registration.setStatus(Registration.Status.PROCESSING);
 		return registration;
 	}
