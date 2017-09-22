@@ -77,13 +77,17 @@ public class RegistrationServiceBean implements RegistrationService {
 	public List<RegistrationTO> getRegistrationList(RegistrationSearchQuery query) {
 		return registrationDao.searchList(query).stream().map(entity -> {
 			RegistrationTO to = new RegistrationTO();
+			to.setSpecialty(entity.getSpecialty().getTitle());
 			to.setFirstName(entity.getEnrollee().getFirstName());
 			to.setLastName(entity.getEnrollee().getLastName());
 			to.setMiddleName(entity.getEnrollee().getMiddleName());
 			to.setId(entity.getEntityKey());
+			to.setRegistrationId(entity.getRegistrationId());
 			to.setRegistrationDate(entity.getRegistrationDate());
 			to.setFundsSource(entity.getFundsSource().value);
-			to.setSpecialty(entity.getSpecialty().getTitle());
+			to.setEducationBase(entity.getEducationBase().value);
+			to.setEducationForm(entity.getEducationForm().value);
+			to.setStatus(entity.getStatus().value);
 			to.setAttestateAvg(entity.getCertificate() != null 
 					? certificateDao.getAverageMark(entity.getCertificate().getEntityKey()) : 0);
 			return to;

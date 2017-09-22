@@ -8,11 +8,19 @@ public class RegistrationSearchQuery implements Serializable {
 
 	private Long customerId;
 	
-	private String name;
-	
 	private Long periodId;
 	
+	private Long educationInstitutionId;
+	
 	private Long specialtyId;
+	
+	private Long registrationId;
+	
+	private String name;
+	
+	private Character educationForm;
+	
+	private String educationBase;
 	
 	private Character fundsSource;
 	
@@ -54,6 +62,42 @@ public class RegistrationSearchQuery implements Serializable {
 
 	public void setFundsSource(Character fundsSource) {
 		this.fundsSource = fundsSource;
+	}
+
+	public Long getEducationInstitutionId() {
+		return educationInstitutionId;
+	}
+
+	public void setEducationInstitutionId(Long educationInstitutionId) {
+		this.educationInstitutionId = educationInstitutionId;
+	}
+
+	public Long getRegistrationId() {
+		return registrationId;
+	}
+
+	public void setRegistrationId(Long registrationId) {
+		this.registrationId = registrationId;
+	}
+
+	public Character getEducationForm() {
+		return educationForm;
+	}
+
+	public void setEducationForm(Character educationForm) {
+		this.educationForm = educationForm;
+	}
+
+	public String getEducationBase() {
+		return educationBase;
+	}
+
+	public void setEducationBase(String educationBase) {
+		this.educationBase = educationBase;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 }

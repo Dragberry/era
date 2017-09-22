@@ -17,6 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.dragberry.era.common.registration.RegistrationSearchQuery;
 import org.dragberry.era.dao.RegistrationDao;
 import org.dragberry.era.domain.Customer;
+import org.dragberry.era.domain.EducationBase;
+import org.dragberry.era.domain.EducationForm;
 import org.dragberry.era.domain.FundsSource;
 import org.dragberry.era.domain.Registration;
 import org.springframework.stereotype.Repository;
@@ -43,20 +45,30 @@ public class RegistrationDaoImpl extends AbstractDao<Registration> implements Re
 		where.add(cb.equal(regRoot.get("institution"), custRoot.get("institution")));
 		where.add(cb.equal(custRoot.get("entityKey"), query.getCustomerId()));
 		where.add(cb.equal(regRoot.get("registrationPeriod").get("entityKey"), query.getPeriodId()));
-		if (StringUtils.isNotEmpty(query.getName())) {
-			where.add(cb.or(
-				Arrays.stream(query.getName().split("\\s+")).distinct().map(word -> forLike(word)).flatMap(word -> {
-					return Stream.of(
-							cb.like(regRoot.get("enrollee").get("firstName"), word),
-							cb.like(regRoot.get("enrollee").get("lastName"), word),
-							cb.like(regRoot.get("enrollee").get("middleName"), word));
-				}).collect(Collectors.toList()).toArray(new Predicate[] {})));
-		}
 		if (query.getSpecialtyId() != null) {
 			where.add(cb.equal(regRoot.get("specialty").get("entityKey"), query.getSpecialtyId()));
 		}
 		if (query.getFundsSource() != null) {
 			where.add(cb.equal(regRoot.get("fundsSource"), FundsSource.resolve(query.getFundsSource())));
+		}
+		if (query.getEducationBase() != null) {
+			where.add(cb.equal(regRoot.get("educationBase"), EducationBase.resolve(query.getEducationBase())));
+		}
+		if (query.getEducationForm() != null) {
+			where.add(cb.equal(regRoot.get("educationForm"), EducationForm.resolve(query.getEducationForm())));
+		}
+		if (query.getRegistrationId() != null) {
+			where.add(cb.equal(regRoot.get("registrationId"), query.getRegistrationId()));
+		} else {
+			if (StringUtils.isNotEmpty(query.getName())) {
+				where.add(cb.or(
+					Arrays.stream(query.getName().split("\\s+")).distinct().map(word -> forLike(word)).flatMap(word -> {
+						return Stream.of(
+								cb.like(regRoot.get("enrollee").get("firstName"), word),
+								cb.like(regRoot.get("enrollee").get("lastName"), word),
+								cb.like(regRoot.get("enrollee").get("middleName"), word));
+					}).collect(Collectors.toList()).toArray(new Predicate[] {})));
+			}
 		}
 		cq.where(where.toArray(new Predicate[] {}));
 		cq.select(regRoot).distinct(true);

@@ -14,17 +14,25 @@ public class RegistrationTO implements Serializable {
 
 	private Long id;
 	
+	private Long registrationId;
+	
 	private String firstName;
 	
 	private String lastName;
 	
 	private String middleName;
+	
+	private Character status;
 
 	private String specialty;
 	
 	private Double attestateAvg;
 	
 	private Character fundsSource;
+	
+	private Character educationForm;
+	
+	private String educationBase;
 	
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -92,6 +100,38 @@ public class RegistrationTO implements Serializable {
 
 	public void setFundsSource(Character fundsSource) {
 		this.fundsSource = fundsSource;
+	}
+
+	public Long getRegistrationId() {
+		return registrationId;
+	}
+
+	public void setRegistrationId(Long registrationId) {
+		this.registrationId = registrationId;
+	}
+
+	public Character getStatus() {
+		return status;
+	}
+
+	public void setStatus(Character status) {
+		this.status = status;
+	}
+
+	public Character getEducationForm() {
+		return educationForm;
+	}
+
+	public void setEducationForm(Character educationForm) {
+		this.educationForm = educationForm;
+	}
+
+	public String getEducationBase() {
+		return educationBase;
+	}
+
+	public void setEducationBase(String educationBase) {
+		this.educationBase = educationBase;
 	}
 
 }

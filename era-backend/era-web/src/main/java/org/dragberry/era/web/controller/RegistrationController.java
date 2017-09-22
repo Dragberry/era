@@ -52,18 +52,22 @@ public class RegistrationController {
 			@RequestParam("period") Long periodId,
 			@RequestParam("education-institution") Long institutionId,
 			@RequestParam(name = "specialty", required = false) Long specialtyId,
-			@RequestParam(name = "registration-id", required = false) String registrationId,
+			@RequestParam(name = "registration-id", required = false) Long registrationId,
 			@RequestParam(name = "name", required = false) String name,
 			@RequestParam(name = "funds-source", required = false) Character fundsSource,
 			@RequestParam(name = "education-form", required = false) Character educationForm,
-			@RequestParam(name = "education-base", required = false) Character educationBase) {
+			@RequestParam(name = "education-base", required = false) String educationBase) {
 		accessContoll.checkPermission(Roles.Registrations.VIEW);
 		RegistrationSearchQuery query = new RegistrationSearchQuery();
 		query.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
 		query.setPeriodId(periodId);
-		query.setName(name);
+		query.setEducationInstitutionId(institutionId);
 		query.setSpecialtyId(specialtyId);
+		query.setRegistrationId(registrationId);
+		query.setName(name);
 		query.setFundsSource(fundsSource);
+		query.setEducationForm(educationForm);
+		query.setEducationBase(educationBase);
 		return ResponseEntity.ok(Results.create(registrationService.getRegistrationList(query)));
 	}
 	
