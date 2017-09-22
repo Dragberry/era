@@ -234,6 +234,7 @@ public class RegistrationServiceBean implements RegistrationService {
 			RegisteredSpecialtyTO specTo = new RegisteredSpecialtyTO();
 			specTo.setId(spec.getEntityKey());
 			specTo.setSpecialty(spec.getSpecialty().getTitle());
+			specTo.setShortName(spec.getSpecialty().getShortName());
 			specTo.setSeparateByEducationBase(spec.getSeparateByEducationBase());
 			specTo.setEducationBases(spec.getEducationBases().stream().map(EducationBase::getValue).collect(Collectors.toSet()));
 			specTo.setSeparateByEducationForm(spec.getSeparateByEducationForm());

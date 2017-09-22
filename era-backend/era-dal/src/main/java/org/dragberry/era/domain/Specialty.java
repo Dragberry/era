@@ -1,17 +1,12 @@
 package org.dragberry.era.domain;
 
-import java.text.MessageFormat;
-
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import org.dragberry.era.domain.converter.SpecialtyStatusConverter;
 
 @Entity
 @Table(name = "SPECIALTY")
@@ -27,31 +22,6 @@ public class Specialty extends BaseEntity {
 
 	private static final long serialVersionUID = 6491824262933007676L;
 	
-	private static final String UNKNOWN_VALUE_MSG = "Unknown Specialty status value: {0}!";
-	private static final String NPE_MSG = "Specialty status cannot be null!";
-	
-	public static enum Status {
-		ACTIVE('A'), INACTIVE('I');
-		
-		public final char value;
-		
-		private Status(char value) {
-			this.value = value;
-		}
-		
-		public static Status valueOf(Character value) {
-			if (value == null) {
-				throw new NullPointerException(NPE_MSG);
-			}
-			for (Status status : Status.values()) {
-				if (value.equals(status.value)) {
-					return status;
-				}
-			}
-			throw new IllegalArgumentException(MessageFormat.format(UNKNOWN_VALUE_MSG, value));
-		}
-	}
-	
 	@Id
 	@Column(name = "SPECIALTY_KEY")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "SPECIALTY_GEN")
@@ -60,15 +30,17 @@ public class Specialty extends BaseEntity {
 	@Column(name = "TITLE")
 	private String title;
 	
+	@Column(name = "SHORT_NAME")
+	private String shortName;
+	
 	@Column(name = "CODE")
 	private String code;
 	
 	@Column(name = "QUALIFICATION")
 	private String qualification;
 	
-	@Column(name = "STATUS")
-	@Convert(converter = SpecialtyStatusConverter.class)
-	private Status STATUS;
+	@Column(name = "DELETED")
+	private Boolean deleted;
 	
 	@Override
 	public Long getEntityKey() {
@@ -102,6 +74,22 @@ public class Specialty extends BaseEntity {
 
 	public void setQualification(String qualification) {
 		this.qualification = qualification;
+	}
+	
+	public String getShortName() {
+		return shortName;
+	}
+
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
+	}
+
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 
 }

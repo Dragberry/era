@@ -12,6 +12,8 @@ public class RegisteredSpecialtyTO implements Serializable {
 	
 	private String specialty;
 	
+	private String shortName;
+	
 	private Boolean separateByEducationBase;
 	
 	private Set<String> educationBases = new HashSet<>();
@@ -86,6 +88,14 @@ public class RegisteredSpecialtyTO implements Serializable {
 
 	public void setFundsSources(Set<Character> fundsSources) {
 		this.fundsSources = fundsSources;
+	}
+
+	public String getShortName() {
+		return shortName;
+	}
+
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
 	}
 
 }
