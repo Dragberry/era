@@ -36,10 +36,12 @@ public class RegistrationDaoImpl extends AbstractDao<Registration> implements Re
 		Root<Registration> regRoot = cq.from(Registration.class);
 		Root<Customer> custRoot = cq.from(Customer.class);
 		regRoot.fetch("enrollee");
+		regRoot.fetch("registeredBy");
+		regRoot.fetch("verifiedBy", JoinType.LEFT);
 		regRoot.fetch("institution");
 		regRoot.fetch("specialty");
-		regRoot.fetch("certificate", JoinType.LEFT);
 		regRoot.fetch("registrationPeriod");
+		regRoot.fetch("certificate", JoinType.LEFT);
 		
 		List<Predicate> where = new ArrayList<>();
 		where.add(cb.equal(regRoot.get("institution"), custRoot.get("institution")));

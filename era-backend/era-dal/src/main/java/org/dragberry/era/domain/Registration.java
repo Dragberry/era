@@ -74,6 +74,13 @@ public class Registration extends BaseEntity {
 	@JoinColumn(name = "REGISTERED_BY", referencedColumnName = "USER_ACCOUNT_KEY")
 	private UserAccount registeredBy;
 	
+	@Column(name = "VERIFICATION_DATE")
+	private LocalDateTime verificationDate;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "VERIFIED_BY", referencedColumnName = "USER_ACCOUNT_KEY")
+	private UserAccount verifiedBy;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "EDUCATION_INSTITUTION_KEY", referencedColumnName = "EDUCATION_INSTITUTION_KEY")
 	private EducationInstitution institution;
@@ -230,9 +237,26 @@ public class Registration extends BaseEntity {
 	public void setOutOfCompetitions(List<OutOfCompetition> outOfCompetitions) {
 		this.outOfCompetitions = outOfCompetitions;
 	}
+	
+
+	public LocalDateTime getVerificationDate() {
+		return verificationDate;
+	}
+
+	public void setVerificationDate(LocalDateTime verificationDate) {
+		this.verificationDate = verificationDate;
+	}
+
+	public UserAccount getVerifiedBy() {
+		return verifiedBy;
+	}
+
+	public void setVerifiedBy(UserAccount verifiedBy) {
+		this.verifiedBy = verifiedBy;
+	}
 
 	public static enum Status implements BaseEnum<Character> {
-		PROCESSING('P'), AWAITING('W'), ACCEPTED('A'), CANCELED('C');
+		UNCOMPLETE('U'), NOT_VERIFIED('N'), VERIFIED('V'), ACCEPTED('A'), CANCELED('C');
 		
 		public final Character value;
 		

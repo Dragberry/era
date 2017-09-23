@@ -31,6 +31,7 @@ import org.dragberry.era.dao.SpecialtyDao;
 import org.dragberry.era.dao.SubjectDao;
 import org.dragberry.era.dao.UserAccountDao;
 import org.dragberry.era.domain.Address;
+import org.dragberry.era.domain.Benefit;
 import org.dragberry.era.domain.Certificate;
 import org.dragberry.era.domain.Document;
 import org.dragberry.era.domain.EducationBase;
@@ -77,21 +78,34 @@ public class RegistrationServiceBean implements RegistrationService {
 	public List<RegistrationTO> getRegistrationList(RegistrationSearchQuery query) {
 		return registrationDao.searchList(query).stream().map(entity -> {
 			RegistrationTO to = new RegistrationTO();
-			to.setSpecialty(entity.getSpecialty().getTitle());
+			to.setRegistrationId(entity.getRegistrationId());
+			to.setStatus(entity.getStatus().value);
 			to.setFirstName(entity.getEnrollee().getFirstName());
 			to.setLastName(entity.getEnrollee().getLastName());
 			to.setMiddleName(entity.getEnrollee().getMiddleName());
 			to.setId(entity.getEntityKey());
-			to.setRegistrationId(entity.getRegistrationId());
-			to.setRegistrationDate(entity.getRegistrationDate());
+			to.setSpecialty(entity.getSpecialty().getTitle());
 			to.setFundsSource(entity.getFundsSource().value);
 			to.setEducationBase(entity.getEducationBase().value);
 			to.setEducationForm(entity.getEducationForm().value);
-			to.setStatus(entity.getStatus().value);
+			to.setOutOfCompetitions(getBenefitNames(entity.getOutOfCompetitions()));
+			to.setPrerogatives(getBenefitNames(entity.getPrerogatives()));
+			to.setRegistrationDate(entity.getRegistrationDate());
+			to.setRegisteredBy(entity.getRegisteredBy().getUsername());
+			to.setRegisteredById(entity.getRegisteredBy().getEntityKey());
+			if (entity.getStatus() == Status.VERIFIED) {
+				to.setVerificationDate(entity.getVerificationDate());
+				to.setVerifiedBy(entity.getVerifiedBy().getUsername());
+				to.setVerifiedById(entity.getVerifiedBy().getEntityKey());
+			}
 			to.setAttestateAvg(entity.getCertificate() != null 
 					? certificateDao.getAverageMark(entity.getCertificate().getEntityKey()) : 0);
 			return to;
 		}).collect(Collectors.toList());
+	}
+	
+	private static List<String> getBenefitNames(List<? extends Benefit> benefits) {
+		return benefits.stream().map(Benefit::getName).collect(Collectors.toList());
 	}
 	
 	@Override
@@ -194,7 +208,7 @@ public class RegistrationServiceBean implements RegistrationService {
 			
 			Long registrationId = getIdForRegistration(registration);
 			registration.setRegistrationId(registrationId);
-			registration.setStatus(Status.PROCESSING);
+			registration.setStatus(Status.NOT_VERIFIED);
 
 			registrationDao.create(registration);
 			registrationCRUD.setId(registration.getEntityKey());
@@ -238,7 +252,6 @@ public class RegistrationServiceBean implements RegistrationService {
 			RegisteredSpecialtyTO specTo = new RegisteredSpecialtyTO();
 			specTo.setId(spec.getEntityKey());
 			specTo.setSpecialty(spec.getSpecialty().getTitle());
-			specTo.setShortName(spec.getSpecialty().getShortName());
 			specTo.setSeparateByEducationBase(spec.getSeparateByEducationBase());
 			specTo.setEducationBases(spec.getEducationBases().stream().map(EducationBase::getValue).collect(Collectors.toSet()));
 			specTo.setSeparateByEducationForm(spec.getSeparateByEducationForm());

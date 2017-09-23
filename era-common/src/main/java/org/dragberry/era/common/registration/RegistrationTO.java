@@ -2,6 +2,8 @@ package org.dragberry.era.common.registration;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -34,9 +36,25 @@ public class RegistrationTO implements Serializable {
 	
 	private String educationBase;
 	
+	private List<String> prerogatives = new ArrayList<>();
+	
+	private List<String> outOfCompetitions = new ArrayList<>();
+	
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime registrationDate;
+	
+	private String registeredBy;
+	
+	private Long registeredById;
+	
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	private LocalDateTime verificationDate;
+	
+	private String verifiedBy;
+	
+	private Long verifiedById;
 
 	public Long getId() {
 		return id;
@@ -44,6 +62,14 @@ public class RegistrationTO implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getRegistrationId() {
+		return registrationId;
+	}
+
+	public void setRegistrationId(Long registrationId) {
+		this.registrationId = registrationId;
 	}
 
 	public String getFirstName() {
@@ -70,12 +96,20 @@ public class RegistrationTO implements Serializable {
 		this.middleName = middleName;
 	}
 
+	public Character getStatus() {
+		return status;
+	}
+
+	public void setStatus(Character status) {
+		this.status = status;
+	}
+
 	public String getSpecialty() {
 		return specialty;
 	}
 
-	public void setSpecialty(String speciality) {
-		this.specialty = speciality;
+	public void setSpecialty(String specialty) {
+		this.specialty = specialty;
 	}
 
 	public Double getAttestateAvg() {
@@ -86,36 +120,12 @@ public class RegistrationTO implements Serializable {
 		this.attestateAvg = attestateAvg;
 	}
 
-	public LocalDateTime getRegistrationDate() {
-		return registrationDate;
-	}
-
-	public void setRegistrationDate(LocalDateTime registrationDate) {
-		this.registrationDate = registrationDate;
-	}
-
 	public Character getFundsSource() {
 		return fundsSource;
 	}
 
 	public void setFundsSource(Character fundsSource) {
 		this.fundsSource = fundsSource;
-	}
-
-	public Long getRegistrationId() {
-		return registrationId;
-	}
-
-	public void setRegistrationId(Long registrationId) {
-		this.registrationId = registrationId;
-	}
-
-	public Character getStatus() {
-		return status;
-	}
-
-	public void setStatus(Character status) {
-		this.status = status;
 	}
 
 	public Character getEducationForm() {
@@ -132,6 +142,70 @@ public class RegistrationTO implements Serializable {
 
 	public void setEducationBase(String educationBase) {
 		this.educationBase = educationBase;
+	}
+
+	public List<String> getPrerogatives() {
+		return prerogatives;
+	}
+
+	public void setPrerogatives(List<String> prerogatives) {
+		this.prerogatives = prerogatives;
+	}
+
+	public List<String> getOutOfCompetitions() {
+		return outOfCompetitions;
+	}
+
+	public void setOutOfCompetitions(List<String> outOfCompetitions) {
+		this.outOfCompetitions = outOfCompetitions;
+	}
+
+	public LocalDateTime getRegistrationDate() {
+		return registrationDate;
+	}
+
+	public void setRegistrationDate(LocalDateTime registrationDate) {
+		this.registrationDate = registrationDate;
+	}
+
+	public String getRegisteredBy() {
+		return registeredBy;
+	}
+
+	public void setRegisteredBy(String registeredBy) {
+		this.registeredBy = registeredBy;
+	}
+
+	public Long getRegisteredById() {
+		return registeredById;
+	}
+
+	public void setRegisteredById(Long registeredById) {
+		this.registeredById = registeredById;
+	}
+
+	public LocalDateTime getVerificationDate() {
+		return verificationDate;
+	}
+
+	public void setVerificationDate(LocalDateTime verificationDate) {
+		this.verificationDate = verificationDate;
+	}
+
+	public String getVerifiedBy() {
+		return verifiedBy;
+	}
+
+	public void setVerifiedBy(String verifiedBy) {
+		this.verifiedBy = verifiedBy;
+	}
+
+	public Long getVerifiedById() {
+		return verifiedById;
+	}
+
+	public void setVerifiedById(Long verifiedById) {
+		this.verifiedById = verifiedById;
 	}
 
 }

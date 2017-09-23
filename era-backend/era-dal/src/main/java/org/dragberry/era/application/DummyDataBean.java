@@ -65,7 +65,8 @@ public class DummyDataBean {
 	@Autowired
 	private OutOfCompetitionDao outOfCompetitionDao;
 	
-	private UserAccount registeredBy;
+	private UserAccount user1;
+	private UserAccount user2;
 	private EducationInstitution eInstitution;
 	private RegistrationPeriod period;
 	
@@ -74,7 +75,8 @@ public class DummyDataBean {
 		if (registrationPeriodDao.findOne(1000L) != null) {
 			return;
 		}
-		registeredBy = userAccountDao.findOne(1000L);
+		user1 = userAccountDao.findOne(1000L);
+		user2 = userAccountDao.findOne(1001L);
 		eInstitution = einstitutionDao.findOne(1000l);
 		
 		period = period(eInstitution);
@@ -182,8 +184,15 @@ public class DummyDataBean {
 		registration.setCertificate(certificate);
 		registration.setEnrollee(enr);
 		registration.setInstitution(eInstitution);
-		registration.setRegisteredBy(registeredBy);
+		registration.setRegisteredBy(id % 2 == 0 ? user1 : user2);
 		registration.setRegistrationDate(LocalDateTime.now());
+		if (id % 3 == 0) {
+			registration.setVerifiedBy(id % 2 == 0 ? user2 : user1);
+			registration.setStatus(Registration.Status.VERIFIED);
+			registration.setVerificationDate(LocalDateTime.now().plusMinutes(45));
+		} else {
+			registration.setStatus(Registration.Status.NOT_VERIFIED);
+		}
 		registration.setSpecialty(period.getSpecialties().get(specId).getSpecialty());
 		registration.setRegistrationId(id);
 		registration.setRegistrationPeriod(period);
@@ -192,7 +201,7 @@ public class DummyDataBean {
 		registration.setEducationBase(base);
 		registration.setPrerogatives(Arrays.stream(benefits).filter(b -> b instanceof Prerogative).map(b -> (Prerogative) b).collect(Collectors.toList()));
 		registration.setOutOfCompetitions(Arrays.stream(benefits).filter(b -> b instanceof OutOfCompetition).map(b -> (OutOfCompetition) b).collect(Collectors.toList()));
-		registration.setStatus(Registration.Status.PROCESSING);
+		
 		return registration;
 	}
 	
