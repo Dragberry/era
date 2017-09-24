@@ -1,5 +1,6 @@
 package org.dragberry.era.application.config;
 
+import org.dragberry.era.business.audit.AuditService;
 import org.dragberry.era.business.benefit.BenefitService;
 import org.dragberry.era.business.certificate.CertificateService;
 import org.dragberry.era.business.customer.CustomerService;
@@ -72,5 +73,10 @@ public class TestContext {
 	@Bean
 	public UserAccountService usService() {
 		return Mockito.mock(UserAccountService.class);
+	}
+	
+	@Bean
+	public AuditService auditService() {
+		return Mockito.mock(AuditService.class);
 	}
 }

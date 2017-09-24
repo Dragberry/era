@@ -19,6 +19,11 @@ public class AccessControlBean implements AccessControl {
 	@Autowired
 	private HttpServletRequest request;
 	
+	@Override
+	public String getRemoteAddress() {
+		return request.getRemoteAddr();
+	}
+	
 	public void checkPermission(List<String> rolesToCheck) {
 		rolesToCheck.forEach((role) -> {
 			checkPermission(role);

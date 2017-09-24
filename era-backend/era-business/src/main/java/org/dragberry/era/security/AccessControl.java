@@ -11,4 +11,6 @@ public interface AccessControl {
 	JwtUser getLoggedUser();
 
 	void checkLoggedUser();
+
+	String getRemoteAddress();
 }

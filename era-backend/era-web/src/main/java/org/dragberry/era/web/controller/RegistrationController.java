@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.dragberry.era.business.audit.AuditService;
 import org.dragberry.era.business.benefit.BenefitService;
 import org.dragberry.era.business.registration.ContractService;
 import org.dragberry.era.business.registration.RegistrationService;
@@ -37,6 +38,8 @@ public class RegistrationController {
 	
 	@Autowired
 	private AccessControl accessContoll;
+	@Autowired
+	private AuditService auditService;
 	
 	@Autowired
 	private BenefitService benefitServiceBean;

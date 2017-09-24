@@ -70,6 +70,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.javers</groupId>
+			<artifactId>javers-core</artifactId>
+			<version>${javers.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.dragberry.era</groupId>
 			<artifactId>era-common</artifactId>
 			<version>${project.version}</version>
@@ -78,9 +84,10 @@
 	</dependencies>
 
 	<properties>
+		<javers.version>3.5.1</javers.version>
 		<flyway.version>2.3.1</flyway.version>
 		<commons-dbcp2.version>2.1.1</commons-dbcp2.version>
 		<hibernate.version>5.2.11.Final</hibernate.version>
 		<mysql.version>5.1.44</mysql.version>
-	</properties>	
+	</properties>
 </project>
