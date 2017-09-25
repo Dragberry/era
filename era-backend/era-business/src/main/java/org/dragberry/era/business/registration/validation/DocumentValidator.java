@@ -54,44 +54,44 @@ public class DocumentValidator implements Validator<Registration> {
 		// Document
 		Document document = entity.getEnrollee().getDocument();
 		if (document == null) {
-			issues.add(Issues.create(Errors.DOCUMENT_IS_EMPTY));
+			issues.add(Issues.warning(Errors.DOCUMENT_IS_EMPTY));
 		} else {
 			// Document type
 			if (document.getType() == null) {
-				issues.add(Issues.create(Errors.DOCUMENT_TYPE_IS_INVALID, FieldID.DOCUMENT_TYPE));
+				issues.add(Issues.error(Errors.DOCUMENT_TYPE_IS_INVALID, FieldID.DOCUMENT_TYPE));
 			}
 			// Id
 			if (StringUtils.isBlank(document.getId())) {
-				issues.add(Issues.create(Errors.ID_IS_EMPTY, FieldID.DOCUMENT_ID));
+				issues.add(Issues.warning(Errors.ID_IS_EMPTY, FieldID.DOCUMENT_ID));
 			} else {
 				issues.addAll(validateFieldLength(document.getId(), 14, Errors.ID_HAS_INVALID_LENGTH, FieldID.DOCUMENT_ID));
 			}
 			// Document id
 			if (StringUtils.isBlank(document.getDocumentId())) {
-				issues.add(Issues.create(Errors.DOCUMENT_ID_IS_EMPTY, FieldID.DOCUMENT_DOCUMENT_ID));
+				issues.add(Issues.warning(Errors.DOCUMENT_ID_IS_EMPTY, FieldID.DOCUMENT_DOCUMENT_ID));
 			} else {
 				issues.addAll(validateFieldLength(document.getDocumentId(), 9, Errors.DOCUMENT_ID_HAS_INVALID_LENGTH, FieldID.DOCUMENT_DOCUMENT_ID));
 			}
 			// Document issue date
 			if (document.getIssueDate() == null) {
-				issues.add(Issues.create(Errors.DOCUMENT_ISSUE_DATE_IS_EMPTY, FieldID.DOCUMENT_ISSUE_DATE));
+				issues.add(Issues.warning(Errors.DOCUMENT_ISSUE_DATE_IS_EMPTY, FieldID.DOCUMENT_ISSUE_DATE));
 			} else {
 				if (document.getIssueDate().isAfter(LocalDate.now())) {
-					issues.add(Issues.create(Errors.DOCUMENT_ISSUE_DATE_IS_IN_FUTURE, FieldID.DOCUMENT_ISSUE_DATE));
+					issues.add(Issues.error(Errors.DOCUMENT_ISSUE_DATE_IS_IN_FUTURE, FieldID.DOCUMENT_ISSUE_DATE));
 				}
 			}
 			// Document issued by
 			if (StringUtils.isBlank(document.getIssuedBy())) {
-				issues.add(Issues.create(Errors.DOCUMENT_ISSUED_BY_IS_EMPTY, FieldID.DOCUMENT_ISSUED_BY));
+				issues.add(Issues.warning(Errors.DOCUMENT_ISSUED_BY_IS_EMPTY, FieldID.DOCUMENT_ISSUED_BY));
 			} else {
 				issues.addAll(validateFieldMaxLength(document.getIssuedBy(), 32, Errors.DOCUMENT_ISSUED_BY_IS_TOO_LONG, FieldID.DOCUMENT_ISSUED_BY));
 			}
 			// Document citizenship
 			if (StringUtils.isBlank(document.getCitizenhip())) {
-				issues.add(Issues.create(Errors.DOCUMENT_CITIZENSHIP_IS_EMPTY, FieldID.DOCUMENT_CITIZENSHIP));
+				issues.add(Issues.warning(Errors.DOCUMENT_CITIZENSHIP_IS_EMPTY, FieldID.DOCUMENT_CITIZENSHIP));
 			} else {
 				if (!countryService.getCountryCodes().contains(document.getCitizenhip())) {
-					issues.add(Issues.create(Errors.DOCUMENT_CITIZENSHIP_IS_INVALID, FieldID.DOCUMENT_CITIZENSHIP));
+					issues.add(Issues.error(Errors.DOCUMENT_CITIZENSHIP_IS_INVALID, FieldID.DOCUMENT_CITIZENSHIP));
 				}
 			}
 		}

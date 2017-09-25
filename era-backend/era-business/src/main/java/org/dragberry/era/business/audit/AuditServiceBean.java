@@ -40,7 +40,7 @@ public class AuditServiceBean implements AuditService {
 		record.setDate(LocalDateTime.now());
 		record.setIp(accessControl.getRemoteAddress());
 		record.setEntityType(entityType.getName());
-		record.setReferencedEntityKey(entityKey.toString());
+		record.setReferencedEntityKey(entityKey);
 		record.setAction(action);
 		return auditRecordDao.create(record);
 	}
@@ -52,7 +52,7 @@ public class AuditServiceBean implements AuditService {
 		record.setDate(LocalDateTime.now());
 		record.setIp(accessControl.getRemoteAddress());
 		record.setEntityType(entityType.getName());
-		record.setReferencedEntityKey(old.getEntityKey().toString());
+		record.setReferencedEntityKey(old.getEntityKey());
 		record.setAction(action);
 		return auditRecordDao.create(record);
 	}

@@ -51,32 +51,32 @@ public class AddressValidator implements Validator<Registration> {
 		}
 		Address address = entity.getEnrollee().getAddress();
 		if (address == null) {
-			return issues(Issues.create(Errors.ADDRESS_IS_EMPTY));
+			return issues(Issues.warning(Errors.ADDRESS_IS_EMPTY));
 		}
 		List<IssueTO> issues = new ArrayList<>();
 		// Country
 		if (address.getCountry() == null) {
-			issues.add(Issues.create(Errors.COUNTRY_IS_EMPTY, FieldID.COUNTRY));
+			issues.add(Issues.warning(Errors.COUNTRY_IS_EMPTY, FieldID.COUNTRY));
 		} else {
 			if (!countryService.getCountryCodes().contains(address.getCountry())) {
-				issues.add(Issues.create(Errors.COUNTRY_IS_INVALID, FieldID.COUNTRY));
+				issues.add(Issues.error(Errors.COUNTRY_IS_INVALID, FieldID.COUNTRY));
 			}
 		}
 		// City
 		if (StringUtils.isBlank(address.getCity())) {
-			issues.add(Issues.create(Errors.CITY_IS_EMPTY, FieldID.CITY));
+			issues.add(Issues.warning(Errors.CITY_IS_EMPTY, FieldID.CITY));
 		} else {
 			issues.addAll(validateFieldMaxLength(address.getCity(), 32, Errors.CITY_IS_TOO_LONG, FieldID.CITY));
 		}
 		// Street
 		if (StringUtils.isBlank(address.getStreet())) {
-			issues.add(Issues.create(Errors.STREET_IS_EMPTY, FieldID.STREET));
+			issues.add(Issues.warning(Errors.STREET_IS_EMPTY, FieldID.STREET));
 		} else {
 			issues.addAll(validateFieldMaxLength(address.getStreet(), 32, Errors.STREET_IS_TOO_LONG, FieldID.STREET));
 		}
 		// House
 		if (StringUtils.isBlank(address.getStreet())) {
-			issues.add(Issues.create(Errors.HOUSE_IS_EMPTY, FieldID.HOUSE));
+			issues.add(Issues.warning(Errors.HOUSE_IS_EMPTY, FieldID.HOUSE));
 		} else {
 			issues.addAll(validateFieldMaxLength(address.getHouse(), 8, Errors.HOUSE_IS_TOO_LONG, FieldID.HOUSE));
 		}

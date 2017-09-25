@@ -13,6 +13,8 @@ public class AbstractCRUDTO implements Serializable {
 	private Long userAccountId;
 	
 	private Long version;
+	
+	private Boolean ignoreWarnings;
 
 	public Long getId() {
 		return id;
@@ -44,6 +46,14 @@ public class AbstractCRUDTO implements Serializable {
 
 	public void setVersion(Long version) {
 		this.version = version;
+	}
+
+	public Boolean getIgnoreWarnings() {
+		return ignoreWarnings;
+	}
+
+	public void setIgnoreWarnings(Boolean ignoreWarnings) {
+		this.ignoreWarnings = ignoreWarnings;
 	}
 	
 }

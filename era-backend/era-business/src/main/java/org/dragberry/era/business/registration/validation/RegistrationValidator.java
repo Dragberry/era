@@ -65,54 +65,54 @@ public class RegistrationValidator implements Validator<Registration> {
 		List<IssueTO> issues = new ArrayList<>();
 		RegistrationPeriod period = entity.getRegistrationPeriod();
 		if (entity.getInstitution() == null) {
-			issues.add(Issues.create(Errors.EDUCATION_INSTITUTION_IS_EMPTY, FieldID.EDUCATION_INSTITUTION));
+			issues.add(Issues.error(Errors.EDUCATION_INSTITUTION_IS_EMPTY, FieldID.EDUCATION_INSTITUTION));
 		} else {
 			List<RegistrationPeriod> periods = registrationPeriodDao.findActivePeriodsForCustomer(accessControl.getLoggedUser().getCustomerId());
 			if (period == null) {
-				issues.add(Issues.create(Errors.NO_REGISTRATION_PERIOD));
+				issues.add(Issues.error(Errors.NO_REGISTRATION_PERIOD));
 			} else {
 				if (!periods.stream().anyMatch(p -> p.getEntityKey().equals(period.getEntityKey()))) {
-					issues.add(Issues.create(Errors.REGISTRATION_PERIOD_IS_WRONG));
+					issues.add(Issues.error(Errors.REGISTRATION_PERIOD_IS_WRONG));
 				} else {
 					if (period.getStatus() != RegistrationPeriod.Status.OPENED) {
-						issues.add(Issues.create(Errors.REGISTRATION_PERIOD_IS_NOT_OPENED));
+						issues.add(Issues.error(Errors.REGISTRATION_PERIOD_IS_NOT_OPENED));
 					}
 				}
 				if (!period.getEducationInstitution().getEntityKey().equals(entity.getInstitution().getEntityKey())) {
-					issues.add(Issues.create(Errors.EDUCATION_INSTITUTION_IS_WRONG, FieldID.EDUCATION_INSTITUTION));
+					issues.add(Issues.error(Errors.EDUCATION_INSTITUTION_IS_WRONG, FieldID.EDUCATION_INSTITUTION));
 				}
 			}
 		}
 		if (entity.getSpecialty() == null) {
-			issues.add(Issues.create(Errors.SPECIALTY_IS_EMPTY, FieldID.SPECIALTY));
+			issues.add(Issues.error(Errors.SPECIALTY_IS_EMPTY, FieldID.SPECIALTY));
 		} else {
 			if (period != null && !period.getSpecialties().stream()
 					.anyMatch(spec -> spec.getSpecialty().getEntityKey().equals(entity.getSpecialty().getEntityKey()))) {
-				issues.add(Issues.create(Errors.SPECIALTY_IS_WRONG, FieldID.SPECIALTY));
+				issues.add(Issues.error(Errors.SPECIALTY_IS_WRONG, FieldID.SPECIALTY));
 			}
 		}
 		if (entity.getFundsSource() == null) {
-			issues.add(Issues.create(Errors.FUNDS_SOURCE_IS_EMPTY, FieldID.FUNDS_SOURCE));
+			issues.add(Issues.error(Errors.FUNDS_SOURCE_IS_EMPTY, FieldID.FUNDS_SOURCE));
 		} else {
 			if (period != null && !period.getSpecialties().stream()
 					.anyMatch(spec -> spec.getFundsSources().contains(entity.getFundsSource()))) {
-				issues.add(Issues.create(Errors.FUNDS_SOURCE_IS_NOT_AVAILABLE, FieldID.FUNDS_SOURCE));
+				issues.add(Issues.error(Errors.FUNDS_SOURCE_IS_NOT_AVAILABLE, FieldID.FUNDS_SOURCE));
 			}
 		}
 		if (entity.getEducationForm() == null) {
-			issues.add(Issues.create(Errors.EDUCATION_FORM_IS_EMPTY, FieldID.EDUCATION_FORM));
+			issues.add(Issues.error(Errors.EDUCATION_FORM_IS_EMPTY, FieldID.EDUCATION_FORM));
 		} else {
 			if (period != null && !period.getSpecialties().stream()
 					.anyMatch(spec -> spec.getEducationForms().contains(entity.getEducationForm()))) {
-				issues.add(Issues.create(Errors.EDUCATION_FORM_IS_NOT_AVAILABLE, FieldID.EDUCATION_FORM));
+				issues.add(Issues.error(Errors.EDUCATION_FORM_IS_NOT_AVAILABLE, FieldID.EDUCATION_FORM));
 			}
 		}
 		if (entity.getEducationBase() == null) {
-			issues.add(Issues.create(Errors.EDUCATION_BASE_IS_EMPTY, FieldID.EDUCATION_BASE));
+			issues.add(Issues.error(Errors.EDUCATION_BASE_IS_EMPTY, FieldID.EDUCATION_BASE));
 		} else {
 			if (period != null && !period.getSpecialties().stream()
 					.anyMatch(spec -> spec.getEducationBases().contains(entity.getEducationBase()))) {
-				issues.add(Issues.create(Errors.EDUCATION_BASE_IS_NOT_AVAILABLE, FieldID.EDUCATION_BASE));
+				issues.add(Issues.error(Errors.EDUCATION_BASE_IS_NOT_AVAILABLE, FieldID.EDUCATION_BASE));
 			}
 		}
 		
@@ -129,7 +129,7 @@ public class RegistrationValidator implements Validator<Registration> {
 				.map(Benefit::getName)
 				.collect(Collectors.joining(COMMA, BRACKET_L, BRACKET_R));
 			if (!deleted.equals(BRACKETS)) {
-				return Arrays.asList(Issues.create(msg, fieldID, deleted));
+				return Arrays.asList(Issues.error(msg, fieldID, deleted));
 			}
 		}
 		return Collections.emptyList();

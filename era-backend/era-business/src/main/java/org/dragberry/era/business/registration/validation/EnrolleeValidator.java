@@ -39,18 +39,18 @@ public class EnrolleeValidator implements Validator<Registration> {
 	public List<IssueTO> validate(Registration entity) {
 		Person enrollee = entity.getEnrollee();
 		if (enrollee == null) {
-			return issues(Issues.create(Errors.ENROLLEE_DETAILS_IS_EMPTY));
+			return issues(Issues.warning(Errors.ENROLLEE_DETAILS_IS_EMPTY));
 		}
 		List<IssueTO> issues = new ArrayList<>();
 		// First name
 		if (StringUtils.isBlank(enrollee.getFirstName())) {
-			issues.add(Issues.create(Errors.ENROLLEE_FIRST_NAME_IS_EMPTY, FieldID.ENROLEE_FIRST_NAME));
+			issues.add(Issues.error(Errors.ENROLLEE_FIRST_NAME_IS_EMPTY, FieldID.ENROLEE_FIRST_NAME));
 		} else {
 			issues.addAll(validateFieldMaxLength(enrollee.getFirstName(), 32, Errors.ENROLLEE_FIRST_NAME_IS_TOO_LONG, FieldID.ENROLEE_FIRST_NAME));
 		}
 		// Last name
 		if (StringUtils.isBlank(enrollee.getLastName())) {
-			issues.add(Issues.create(Errors.ENROLLEE_LAST_NAME_IS_EMPTY, FieldID.ENROLEE_LAST_NAME));
+			issues.add(Issues.error(Errors.ENROLLEE_LAST_NAME_IS_EMPTY, FieldID.ENROLEE_LAST_NAME));
 		} else {
 			issues.addAll(validateFieldMaxLength(enrollee.getLastName(), 32, Errors.ENROLLEE_LAST_NAME_IS_TOO_LONG, FieldID.ENROLEE_LAST_NAME));
 		}
@@ -58,16 +58,16 @@ public class EnrolleeValidator implements Validator<Registration> {
 		issues.addAll(validateFieldMaxLength(enrollee.getMiddleName(), 32, Errors.ENROLLEE_MIDDLE_NAME_IS_TOO_LONG, FieldID.ENROLEE_MIDDLE_NAME));
 		// Birthdate
 		if (enrollee.getBirthdate() == null) {
-			issues.add(Issues.create(Errors.ENROLLEE_BIRTHDATE_IS_EMPTY, FieldID.ENROLEE_BIRTHDATE));
+			issues.add(Issues.error(Errors.ENROLLEE_BIRTHDATE_IS_EMPTY, FieldID.ENROLEE_BIRTHDATE));
 		} else {
 			int age = 15;
 			if (enrollee.getBirthdate().isAfter(LocalDate.now().minusYears(age))) {
-				issues.add(Issues.create(Errors.ENROLLEE_BIRTHDAY_IS_TOO_YOUNG, FieldID.ENROLEE_BIRTHDATE, age));
+				issues.add(Issues.error(Errors.ENROLLEE_BIRTHDAY_IS_TOO_YOUNG, FieldID.ENROLEE_BIRTHDATE, age));
 			}
 		}
 		// Phone
 		if (StringUtils.isBlank(enrollee.getPhone())) {
-			issues.add(Issues.create(Errors.ENROLLEE_PHONE_IS_EMPTY, FieldID.ENROLEE_PHONE));
+			issues.add(Issues.error(Errors.ENROLLEE_PHONE_IS_EMPTY, FieldID.ENROLEE_PHONE));
 		}
 		return issues;
 	}

@@ -22,7 +22,7 @@ public interface Validator<T> {
 	default List<IssueTO> validateFieldLength(String field, int length, String errMsg, String fieldId) {
 		if (field != null) {
 			if (field.length() != length) {
-				return issues(Issues.create(errMsg, fieldId, length));
+				return issues(Issues.error(errMsg, fieldId, length));
 			}
 		}
 		return Collections.emptyList();
@@ -35,10 +35,10 @@ public interface Validator<T> {
 	default List<IssueTO> validateFieldLength(String field, int minLength, String errMsgForMin, int maxLength, String errMsgForMax, String fieldId) {
 		if (field != null) {
 			if (minLength != 0 && errMsgForMin != null && field.length() < minLength) {
-				return issues(Issues.create(errMsgForMin, fieldId, minLength));
+				return issues(Issues.error(errMsgForMin, fieldId, minLength));
 			} 
 			if (maxLength != 0 && errMsgForMax != null && field.length() > maxLength) {
-				return issues(Issues.create(errMsgForMax, fieldId, maxLength));
+				return issues(Issues.error(errMsgForMax, fieldId, maxLength));
 			}
 		}
 		return Collections.emptyList();

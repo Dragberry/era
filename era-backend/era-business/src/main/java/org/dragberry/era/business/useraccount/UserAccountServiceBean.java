@@ -66,14 +66,14 @@ public class UserAccountServiceBean implements UserAccountService {
 	public ResultTO<UserAccountCRUDTO> getDetails(UserAccountCRUDTO userAccount) {
 		List<IssueTO> issues = new ArrayList<>();
 		if (userAccount.getId() == null) {
-			issues.add(Issues.create("validation.user-account.id-is-empty"));
+			issues.add(Issues.error("validation.user-account.id-is-empty"));
 		} else {
 			UserAccount account = userAccountDao.findOne(userAccount.getId());
 			if (account == null) {
-				issues.add(Issues.create("validation.user-account.account-doesnt-exist"));
+				issues.add(Issues.error("validation.user-account.account-doesnt-exist"));
 			} else {
 				if (!account.getCustomer().getEntityKey().equals(userAccount.getCustomerId())) {
-					issues.add(Issues.create("validation.user-account.account-doesnt-belong-to-customer"));
+					issues.add(Issues.error("validation.user-account.account-doesnt-belong-to-customer"));
 				}
 			}
 			if (issues.isEmpty()) {
@@ -99,17 +99,17 @@ public class UserAccountServiceBean implements UserAccountService {
 	public ResultTO<UserAccountCRUDTO> delete(UserAccountCRUDTO userAccount) {
 		List<IssueTO> issues = new ArrayList<>();
 		if (userAccount.getId() == null) {
-			issues.add(Issues.create("validation.user-account.id-is-empty"));
+			issues.add(Issues.error("validation.user-account.id-is-empty"));
 		} else {
 			UserAccount account = userAccountDao.findOne(userAccount.getId());
 			if (userAccount.getUserAccountId().equals(userAccount.getId())) {
-				issues.add(Issues.create("validation.user-account.account-is-initiator"));
+				issues.add(Issues.error("validation.user-account.account-is-initiator"));
 			} else {
 				if (account == null) {
-					issues.add(Issues.create("validation.user-account.account-doesnt-exist"));
+					issues.add(Issues.error("validation.user-account.account-doesnt-exist"));
 				} else {
 					if (!account.getCustomer().getEntityKey().equals(userAccount.getCustomerId())) {
-						issues.add(Issues.create("validation.user-account.account-doesnt-belong-to-customer"));
+						issues.add(Issues.error("validation.user-account.account-doesnt-belong-to-customer"));
 					}
 				}
 			}
@@ -127,58 +127,58 @@ public class UserAccountServiceBean implements UserAccountService {
 	public ResultTO<UserAccountCRUDTO> update(UserAccountCRUDTO userAccount) {
 		List<IssueTO> issues = new ArrayList<>();
 		if (userAccount.getId() == null) {
-			issues.add(Issues.create("validation.user-account.id-is-empty"));
+			issues.add(Issues.error("validation.user-account.id-is-empty"));
 		} else {
 			UserAccount account = userAccountDao.findOne(userAccount.getId());
 			if (account == null) {
-				issues.add(Issues.create("validation.user-account.account-doesnt-exist"));
+				issues.add(Issues.error("validation.user-account.account-doesnt-exist"));
 			} else {
 				if (!account.getCustomer().getEntityKey().equals(userAccount.getCustomerId())) {
-					issues.add(Issues.create("validation.user-account.account-doesnt-belong-to-customer"));
+					issues.add(Issues.error("validation.user-account.account-doesnt-belong-to-customer"));
 				}
 			}
 			
 			// Username
 			if (!account.getUsername().equals(userAccount.getUsername())) {
-				issues.add(Issues.create("validation.user-account.username-is-not-editable"));
+				issues.add(Issues.error("validation.user-account.username-is-not-editable"));
 			}
 			// E-mail
 			if (!account.getEmail().equals(userAccount.getEmail())) {
-				issues.add(Issues.create("validation.user-account.email-is-not-editable"));
+				issues.add(Issues.error("validation.user-account.email-is-not-editable"));
 			}
 			// First name
 			if (StringUtils.isBlank(userAccount.getFirstName())) {
-				issues.add(Issues.create("validation.user-account.first-name-is-empty"));
+				issues.add(Issues.error("validation.user-account.first-name-is-empty"));
 			} else {
 				if (userAccount.getFirstName().length() > 64) {
-					issues.add(Issues.create("validation.user-account.first-name-is-large"));
+					issues.add(Issues.error("validation.user-account.first-name-is-large"));
 				}
 			}
 			// Last name
 			if (StringUtils.isBlank(userAccount.getLastName())) {
-				issues.add(Issues.create("validation.user-account.last-name-is-empty"));
+				issues.add(Issues.error("validation.user-account.last-name-is-empty"));
 			} else {
 				if (userAccount.getLastName().length() > 64) {
-					issues.add(Issues.create("validation.user-account.last-name-is-large"));
+					issues.add(Issues.error("validation.user-account.last-name-is-large"));
 				}
 			}
 			// Password
 			if (StringUtils.isBlank(userAccount.getPassword()) || StringUtils.isBlank(userAccount.getRepeatedPassword())) {
-				issues.add(Issues.create("validation.user-account.password-is-empty"));
+				issues.add(Issues.error("validation.user-account.password-is-empty"));
 			} else {
 				if (!Objects.equals(userAccount.getPassword(), userAccount.getRepeatedPassword())) {
-					issues.add(Issues.create("validation.user-account.passwords-dont-match"));
+					issues.add(Issues.error("validation.user-account.passwords-dont-match"));
 				} else {
 					if (userAccount.getPassword().length() < 8) {
-						issues.add(Issues.create("validation.user-account.password-is-small"));
+						issues.add(Issues.error("validation.user-account.password-is-small"));
 					} else if (userAccount.getPassword().length() > 20) {
-						issues.add(Issues.create("validation.user-account.password-is-large"));
+						issues.add(Issues.error("validation.user-account.password-is-large"));
 					}
 				}
 			}
 			// Bidthdate
 			if (userAccount.getBirthdate() == null) {
-				issues.add(Issues.create("validation.user-account.birthdate-is-empty"));
+				issues.add(Issues.error("validation.user-account.birthdate-is-empty"));
 			}
 			
 			if (issues.isEmpty()) {
@@ -204,63 +204,63 @@ public class UserAccountServiceBean implements UserAccountService {
 		List<IssueTO> issues = new ArrayList<>();
 		// Username
 		if (StringUtils.isBlank(userAccount.getUsername())) {
-			issues.add(Issues.create("validation.user-account.username-is-empty"));
+			issues.add(Issues.error("validation.user-account.username-is-empty"));
 		} else {
 			if (userAccount.getUsername().length() < 3) {
-				issues.add(Issues.create("validation.user-account.username-is-small"));
+				issues.add(Issues.error("validation.user-account.username-is-small"));
 			} else if (userAccount.getUsername().length() > 20) {
-				issues.add(Issues.create("validation.user-account.username-is-large"));
+				issues.add(Issues.error("validation.user-account.username-is-large"));
 			} else {
 				if (userAccountDao.findByUsername(userAccount.getUsername()) != null) {
-					issues.add(Issues.create("validation.user-account.username-exists"));
+					issues.add(Issues.error("validation.user-account.username-exists"));
 				}
 			}
 		}
 		// E-mail
 		if (StringUtils.isBlank(userAccount.getEmail())) {
-			issues.add(Issues.create("validation.user-account.email-is-empty"));
+			issues.add(Issues.error("validation.user-account.email-is-empty"));
 		} else {
 			if (!VALID_EMAIL_ADDRESS_REGEX .matcher(userAccount.getEmail()).matches()) {
-				issues.add(Issues.create("validation.user-account.email-is-invalid"));
+				issues.add(Issues.error("validation.user-account.email-is-invalid"));
 			} else {
 				if (userAccountDao.findByEmail(userAccount.getEmail()) != null) {
-					issues.add(Issues.create("validation.user-account.email-exists"));
+					issues.add(Issues.error("validation.user-account.email-exists"));
 				}
 			}
 		}
 		// First name
 		if (StringUtils.isBlank(userAccount.getFirstName())) {
-			issues.add(Issues.create("validation.user-account.first-name-is-empty"));
+			issues.add(Issues.error("validation.user-account.first-name-is-empty"));
 		} else {
 			if (userAccount.getFirstName().length() > 64) {
-				issues.add(Issues.create("validation.user-account.first-name-is-large"));
+				issues.add(Issues.error("validation.user-account.first-name-is-large"));
 			}
 		}
 		// Last name
 		if (StringUtils.isBlank(userAccount.getLastName())) {
-			issues.add(Issues.create("validation.user-account.last-name-is-empty"));
+			issues.add(Issues.error("validation.user-account.last-name-is-empty"));
 		} else {
 			if (userAccount.getLastName().length() > 64) {
-				issues.add(Issues.create("validation.user-account.last-name-is-large"));
+				issues.add(Issues.error("validation.user-account.last-name-is-large"));
 			}
 		}
 		// Password
 		if (StringUtils.isBlank(userAccount.getPassword()) || StringUtils.isBlank(userAccount.getRepeatedPassword())) {
-			issues.add(Issues.create("validation.user-account.password-is-empty"));
+			issues.add(Issues.error("validation.user-account.password-is-empty"));
 		} else {
 			if (!Objects.equals(userAccount.getPassword(), userAccount.getRepeatedPassword())) {
-				issues.add(Issues.create("validation.user-account.passwords-dont-match"));
+				issues.add(Issues.error("validation.user-account.passwords-dont-match"));
 			} else {
 				if (userAccount.getPassword().length() < 8) {
-					issues.add(Issues.create("validation.user-account.password-is-small"));
+					issues.add(Issues.error("validation.user-account.password-is-small"));
 				} else if (userAccount.getPassword().length() > 20) {
-					issues.add(Issues.create("validation.user-account.password-is-large"));
+					issues.add(Issues.error("validation.user-account.password-is-large"));
 				}
 			}
 		}
 		// Bidthdate
 		if (userAccount.getBirthdate() == null) {
-			issues.add(Issues.create("validation.user-account.birthdate-is-empty"));
+			issues.add(Issues.error("validation.user-account.birthdate-is-empty"));
 		}
 		
 		if (issues.isEmpty()) {

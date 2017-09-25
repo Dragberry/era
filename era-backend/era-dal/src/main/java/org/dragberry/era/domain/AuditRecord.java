@@ -54,10 +54,10 @@ public class AuditRecord extends AbstractEntity {
 	private Action action;
 	
 	@Column(name = "REFERENCED_ENTITY_KEY")
-	private String referencedEntityKey;
+	private Long referencedEntityKey;
 	
 	@Basic(fetch = FetchType.LAZY)
-	@Column(name = "CHANGES")
+	@Column(name = "CHANGES", columnDefinition = "TEXT")
 	private String changes;
 	
 	@Override
@@ -110,11 +110,11 @@ public class AuditRecord extends AbstractEntity {
 		this.changes = changes;
 	}
 
-	public String getReferencedEntityKey() {
+	public Long getReferencedEntityKey() {
 		return referencedEntityKey;
 	}
 
-	public void setReferencedEntityKey(String referencedEntityKey) {
+	public void setReferencedEntityKey(Long referencedEntityKey) {
 		this.referencedEntityKey = referencedEntityKey;
 	}
 

@@ -1,11 +1,13 @@
 package org.dragberry.era.business.registration;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.dragberry.era.business.validation.ValidationService;
 import org.dragberry.era.common.IssueTO;
+import org.dragberry.era.common.IssueType;
 import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
 import org.dragberry.era.common.certificate.CertificateCRUDTO;
@@ -198,8 +200,16 @@ public class RegistrationServiceBean implements RegistrationService {
 			registration.setCertificate(certificate);
 		}
 		
-		List<IssueTO> issues = validationService.validate(registration);
-		if (issues.isEmpty()) {
+		List<IssueTO> allIssues = validationService.validate(registration);
+		List<IssueTO> errorIssues = Collections.emptyList();
+		Status status = Status.NOT_VERIFIED;
+		if (!allIssues.isEmpty() && registrationCRUD.getIgnoreWarnings()) {
+			errorIssues = allIssues.stream().filter(issue -> IssueType.WARNING != issue.getType()).collect(Collectors.toList());
+			if (errorIssues.isEmpty()) {
+				status = Status.UNCOMPLETE;
+			}
+		}
+		if (errorIssues.isEmpty() && registrationCRUD.getIgnoreWarnings()) {
 			personDao.create(registration.getEnrollee());
 			enrolleeCRUD.setId(registration.getEnrollee().getEntityKey());
 			
@@ -208,12 +218,12 @@ public class RegistrationServiceBean implements RegistrationService {
 			
 			Long registrationId = getIdForRegistration(registration);
 			registration.setRegistrationId(registrationId);
-			registration.setStatus(Status.NOT_VERIFIED);
+			registration.setStatus(status);
 
 			registrationDao.create(registration);
 			registrationCRUD.setId(registration.getEntityKey());
 		}
-		return Results.create(registrationCRUD, issues);
+		return Results.create(registrationCRUD, registrationCRUD.getIgnoreWarnings() ? errorIssues : allIssues);
 	}
 	
 	private long getIdForRegistration(Registration registration) {
