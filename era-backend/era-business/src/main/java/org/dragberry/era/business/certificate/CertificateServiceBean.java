@@ -20,6 +20,7 @@ public class CertificateServiceBean implements CertificateService {
 			SubjectTO to = new SubjectTO();
 			to.setId(s.getEntityKey());
 			to.setTitle(s.getTitle());
+			to.setBase(s.isBase());
 			return to;
 		}).collect(Collectors.toList());
 	}

@@ -9,6 +9,8 @@ public class SubjectTO implements Serializable {
 	private Long id;
 	
 	private String title;
+	
+	private Boolean base;
 
 	public Long getId() {
 		return id;
@@ -26,4 +28,12 @@ public class SubjectTO implements Serializable {
 		this.title = title;
 	}
 
+	public Boolean isBase() {
+		return base;
+	}
+
+	public void setBase(Boolean base) {
+		this.base = base;
+	}
+	
 }

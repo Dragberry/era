@@ -50,6 +50,9 @@ public class Certificate extends BaseEntity {
 	@Column(name = "INSTITUTION")
 	private String institution;
 	
+	@Column(name = "COUNTRY")
+	private String country;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ENROLLEE_KEY", referencedColumnName = "PERSON_KEY")
 	private Person enrollee;
@@ -100,6 +103,14 @@ public class Certificate extends BaseEntity {
 
 	public void setEnrollee(Person enrollee) {
 		this.enrollee = enrollee;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
 	}
 	
 }
