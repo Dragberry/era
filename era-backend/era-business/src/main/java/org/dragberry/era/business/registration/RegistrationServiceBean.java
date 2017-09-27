@@ -192,7 +192,7 @@ public class RegistrationServiceBean implements RegistrationService {
 			Certificate certificate = new Certificate();
 			certificate.setEntityKey(cert.getId());
 			certificate.setYear(cert.getYear());
-			certificate.setInstitution(cert.getInstitution());
+//			certificate.setInstitution(cert.getInstitution());
 			certificate.setEnrollee(registration.getEnrollee());
 			certificate.setMarks(cert.getMarks().stream().filter(sm -> sm.getMark() != null).collect(Collectors.toMap(
 							sm -> subjectDao.findOne(sm.getSubject().getId()),

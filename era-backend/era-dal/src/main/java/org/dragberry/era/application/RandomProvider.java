@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class RandomProvider {
 
-	private static final Random RANDOM = new Random();
+	public static final Random RANDOM = new Random();
 	
 	private static final int CURRENT_YEAR = LocalDate.now().getYear();
 	
@@ -29,6 +29,9 @@ public class RandomProvider {
 	
 	private static final List<String> STREETS = Arrays.asList(
 			"Прушинских", "Уборевича", "Московская", "Независимости", "Куйбышева", "Красная", "Хоружей", "Голодеда", "Янки Лучины");
+	
+	private static final List<String> SCHOOLS = Arrays.asList(
+			"ГУО СШ №112 г.Минска", "ГУО СШ №143 г.Минска", "ГУО СШ №1 г.Минска", "ГУО СШ №13 г.Бреста", "ГУО СШ №16 г.Могилева", "ГУО СШ №69 г.Минска", "ГУО \"СШ №4 г. Несвижа\" Минской обл.", "ГУО СШ №108 г. Минска", "ГУО \"Лоевская районная гимназия\"");
 	
 	
 	public static String getNumber() {
@@ -96,7 +99,7 @@ public class RandomProvider {
 	}
 
 	public static String getSchool() {
-		return getString("СШ №", 2);
+		return SCHOOLS.get(RANDOM.nextInt(SCHOOLS.size()));
 	}
 
 	public static Integer getYear() {

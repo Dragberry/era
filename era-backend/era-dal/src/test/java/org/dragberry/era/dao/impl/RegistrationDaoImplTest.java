@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-import org.dragberry.era.application.DummyDataBeanTest;
 import org.dragberry.era.application.config.DataConfigTest;
 import org.dragberry.era.dao.RegistrationDao;
 import org.dragberry.era.dao.RegistrationPeriodDao;
@@ -24,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {DataConfigTest.class})
-public class RegistrationDaoImplTest extends DummyDataBeanTest {
+public class RegistrationDaoImplTest {
 	
 	@Autowired
 	private RegistrationPeriodDao registrationPeriodDao;

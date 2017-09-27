@@ -92,4 +92,8 @@ public abstract class AbstractDao<E extends AbstractEntity> implements DataAcces
 		return exp + LIKE;
 	}
 	
+	protected static String forLikeWrap(String exp) {
+		return LIKE + exp + LIKE;
+	}
+	
 }

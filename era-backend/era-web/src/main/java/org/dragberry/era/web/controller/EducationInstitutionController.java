@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,6 +23,14 @@ public class EducationInstitutionController {
 	@GetMapping("/get-list-for-registration")
 	public ResponseEntity<?> getListForRegistrations() {
 		return ResponseEntity.ok(Results.create(eInstitutionService.getInstitutionListForRegistration(accessContoll.getLoggedUser().getCustomerId())));
+	}
+	
+	@GetMapping("/lookup")
+	public ResponseEntity<?> lookup(
+			@RequestParam("name") String name,
+			@RequestParam("country") String country,
+			@RequestParam("max-size") Integer maxSize) {
+		return ResponseEntity.ok(Results.create(eInstitutionService.lookup(name, country, maxSize)));
 	}
 
 }

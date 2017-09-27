@@ -47,11 +47,9 @@ public class Certificate extends BaseEntity {
 	@Column(name = "YEAR")
 	private Integer year;
 	
-	@Column(name = "INSTITUTION")
-	private String institution;
-	
-	@Column(name = "COUNTRY")
-	private String country;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "EDUCATION_INSTITUTION_BASE_KEY", referencedColumnName = "EDUCATION_INSTITUTION_BASE_KEY")
+	private EducationInstitutionBase institution;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ENROLLEE_KEY", referencedColumnName = "PERSON_KEY")
@@ -81,11 +79,11 @@ public class Certificate extends BaseEntity {
 		this.year = year;
 	}
 
-	public String getInstitution() {
+	public EducationInstitutionBase getInstitution() {
 		return institution;
 	}
 
-	public void setInstitution(String institution) {
+	public void setInstitution(EducationInstitutionBase institution) {
 		this.institution = institution;
 	}
 
@@ -105,12 +103,4 @@ public class Certificate extends BaseEntity {
 		this.enrollee = enrollee;
 	}
 
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-	
 }

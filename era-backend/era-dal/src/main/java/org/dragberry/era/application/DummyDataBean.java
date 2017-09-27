@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.dragberry.era.dao.PrerogativeDao;
 import org.dragberry.era.dao.CertificateDao;
+import org.dragberry.era.dao.EducationInstitutionBaseDao;
 import org.dragberry.era.dao.EducationInstitutionDao;
 import org.dragberry.era.dao.OutOfCompetitionDao;
 import org.dragberry.era.dao.PersonDao;
@@ -26,6 +27,7 @@ import org.dragberry.era.domain.Document;
 import org.dragberry.era.domain.EducationBase;
 import org.dragberry.era.domain.EducationForm;
 import org.dragberry.era.domain.EducationInstitution;
+import org.dragberry.era.domain.EducationInstitutionBase;
 import org.dragberry.era.domain.FundsSource;
 import org.dragberry.era.domain.OutOfCompetition;
 import org.dragberry.era.domain.Person;
@@ -64,6 +66,8 @@ public class DummyDataBean {
 	private PrerogativeDao prerogativeDao;
 	@Autowired
 	private OutOfCompetitionDao outOfCompetitionDao;
+	@Autowired
+	private EducationInstitutionBaseDao educationInstitutionBaseDao;
 	
 	private UserAccount user1;
 	private UserAccount user2;
@@ -75,6 +79,8 @@ public class DummyDataBean {
 		if (registrationPeriodDao.findOne(1000L) != null) {
 			return;
 		}
+		createBaseInstitutions();
+		
 		user1 = userAccountDao.findOne(1000L);
 		user2 = userAccountDao.findOne(1001L);
 		eInstitution = einstitutionDao.findOne(1000l);
@@ -303,7 +309,7 @@ public class DummyDataBean {
 	
 	private Certificate certificate(Person enrollee) {
 		Certificate certificate = new Certificate();
-		certificate.setInstitution(RandomProvider.getSchool());
+		certificate.setInstitution(educationInstitutionBaseDao.findOne(1000L + RandomProvider.RANDOM.nextInt(20)));
 		certificate.setYear(RandomProvider.getYear());
 		certificate.setEnrollee(enrollee);
 		
@@ -312,6 +318,23 @@ public class DummyDataBean {
 		marks = subjectDao.fetchList().stream().collect(Collectors.toMap(subject -> subject, subject -> Math.abs(random.nextInt() % 11)));
 		certificate.setMarks(marks);
 		return certificate;
+	}
+	
+	private void createBaseInstitutions() {
+		createBase("BY", "ГУО СШ №999 г.Минска");
+		createBase("BY", "ГУО СШ №998 г.Минска");
+		createBase("BY", "ГУО СШ №988 г.Минска");
+		createBase("BY", "ГУО СШ №888 г.Минска");
+		for (int i = 0; i < 20; i++) {
+			createBase("BY", RandomProvider.getSchool());
+		}
+	}
+
+	private void createBase(String country, String name) {
+		EducationInstitutionBase base = new EducationInstitutionBase();
+		base.setCountry(country);
+		base.setName(name);
+		educationInstitutionBaseDao.create(base);
 	}
 
 }
