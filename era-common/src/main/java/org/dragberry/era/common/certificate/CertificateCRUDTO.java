@@ -3,22 +3,23 @@ package org.dragberry.era.common.certificate;
 import java.util.List;
 
 import org.dragberry.era.common.AbstractCRUDTO;
+import org.dragberry.era.common.institution.EducationInstitutionTO;
 
 public class CertificateCRUDTO extends AbstractCRUDTO {
 
 	private static final long serialVersionUID = 817707147440284169L;
 	
-	private String institution;
+	private EducationInstitutionTO institution;
 	
 	private Integer year;
 	
 	private List<SubjectMarkTO> marks;
 
-	public String getInstitution() {
+	public EducationInstitutionTO getInstitution() {
 		return institution;
 	}
 
-	public void setInstitution(String institution) {
+	public void setInstitution(EducationInstitutionTO institution) {
 		this.institution = institution;
 	}
 
