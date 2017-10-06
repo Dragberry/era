@@ -14,8 +14,11 @@ import javax.persistence.TableGenerator;
 @Table(name = "EDUCATION_INSTITUTION_BASE")
 @NamedQueries({
 	@NamedQuery(
+			name = EducationInstitutionBase.FIND_LIST_BY_NAME_AND_COUNTRY,
+			query = "select eib from EducationInstitutionBase eib where eib.country = :country and eib.name like :name"),
+	@NamedQuery(
 			name = EducationInstitutionBase.FIND_BY_NAME_AND_COUNTRY,
-			query = "select eib from EducationInstitutionBase eib where eib.country = :country and eib.name like :name")
+			query = "select eib from EducationInstitutionBase eib where eib.country = :country and eib.name = :name")
 })
 @TableGenerator(
 		name = "EINSTITUTION_BASE_GEN", 
@@ -29,8 +32,10 @@ public class EducationInstitutionBase extends BaseEntity {
 
 	private static final long serialVersionUID = 4453873327596382695L;
 	
-	public static final String FIND_BY_NAME_AND_COUNTRY = "EducationInstitutionBase.FindByNameAndCountry";
+	public static final String FIND_LIST_BY_NAME_AND_COUNTRY = "EducationInstitutionBase.FindListByNameAndCountry";
 
+	public static final String FIND_BY_NAME_AND_COUNTRY = "EducationInstitutionBase.FindByNameAndCountry";
+	
 	@Id
 	@Column(name = "EDUCATION_INSTITUTION_BASE_KEY")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "EINSTITUTION_BASE_GEN")

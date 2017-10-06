@@ -33,7 +33,7 @@ public class EducationInstitutionServiceBeanTest {
 		base.setCountry("BY");
 		base.setName("Name");
 		base.setEntityKey(1L);
-		Mockito.when(eInstitutionBaseDao.findByNameAndCountry("name", "BY", 5)).thenReturn(Arrays.asList(base));
+		Mockito.when(eInstitutionBaseDao.findListByNameAndCountry("name", "BY", 5)).thenReturn(Arrays.asList(base));
 		List<EducationInstitutionBaseTO> list = service.lookup("name", "BY", 5);
 		assertEquals(1, list.size());
 		EducationInstitutionBaseTO baseTO = list.get(0);

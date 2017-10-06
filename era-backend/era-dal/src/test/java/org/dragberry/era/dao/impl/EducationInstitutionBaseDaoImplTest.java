@@ -23,21 +23,21 @@ public class EducationInstitutionBaseDaoImplTest {
 	@Test
 	public void testFindByNameAndCountry_BY() {
 		List<EducationInstitutionBase> result = educationInstitutionBaseDao
-				.findByNameAndCountry("СШ", "BY", 5);
+				.findListByNameAndCountry("СШ", "BY", 5);
 		assertNotEquals(0, result.size());
 	}
 	
 	@Test
 	public void testFindByNameAndCountry_BY_99() {
 		List<EducationInstitutionBase> result = educationInstitutionBaseDao
-				.findByNameAndCountry("99", "BY", 5);
+				.findListByNameAndCountry("99", "BY", 5);
 		assertEquals(2, result.size());
 	}
 	
 	@Test
 	public void testFindByNameAndCountry_BY_maxLimit() {
 		List<EducationInstitutionBase> result = educationInstitutionBaseDao
-				.findByNameAndCountry("минск", "BY", 5);
+				.findListByNameAndCountry("минск", "BY", 5);
 		assertEquals(5, result.size());
 	}
 

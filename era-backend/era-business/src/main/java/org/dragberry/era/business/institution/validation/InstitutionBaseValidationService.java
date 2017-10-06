@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class InstitutionBaseValidationService extends AbstractValidationService<EducationInstitutionBase> {
 
 	@Autowired
-	public InstitutionBaseValidationService(InstitutionNameValidator institutionNameValidator) {
-		addValidator(institutionNameValidator);
+	public InstitutionBaseValidationService(InstitutionValidator institutionValidator) {
+		addValidator(institutionValidator);
 	}
 }

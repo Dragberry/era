@@ -1,10 +1,12 @@
 package org.dragberry.era.business.registration;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.dragberry.era.business.institution.EducationInstitutionService;
 import org.dragberry.era.business.validation.ValidationService;
 import org.dragberry.era.common.IssueTO;
 import org.dragberry.era.common.IssueType;
@@ -12,6 +14,7 @@ import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
 import org.dragberry.era.common.certificate.CertificateCRUDTO;
 import org.dragberry.era.common.certificate.SubjectMarkTO;
+import org.dragberry.era.common.institution.EducationInstitutionBaseCRUDTO;
 import org.dragberry.era.common.institution.EducationInstitutionTO;
 import org.dragberry.era.common.person.AddressTO;
 import org.dragberry.era.common.person.ContactDetailsTO;
@@ -79,6 +82,9 @@ public class RegistrationServiceBean implements RegistrationService {
 	@Autowired
 	private ValidationService<Registration> validationService;
 	
+	@Autowired
+	private EducationInstitutionService eiService;
+	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<RegistrationTO> getRegistrationList(RegistrationSearchQuery query) {
@@ -117,6 +123,7 @@ public class RegistrationServiceBean implements RegistrationService {
 	@Override
 	@Transactional
 	public ResultTO<RegistrationCRUDTO> createRegistration(RegistrationCRUDTO registrationCRUD) {
+		List<IssueTO> allIssues = new ArrayList<>();
 		Registration registration = new Registration();
 		PersonCRUDTO enrolleeCRUD = registrationCRUD.getEnrollee();
 		if (enrolleeCRUD != null) {
@@ -196,14 +203,25 @@ public class RegistrationServiceBean implements RegistrationService {
 			Certificate certificate = new Certificate();
 			certificate.setEntityKey(cert.getId());
 			certificate.setYear(cert.getYear());
-			if (cert.getInstitution() != null && cert.getInstitution().getId() != null) {
-				EducationInstitutionBase eiBase = educationInstitutionBaseDao.findOne(cert.getInstitution().getId());
+			EducationInstitutionBaseCRUDTO institution = cert.getInstitution();
+			if (institution != null) {
+				EducationInstitutionBase eiBase = null;
+				if (institution.getId() != null) {
+					eiBase = educationInstitutionBaseDao.findOne(institution.getId());
+				} else if (institution.getName() != null && institution.getCountry() != null) {
+					eiBase = educationInstitutionBaseDao.findByNameAndCountry(institution.getName(), institution.getCountry());
+				}
 				if (eiBase == null) {
-					ResultTO<EducationInstitutionBase> eiResult = createInstitution(cert.getInstitution());
+					ResultTO<EducationInstitutionBaseCRUDTO> eiResult = eiService.create(institution);
+					if (eiResult.getIssues().isEmpty()) {
+						eiBase = educationInstitutionBaseDao.findOne(institution.getId());
+					} else {
+						allIssues.addAll(eiResult.getIssues());
+					}
 				}
 				certificate.setInstitution(eiBase);
 			}
-			ResultTO<EducationInstitutionTO> institutionResult = createInstitution(cert.getInstitution());
+			
 			certificate.setEnrollee(registration.getEnrollee());
 			certificate.setMarks(cert.getMarks().stream().filter(sm -> sm.getMark() != null).collect(Collectors.toMap(
 							sm -> subjectDao.findOne(sm.getSubject().getId()),
@@ -211,7 +229,7 @@ public class RegistrationServiceBean implements RegistrationService {
 			registration.setCertificate(certificate);
 		}
 		
-		List<IssueTO> allIssues = validationService.validate(registration);
+		allIssues.addAll(validationService.validate(registration));
 		List<IssueTO> errorIssues = Collections.emptyList();
 		Status status = Status.NOT_VERIFIED;
 		if (!allIssues.isEmpty() && registrationCRUD.getIgnoreWarnings()) {
@@ -237,13 +255,6 @@ public class RegistrationServiceBean implements RegistrationService {
 		return Results.create(registrationCRUD, registrationCRUD.getIgnoreWarnings() ? errorIssues : allIssues);
 	}
 	
-	private ResultTO<EducationInstitutionBase> createInstitution(EducationInstitutionTO institution) {
-		EducationInstitutionBase base = new EducationInstitutionBase();
-		base.setCountry(institution.getCountry());
-		base.setName(institution.getName());
-		return Results.create(educationInstitutionBaseDao.create(base));
-	}
-
 	private long getIdForRegistration(Registration registration) {
 		return registrationDao.findMaxRegistrationId(registration) + 1L;
 	}

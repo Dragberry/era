@@ -6,5 +6,7 @@ import org.dragberry.era.domain.EducationInstitutionBase;
 
 public interface EducationInstitutionBaseDao extends DataAccessObject<EducationInstitutionBase, Long> {
 
-	List<EducationInstitutionBase> findByNameAndCountry(String name, String country, int count);
+	List<EducationInstitutionBase> findListByNameAndCountry(String name, String country, int count);
+	
+	EducationInstitutionBase findByNameAndCountry(String name, String country);
 }
