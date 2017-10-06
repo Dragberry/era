@@ -24,6 +24,7 @@ import org.dragberry.era.common.registration.RegistrationSearchQuery;
 import org.dragberry.era.common.registration.RegistrationTO;
 import org.dragberry.era.dao.PrerogativeDao;
 import org.dragberry.era.dao.CertificateDao;
+import org.dragberry.era.dao.EducationInstitutionBaseDao;
 import org.dragberry.era.dao.EducationInstitutionDao;
 import org.dragberry.era.dao.OutOfCompetitionDao;
 import org.dragberry.era.dao.PersonDao;
@@ -38,6 +39,7 @@ import org.dragberry.era.domain.Certificate;
 import org.dragberry.era.domain.Document;
 import org.dragberry.era.domain.EducationBase;
 import org.dragberry.era.domain.EducationForm;
+import org.dragberry.era.domain.EducationInstitutionBase;
 import org.dragberry.era.domain.FundsSource;
 import org.dragberry.era.domain.Person;
 import org.dragberry.era.domain.Registration;
@@ -59,6 +61,8 @@ public class RegistrationServiceBean implements RegistrationService {
 	private CertificateDao certificateDao;
 	@Autowired
 	private EducationInstitutionDao educationInstitutionDao;
+	@Autowired
+	private EducationInstitutionBaseDao educationInstitutionBaseDao;
 	@Autowired
 	private PersonDao personDao;
 	@Autowired
@@ -192,7 +196,14 @@ public class RegistrationServiceBean implements RegistrationService {
 			Certificate certificate = new Certificate();
 			certificate.setEntityKey(cert.getId());
 			certificate.setYear(cert.getYear());
-//			certificate.setInstitution(cert.getInstitution());
+			if (cert.getInstitution() != null && cert.getInstitution().getId() != null) {
+				EducationInstitutionBase eiBase = educationInstitutionBaseDao.findOne(cert.getInstitution().getId());
+				if (eiBase == null) {
+					ResultTO<EducationInstitutionBase> eiResult = createInstitution(cert.getInstitution());
+				}
+				certificate.setInstitution(eiBase);
+			}
+			ResultTO<EducationInstitutionTO> institutionResult = createInstitution(cert.getInstitution());
 			certificate.setEnrollee(registration.getEnrollee());
 			certificate.setMarks(cert.getMarks().stream().filter(sm -> sm.getMark() != null).collect(Collectors.toMap(
 							sm -> subjectDao.findOne(sm.getSubject().getId()),
@@ -226,6 +237,13 @@ public class RegistrationServiceBean implements RegistrationService {
 		return Results.create(registrationCRUD, registrationCRUD.getIgnoreWarnings() ? errorIssues : allIssues);
 	}
 	
+	private ResultTO<EducationInstitutionBase> createInstitution(EducationInstitutionTO institution) {
+		EducationInstitutionBase base = new EducationInstitutionBase();
+		base.setCountry(institution.getCountry());
+		base.setName(institution.getName());
+		return Results.create(educationInstitutionBaseDao.create(base));
+	}
+
 	private long getIdForRegistration(Registration registration) {
 		return registrationDao.findMaxRegistrationId(registration) + 1L;
 	}

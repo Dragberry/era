@@ -10,6 +10,8 @@ public class EducationInstitutionBaseTO implements Serializable {
 	
 	private String name;
 	
+	private String country;
+	
 	public Long getId() {
 		return id;
 	}
@@ -24,6 +26,14 @@ public class EducationInstitutionBaseTO implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
 	}
 
 }

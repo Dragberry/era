@@ -11,6 +11,8 @@ public class EducationInstitutionTO implements Serializable {
 	private String name;
 	
 	private String shortName;
+	
+	private String country;
 
 	public Long getId() {
 		return id;
@@ -34,6 +36,14 @@ public class EducationInstitutionTO implements Serializable {
 
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
 	}
 	
 }

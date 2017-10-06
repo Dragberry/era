@@ -35,6 +35,7 @@ public class EducationInstitutionServiceBean implements EducationInstitutionServ
 			EducationInstitutionBaseTO to = new EducationInstitutionBaseTO();
 			to.setId(ei.getEntityKey());
 			to.setName(ei.getName());
+			to.setCountry(ei.getCountry());
 			return to;
 		}).collect(Collectors.toList());
 	}
