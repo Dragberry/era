@@ -5,11 +5,21 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 @Entity
 @Table(name = "SUBJECT")
+@NamedQueries({
+	@NamedQuery(
+			name = Subject.GET_LAST_ORDER,
+			query = "select max(s.order) from Subject s"),
+	@NamedQuery(
+			name = Subject.FIND_BY_TITLE,
+			query = "select s from Subject s where s.title = :title")
+})
 @TableGenerator(
 		name = "SUBJECT_GEN", 
 		table = "GENERATOR",
@@ -21,6 +31,10 @@ import javax.persistence.TableGenerator;
 public class Subject extends BaseEntity {
 
 	private static final long serialVersionUID = -6350070942122947614L;
+	
+	public static final String GET_LAST_ORDER = "Subject.GetLastOrder";
+
+	public static final String FIND_BY_TITLE = "Subject.FindByTitle";
 	
 	@Id
 	@Column(name = "SUBJECT_KEY")

@@ -2,7 +2,7 @@ package org.dragberry.era.common.certificate;
 
 import java.io.Serializable;
 
-public class SubjectTO implements Serializable {
+public class SubjectCRUDTO implements Serializable {
 
 	private static final long serialVersionUID = -5242840692086448629L;
 
@@ -11,6 +11,8 @@ public class SubjectTO implements Serializable {
 	private String title;
 	
 	private Boolean base;
+	
+	private Integer order;
 
 	public Long getId() {
 		return id;
@@ -34,6 +36,14 @@ public class SubjectTO implements Serializable {
 
 	public void setBase(Boolean base) {
 		this.base = base;
+	}
+
+	public Integer getOrder() {
+		return order;
+	}
+
+	public void setOrder(Integer order) {
+		this.order = order;
 	}
 	
 }

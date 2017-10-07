@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.dragberry.era.business.certificate.CertificateService;
 import org.dragberry.era.business.institution.EducationInstitutionService;
 import org.dragberry.era.business.validation.ValidationService;
 import org.dragberry.era.common.IssueTO;
@@ -13,7 +14,8 @@ import org.dragberry.era.common.IssueType;
 import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
 import org.dragberry.era.common.certificate.CertificateCRUDTO;
-import org.dragberry.era.common.certificate.SubjectMarkTO;
+import org.dragberry.era.common.certificate.SubjectCRUDTO;
+import org.dragberry.era.common.certificate.SubjectMarkCRUDTO;
 import org.dragberry.era.common.institution.EducationInstitutionBaseCRUDTO;
 import org.dragberry.era.common.institution.EducationInstitutionTO;
 import org.dragberry.era.common.person.AddressTO;
@@ -48,6 +50,7 @@ import org.dragberry.era.domain.Person;
 import org.dragberry.era.domain.Registration;
 import org.dragberry.era.domain.Registration.Status;
 import org.dragberry.era.domain.RegistrationPeriod;
+import org.dragberry.era.domain.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -84,6 +87,8 @@ public class RegistrationServiceBean implements RegistrationService {
 	
 	@Autowired
 	private EducationInstitutionService eiService;
+	@Autowired
+	private CertificateService certificationService;
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -223,9 +228,30 @@ public class RegistrationServiceBean implements RegistrationService {
 			}
 			
 			certificate.setEnrollee(registration.getEnrollee());
+			
 			certificate.setMarks(cert.getMarks().stream().filter(sm -> sm.getMark() != null).collect(Collectors.toMap(
 							sm -> subjectDao.findOne(sm.getSubject().getId()),
-							SubjectMarkTO::getMark)));
+							SubjectMarkCRUDTO::getMark)));
+			
+			List<Subject> extraSubjects = new ArrayList<>();
+			cert.getExtraMarks().stream().forEach(sm -> {
+				SubjectCRUDTO subject = sm.getSubject();
+				if (subject != null) {
+					if (subject.getId() != null) {
+						extraSubjects.add(subjectDao.findOne(subject.getId()));
+					} else {
+						ResultTO<SubjectCRUDTO> subjectResult = certificationService.createSubject(subject);
+						if (!subjectResult.getIssues().isEmpty()) {
+							allIssues.addAll(subjectResult.getIssues());
+						}
+					}
+				}
+				
+			certificate.getMarks().putAll(cert.getExtraMarks().stream().filter(esm -> esm.getMark() != null).collect(Collectors.toMap(
+					esm -> subjectDao.findOne(esm.getSubject().getId()),
+					SubjectMarkCRUDTO::getMark)));
+			});
+			
 			registration.setCertificate(certificate);
 		}
 		

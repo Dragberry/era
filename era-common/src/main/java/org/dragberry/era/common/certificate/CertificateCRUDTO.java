@@ -13,7 +13,9 @@ public class CertificateCRUDTO extends AbstractCRUDTO {
 	
 	private Integer year;
 	
-	private List<SubjectMarkTO> marks;
+	private List<SubjectMarkCRUDTO> marks;
+	
+	private List<SubjectMarkCRUDTO> extraMarks;
 
 	public EducationInstitutionBaseCRUDTO getInstitution() {
 		return institution;
@@ -31,12 +33,20 @@ public class CertificateCRUDTO extends AbstractCRUDTO {
 		this.year = year;
 	}
 
-	public List<SubjectMarkTO> getMarks() {
+	public List<SubjectMarkCRUDTO> getMarks() {
 		return marks;
 	}
 
-	public void setMarks(List<SubjectMarkTO> marks) {
+	public void setMarks(List<SubjectMarkCRUDTO> marks) {
 		this.marks = marks;
+	}
+
+	public List<SubjectMarkCRUDTO> getExtraMarks() {
+		return extraMarks;
+	}
+
+	public void setExtraMarks(List<SubjectMarkCRUDTO> extraMarks) {
+		this.extraMarks = extraMarks;
 	}
 	
 }

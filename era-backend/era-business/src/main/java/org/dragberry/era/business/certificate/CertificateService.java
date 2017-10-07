@@ -2,10 +2,13 @@ package org.dragberry.era.business.certificate;
 
 import java.util.List;
 
-import org.dragberry.era.common.certificate.SubjectTO;
+import org.dragberry.era.common.ResultTO;
+import org.dragberry.era.common.certificate.SubjectCRUDTO;
 
 public interface CertificateService {
 	
-	List<SubjectTO> getSubjectList();
+	List<SubjectCRUDTO> getSubjectList();
+
+	ResultTO<SubjectCRUDTO> createSubject(SubjectCRUDTO subject);
 
 }
