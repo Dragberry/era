@@ -11,6 +11,7 @@ public class RegistrationValidationService extends AbstractValidationService<Reg
 	@Autowired
 	public RegistrationValidationService(
 			AddressValidator addressValidator,
+			CertificateValidator certificateValidator,
 			DocumentValidator documentValidator,
 			EnrolleeValidator enrolleeValidator,
 			RegistrationValidator registrationValidator) {
@@ -18,5 +19,6 @@ public class RegistrationValidationService extends AbstractValidationService<Reg
 		addValidator(documentValidator);
 		addValidator(enrolleeValidator);
 		addValidator(registrationValidator);
+		addValidator(certificateValidator);
 	}
 }
