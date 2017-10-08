@@ -1,5 +1,7 @@
 package org.dragberry.era.dao.impl;
 
+import javax.persistence.NoResultException;
+
 import org.dragberry.era.dao.SubjectDao;
 import org.dragberry.era.domain.Subject;
 import org.springframework.stereotype.Repository;
@@ -20,9 +22,13 @@ public class SubjectDaoImpl extends AbstractDao<Subject> implements SubjectDao {
 	
 	@Override
 	public Subject findByTitle(String title) {
-		return getEntityManager().createNamedQuery(Subject.FIND_BY_TITLE, Subject.class)
-				.setParameter(TITLE, title)
-				.getSingleResult();
+		try {
+			return getEntityManager().createNamedQuery(Subject.FIND_BY_TITLE, Subject.class)
+					.setParameter(TITLE, title)
+					.getSingleResult();
+		} catch (NoResultException nre) {
+			return null;
+		}
 	}
 
 }
