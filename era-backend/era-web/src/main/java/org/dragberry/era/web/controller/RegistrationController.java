@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dragberry.era.business.benefit.BenefitService;
 import org.dragberry.era.business.registration.ContractService;
 import org.dragberry.era.business.registration.RegistrationService;
@@ -67,7 +68,7 @@ public class RegistrationController {
 		query.setName(name);
 		query.setFundsSource(fundsSource);
 		query.setEducationForm(educationForm);
-		query.setEducationBase(educationBase);
+		query.setEducationBase(StringUtils.trimToNull(educationBase));
 		return ResponseEntity.ok(Results.create(registrationService.getRegistrationList(query)));
 	}
 	
@@ -102,7 +103,6 @@ public class RegistrationController {
 	
 	@GetMapping("/get-periods")
 	public ResponseEntity<?> getPeriods() {
-//		accessContoll.checkPermission(Roles.RegistrationPeriods.VIEW);
 		return ResponseEntity.ok(Results.create(
 				registrationService.getRegistrationPeriodList(accessContoll.getLoggedUser().getCustomerId())));
 	}
