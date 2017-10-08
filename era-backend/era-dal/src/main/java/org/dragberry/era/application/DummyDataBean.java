@@ -309,7 +309,7 @@ public class DummyDataBean {
 	
 	private Certificate certificate(Person enrollee) {
 		Certificate certificate = new Certificate();
-		certificate.setInstitution(educationInstitutionBaseDao.findOne(1000L + RandomProvider.RANDOM.nextInt(20)));
+		certificate.setInstitution(educationInstitutionBaseDao.findOne(1000L + RandomProvider.RANDOM.nextInt(10)));
 		certificate.setYear(RandomProvider.getYear());
 		certificate.setEnrollee(enrollee);
 		
@@ -325,9 +325,12 @@ public class DummyDataBean {
 		createBase("BY", "ГУО СШ №998 г.Минска");
 		createBase("BY", "ГУО СШ №988 г.Минска");
 		createBase("BY", "ГУО СШ №888 г.Минска");
-		for (int i = 0; i < 20; i++) {
-			createBase("BY", RandomProvider.getSchool());
-		}
+		createBase("BY", "ГУО СШ №87 г.Могилева");
+		createBase("BY", "ГУО СШ №3 г.Бреста");
+		createBase("BY", "ГУО СШ №12 г.Минска");
+		createBase("BY", "ГУО СШ №143 г.Минска");
+		createBase("BY", "ГУО СШ №25 г.Минска");
+		createBase("BY", "ГУО СШ №89 г.Минска");
 	}
 
 	private void createBase(String country, String name) {
