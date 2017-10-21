@@ -132,44 +132,8 @@ public class RegistrationServiceBean implements RegistrationService {
 		Registration registration = new Registration();
 		PersonCRUDTO enrolleeCRUD = registrationCRUD.getEnrollee();
 		if (enrolleeCRUD != null) {
-			Person enrollee = new Person();
+			Person enrollee = convertPerson(enrolleeCRUD);
 			registration.setEnrollee(enrollee);
-			enrollee.setFirstName(enrolleeCRUD.getFirstName());
-			enrollee.setLastName(enrolleeCRUD.getLastName());
-			enrollee.setMiddleName(enrolleeCRUD.getMiddleName());
-			enrollee.setBirthdate(enrolleeCRUD.getBirthdate());
-			AddressTO addressTO = enrolleeCRUD.getAddress();
-			if (addressTO != null) {
-				Address address = new Address();
-				enrollee.setAddress(address);
-				address.setCountry(addressTO.getCountry());
-				address.setCity(addressTO.getCity());
-				address.setStreet(addressTO.getStreet());
-				address.setHouse(addressTO.getHouse());
-				address.setHousing(addressTO.getHousing());
-				address.setFlat(addressTO.getFlat());
-				address.setZipCode(addressTO.getZipCode());
-			}
-			DocumentTO documentTO = enrolleeCRUD.getDocument();
-			if (documentTO != null) {
-				Document document = new Document();
-				enrollee.setDocument(document);
-				try {
-					document.setType(Document.Type.valueOf(documentTO.getType()));
-				} catch (Exception exc) {
-					document.setType(null);
-				}
-				document.setId(documentTO.getId());
-				document.setDocumentId(documentTO.getDocumentId());
-				document.setIssueDate(documentTO.getIssueDate());
-				document.setIssuedBy(documentTO.getIssuedBy());
-				document.setCitizenhip(documentTO.getCitizenship());
-			}
-			ContactDetailsTO contactDetails = enrolleeCRUD.getContactDetails();
-			if (contactDetails != null) {
-				enrollee.setPhone(contactDetails.getPhone());
-				enrollee.setEmail(contactDetails.getEmail());
-			}
 		}
 		if (registrationCRUD.getEducationInstitutionId() != null) {
 			registration.setInstitution(educationInstitutionDao.findOne(registrationCRUD.getEducationInstitutionId()));
@@ -255,6 +219,11 @@ public class RegistrationServiceBean implements RegistrationService {
 			registration.setCertificate(certificate);
 		}
 		
+		PersonCRUDTO payerCRUD = registrationCRUD.getPayer();
+		if (payerCRUD != null && !registrationCRUD.isEnrolleeAsPayer()) {
+			registration.setPayer(convertPerson(payerCRUD));
+		}
+		
 		allIssues.addAll(validationService.validate(registration));
 		List<IssueTO> errorIssues = Collections.emptyList();
 		Status status = Status.NOT_VERIFIED;
@@ -265,8 +234,15 @@ public class RegistrationServiceBean implements RegistrationService {
 			}
 		}
 		if (errorIssues.isEmpty() && registrationCRUD.getIgnoreWarnings()) {
-			personDao.create(registration.getEnrollee());
-			enrolleeCRUD.setId(registration.getEnrollee().getEntityKey());
+			Person enrollee = personDao.create(registration.getEnrollee());
+			enrolleeCRUD.setId(enrollee.getEntityKey());
+			
+			if (registrationCRUD.isEnrolleeAsPayer()) {
+				registration.setPayer(enrollee);
+			} else if (registration.getPayer() != null) {
+				personDao.create(registration.getPayer());
+				registrationCRUD.getPayer().setId(registration.getPayer().getEntityKey());
+			}
 			
 			certificateDao.create(registration.getCertificate());
 			registrationCRUD.getCertificate().setId(registration.getCertificate().getEntityKey());
@@ -279,6 +255,48 @@ public class RegistrationServiceBean implements RegistrationService {
 			registrationCRUD.setId(registration.getEntityKey());
 		}
 		return Results.create(registrationCRUD, registrationCRUD.getIgnoreWarnings() ? errorIssues : allIssues);
+	}
+
+	private static Person convertPerson(PersonCRUDTO personCRUD) {
+		Person person = new Person();
+		person.setEntityKey(personCRUD.getId());
+		person.setFirstName(personCRUD.getFirstName());
+		person.setLastName(personCRUD.getLastName());
+		person.setMiddleName(personCRUD.getMiddleName());
+		person.setBirthdate(personCRUD.getBirthdate());
+		AddressTO addressTO = personCRUD.getAddress();
+		if (addressTO != null) {
+			Address address = new Address();
+			person.setAddress(address);
+			address.setCountry(addressTO.getCountry());
+			address.setCity(addressTO.getCity());
+			address.setStreet(addressTO.getStreet());
+			address.setHouse(addressTO.getHouse());
+			address.setHousing(addressTO.getHousing());
+			address.setFlat(addressTO.getFlat());
+			address.setZipCode(addressTO.getZipCode());
+		}
+		DocumentTO documentTO = personCRUD.getDocument();
+		if (documentTO != null) {
+			Document document = new Document();
+			person.setDocument(document);
+			try {
+				document.setType(Document.Type.valueOf(documentTO.getType()));
+			} catch (Exception exc) {
+				document.setType(null);
+			}
+			document.setId(documentTO.getId());
+			document.setDocumentId(documentTO.getDocumentId());
+			document.setIssueDate(documentTO.getIssueDate());
+			document.setIssuedBy(documentTO.getIssuedBy());
+			document.setCitizenhip(documentTO.getCitizenship());
+		}
+		ContactDetailsTO contactDetails = personCRUD.getContactDetails();
+		if (contactDetails != null) {
+			person.setPhone(contactDetails.getPhone());
+			person.setEmail(contactDetails.getEmail());
+		}
+		return person;
 	}
 	
 	private long getIdForRegistration(Registration registration) {

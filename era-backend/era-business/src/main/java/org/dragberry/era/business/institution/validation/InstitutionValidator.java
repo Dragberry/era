@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dragberry.era.business.CountryService;
-import org.dragberry.era.business.registration.validation.RegistrationCommon;
+import org.dragberry.era.business.registration.validation.RegistrationValidationHelper;
 import org.dragberry.era.business.validation.Validator;
 import org.dragberry.era.common.IssueTO;
 import org.dragberry.era.common.Issues;
@@ -23,7 +23,7 @@ public class InstitutionValidator implements Validator<EducationInstitutionBase>
 	@Autowired
 	private CountryService countryService;
 	
-	private interface Errors extends RegistrationCommon {
+	private interface Errors extends RegistrationValidationHelper {
 		String PREFIX = "validation.education-institution.";
 		String NAME_IS_EMPTY =  PREFIX + "name-is-empty";
 		String NAME_IS_TOO_SHORT = PREFIX + "name-is-too-short";

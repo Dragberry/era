@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.dragberry.era.business.validation.Validator;
+import org.apache.commons.lang3.StringUtils;
+import org.dragberry.era.business.validation.AbstractValidator;
 import org.dragberry.era.common.IssueTO;
 import org.dragberry.era.common.Issues;
 import org.dragberry.era.dao.RegistrationPeriodDao;
@@ -19,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RegistrationValidator implements Validator<Registration> {
+public class RegistrationValidator extends AbstractValidator<Registration> implements RegistrationValidationHelper {
 	
 	private static final String COMMA = ", ";
 	private static final String BRACKET_L = "[";
@@ -32,92 +33,95 @@ public class RegistrationValidator implements Validator<Registration> {
 	@Autowired
 	private RegistrationPeriodDao registrationPeriodDao;
 	
-	private interface Errors extends RegistrationCommon {
-		String NO_REGISTRATION_PERIOD = RegistrationCommon.errorCode("no-registration-period");
-		String REGISTRATION_PERIOD_IS_WRONG = RegistrationCommon.errorCode("registration-period-is-wrong");
-		String REGISTRATION_PERIOD_IS_NOT_OPENED = RegistrationCommon.errorCode("registration-period-is-not-opened");
-		String EDUCATION_INSTITUTION_IS_EMPTY = RegistrationCommon.errorCode("education-institution-is-empty");
-		String SPECIALTY_IS_EMPTY = RegistrationCommon.errorCode("specialty-is-empty");
-		String SPECIALTY_IS_WRONG = RegistrationCommon.errorCode("specialty-is-wrong");
-		String FUNDS_SOURCE_IS_EMPTY = RegistrationCommon.errorCode("funds-source-is-empty");
-		String FUNDS_SOURCE_IS_NOT_AVAILABLE = RegistrationCommon.errorCode("funds-source-is-not-available");
-		String EDUCATION_FORM_IS_EMPTY = RegistrationCommon.errorCode("education-form-is-empty");
-		String EDUCATION_FORM_IS_NOT_AVAILABLE  = RegistrationCommon.errorCode("education-form-is-not-available");
-		String EDUCATION_BASE_IS_EMPTY = RegistrationCommon.errorCode("education-base-is-empty");
-		String EDUCATION_BASE_IS_NOT_AVAILABLE  = RegistrationCommon.errorCode("education-base-is-not-available");
-		String EDUCATION_INSTITUTION_IS_WRONG = RegistrationCommon.errorCode("education-institution-is-wrong");
-		String PREROGATIVE_IS_DELETED = RegistrationCommon.errorCode("prerogative-is-deleted");
-		String OUT_OF_COMPETITION_IS_DELETED = RegistrationCommon.errorCode("out-of-competition-is-deleted");
+	private class Errors {
+		final String noRegistrationPeriod = errorCode("no-registration-period");
+		final String registrationPeriodIsWrong = errorCode("registration-period-is-wrong");
+		final String registrationPeriodIsNotOpened = errorCode("registration-period-is-not-opened");
+		final String educationInstitutionIsEmpty = errorCode("education-institution-is-empty");
+		final String specialtyIsEmpty = errorCode("specialty-is-empty");
+		final String specialtyIsWrong = errorCode("specialty-is-wrong");
+		final String fundsSourceIsEmpty = errorCode("funds-source-is-empty");
+		final String fundsSourceIsNotAvailable = errorCode("funds-source-is-not-available");
+		final String educationFormIsEmpty = errorCode("education-form-is-empty");
+		final String educationFormIsNotAvailable  = errorCode("education-form-is-not-available");
+		final String educationBaseIsEmpty = errorCode("education-base-is-empty");
+		final String educationBaseIsNotAvailable  = errorCode("education-base-is-not-available");
+		final String educationInstitutionIsWrong = errorCode("education-institution-is-wrong");
+		final String prerogativeIsDeleted = errorCode("prerogative-is-deleted");
+		final String outOfCompetitionIsDeleted = errorCode("out-of-competition-is-deleted");
 	}
 	
-	private interface FieldID {
-		String EDUCATION_INSTITUTION = "educationInstitution";
-		String SPECIALTY = "specialty";
-		String FUNDS_SOURCE = "fundsSource";
-		String EDUCATION_FORM = "educationForm";
-		String EDUCATION_BASE = "educationBase";
-		String PREROGATIVES = "prerogatives";
-		String OUT_OF_COMPETITIONS = "outOfCompetitions";
+	private class FieldID {
+		final String educationInstitution = "educationInstitution";
+		final String specialty = "specialty";
+		final String fundsSource = "fundsSource";
+		final String educationForm = "educationForm";
+		final String educationBase = "educationBase";
+		final String prerogatives = "prerogatives";
+		final String outOfCompetitions = "outOfCompetitions";
 	}
+	
+	private final Errors errors = new Errors();
+	private final FieldID fields = new FieldID();
 	
 	@Override
-	public List<IssueTO> validate(Registration entity) {
+	protected List<IssueTO> validateEntity(Registration entity) {
 		List<IssueTO> issues = new ArrayList<>();
 		RegistrationPeriod period = entity.getRegistrationPeriod();
 		if (entity.getInstitution() == null) {
-			issues.add(Issues.error(Errors.EDUCATION_INSTITUTION_IS_EMPTY, FieldID.EDUCATION_INSTITUTION));
+			issues.add(Issues.error(errors.educationInstitutionIsEmpty, fields.educationInstitution));
 		} else {
 			List<RegistrationPeriod> periods = registrationPeriodDao.findActivePeriodsForCustomer(accessControl.getLoggedUser().getCustomerId());
 			if (period == null) {
-				issues.add(Issues.error(Errors.NO_REGISTRATION_PERIOD));
+				issues.add(Issues.error(errors.noRegistrationPeriod));
 			} else {
 				if (!periods.stream().anyMatch(p -> p.getEntityKey().equals(period.getEntityKey()))) {
-					issues.add(Issues.error(Errors.REGISTRATION_PERIOD_IS_WRONG));
+					issues.add(Issues.error(errors.registrationPeriodIsWrong));
 				} else {
 					if (period.getStatus() != RegistrationPeriod.Status.OPENED) {
-						issues.add(Issues.error(Errors.REGISTRATION_PERIOD_IS_NOT_OPENED));
+						issues.add(Issues.error(errors.registrationPeriodIsNotOpened));
 					}
 				}
 				if (!period.getEducationInstitution().getEntityKey().equals(entity.getInstitution().getEntityKey())) {
-					issues.add(Issues.error(Errors.EDUCATION_INSTITUTION_IS_WRONG, FieldID.EDUCATION_INSTITUTION));
+					issues.add(Issues.error(errors.educationInstitutionIsWrong, fields.educationInstitution));
 				}
 			}
 		}
 		if (entity.getSpecialty() == null) {
-			issues.add(Issues.error(Errors.SPECIALTY_IS_EMPTY, FieldID.SPECIALTY));
+			issues.add(Issues.error(errors.specialtyIsEmpty, fields.specialty));
 		} else {
 			if (period != null && !period.getSpecialties().stream()
 					.anyMatch(spec -> spec.getSpecialty().getEntityKey().equals(entity.getSpecialty().getEntityKey()))) {
-				issues.add(Issues.error(Errors.SPECIALTY_IS_WRONG, FieldID.SPECIALTY));
+				issues.add(Issues.error(errors.specialtyIsWrong, fields.specialty));
 			}
 		}
 		if (entity.getFundsSource() == null) {
-			issues.add(Issues.error(Errors.FUNDS_SOURCE_IS_EMPTY, FieldID.FUNDS_SOURCE));
+			issues.add(Issues.error(errors.fundsSourceIsEmpty, fields.fundsSource));
 		} else {
 			if (period != null && !period.getSpecialties().stream()
 					.anyMatch(spec -> spec.getFundsSources().contains(entity.getFundsSource()))) {
-				issues.add(Issues.error(Errors.FUNDS_SOURCE_IS_NOT_AVAILABLE, FieldID.FUNDS_SOURCE));
+				issues.add(Issues.error(errors.fundsSourceIsNotAvailable, fields.fundsSource));
 			}
 		}
 		if (entity.getEducationForm() == null) {
-			issues.add(Issues.error(Errors.EDUCATION_FORM_IS_EMPTY, FieldID.EDUCATION_FORM));
+			issues.add(Issues.error(errors.educationFormIsEmpty, fields.educationForm));
 		} else {
 			if (period != null && !period.getSpecialties().stream()
 					.anyMatch(spec -> spec.getEducationForms().contains(entity.getEducationForm()))) {
-				issues.add(Issues.error(Errors.EDUCATION_FORM_IS_NOT_AVAILABLE, FieldID.EDUCATION_FORM));
+				issues.add(Issues.error(errors.educationFormIsNotAvailable, fields.educationForm));
 			}
 		}
 		if (entity.getEducationBase() == null) {
-			issues.add(Issues.error(Errors.EDUCATION_BASE_IS_EMPTY, FieldID.EDUCATION_BASE));
+			issues.add(Issues.error(errors.educationBaseIsEmpty, fields.educationBase));
 		} else {
 			if (period != null && !period.getSpecialties().stream()
 					.anyMatch(spec -> spec.getEducationBases().contains(entity.getEducationBase()))) {
-				issues.add(Issues.error(Errors.EDUCATION_BASE_IS_NOT_AVAILABLE, FieldID.EDUCATION_BASE));
+				issues.add(Issues.error(errors.educationBaseIsNotAvailable, fields.educationBase));
 			}
 		}
 		
-		issues.addAll(validateBenefits(entity.getPrerogatives(), Errors.PREROGATIVE_IS_DELETED,  FieldID.PREROGATIVES));
-		issues.addAll(validateBenefits(entity.getOutOfCompetitions(), Errors.OUT_OF_COMPETITION_IS_DELETED,  FieldID.OUT_OF_COMPETITIONS));
+		issues.addAll(validateBenefits(entity.getPrerogatives(), errors.prerogativeIsDeleted,  fields.prerogatives));
+		issues.addAll(validateBenefits(entity.getOutOfCompetitions(), errors.outOfCompetitionIsDeleted,  fields.outOfCompetitions));
 		
 		return issues;
 	}
@@ -133,6 +137,16 @@ public class RegistrationValidator implements Validator<Registration> {
 			}
 		}
 		return Collections.emptyList();
+	}
+
+	@Override
+	protected String errorPrefix() {
+		return BASE_ERROR_CODE_PREFIX;
+	}
+
+	@Override
+	protected String fieldPrefix() {
+		return StringUtils.EMPTY;
 	}
 
 }

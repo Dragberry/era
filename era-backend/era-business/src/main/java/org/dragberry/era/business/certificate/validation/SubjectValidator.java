@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dragberry.era.business.registration.validation.RegistrationCommon;
+import org.dragberry.era.business.registration.validation.RegistrationValidationHelper;
 import org.dragberry.era.business.validation.Validator;
 import org.dragberry.era.common.IssueTO;
 import org.dragberry.era.common.Issues;
@@ -19,7 +19,7 @@ public class SubjectValidator implements Validator<Subject> {
 	@Autowired
 	private SubjectDao subjectDao;
 	
-	private interface Errors extends RegistrationCommon {
+	private interface Errors extends RegistrationValidationHelper {
 		String PREFIX = "validation.subject.";
 		String TITLE_IS_EMPTY =  PREFIX + "title-is-empty";
 		String TITLE_IS_TOO_SHORT = PREFIX + "title-is-too-short";

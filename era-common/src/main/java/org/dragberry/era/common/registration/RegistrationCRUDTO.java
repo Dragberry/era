@@ -15,6 +15,10 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 	
 	private PersonCRUDTO enrollee;
 	
+	private PersonCRUDTO payer;
+	
+	private Boolean enrolleeAsPayer;
+	
 	private Character fundsSource;
 	
 	private Character educationForm;
@@ -110,5 +114,23 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 	public void setOutOfCompetitions(List<Long> outOfCompetitions) {
 		this.outOfCompetitions = outOfCompetitions;
 	}
+
+	public PersonCRUDTO getPayer() {
+		return payer;
+	}
+
+	public void setPayer(PersonCRUDTO payer) {
+		this.payer = payer;
+	}
+
+	public Boolean isEnrolleeAsPayer() {
+		return enrolleeAsPayer;
+	}
+
+	public void setEnrolleeAsPayer(Boolean enrolleeAsPayer) {
+		this.enrolleeAsPayer = enrolleeAsPayer;
+	}
+	
+	
 
 }

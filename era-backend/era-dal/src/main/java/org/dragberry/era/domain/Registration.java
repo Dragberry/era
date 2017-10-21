@@ -64,6 +64,10 @@ public class Registration extends BaseEntity {
 	private Person enrollee;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PAYER_KEY", referencedColumnName = "PERSON_KEY")
+	private Person payer;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "REGISTRATION_PERIOD_KEY", referencedColumnName = "REGISTRATION_PERIOD_KEY")
 	private RegistrationPeriod registrationPeriod;
 	
@@ -253,6 +257,14 @@ public class Registration extends BaseEntity {
 
 	public void setVerifiedBy(UserAccount verifiedBy) {
 		this.verifiedBy = verifiedBy;
+	}
+	
+	public Person getPayer() {
+		return payer;
+	}
+
+	public void setPayer(Person payer) {
+		this.payer = payer;
 	}
 
 	public static enum Status implements BaseEnum<Character> {

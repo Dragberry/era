@@ -14,11 +14,17 @@ public class RegistrationValidationService extends AbstractValidationService<Reg
 			CertificateValidator certificateValidator,
 			DocumentValidator documentValidator,
 			EnrolleeValidator enrolleeValidator,
+			PayerValidator payerValidator,
+			PayerAddressValidator payerAddressValidator,
+			PayerDocumentValidator payerDocumentValidator,
 			RegistrationValidator registrationValidator) {
 		addValidator(addressValidator);
 		addValidator(documentValidator);
 		addValidator(enrolleeValidator);
 		addValidator(registrationValidator);
 		addValidator(certificateValidator);
+		addValidator(payerValidator);
+		addValidator(payerAddressValidator);
+		addValidator(payerDocumentValidator);
 	}
 }
