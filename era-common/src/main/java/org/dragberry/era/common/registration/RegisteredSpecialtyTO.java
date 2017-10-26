@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.dragberry.era.common.certificate.ExamSubjectCRUDTO;
+import org.dragberry.era.common.expression.ExpressionResult;
+
 public class RegisteredSpecialtyTO implements Serializable {
 
 	private static final long serialVersionUID = 8050985848644030995L;
@@ -25,6 +28,10 @@ public class RegisteredSpecialtyTO implements Serializable {
 	private Boolean separateByFundsSource;
 	
 	private Set<Character> fundsSources = new HashSet<>();
+	
+	private String examSubjectsRule;
+	
+	private ExpressionResult<ExamSubjectCRUDTO> examSubjects;
 
 	public Long getId() {
 		return id;
@@ -96,6 +103,22 @@ public class RegisteredSpecialtyTO implements Serializable {
 
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
+	}
+
+	public String getExamSubjectsRule() {
+		return examSubjectsRule;
+	}
+
+	public void setExamSubjectsRule(String examSubjectsRule) {
+		this.examSubjectsRule = examSubjectsRule;
+	}
+
+	public ExpressionResult<ExamSubjectCRUDTO> getExamSubjects() {
+		return examSubjects;
+	}
+
+	public void setExamSubjects(ExpressionResult<ExamSubjectCRUDTO> examSubjects) {
+		this.examSubjects = examSubjects;
 	}
 
 }

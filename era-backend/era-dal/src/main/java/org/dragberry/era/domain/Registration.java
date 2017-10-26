@@ -2,9 +2,12 @@ package org.dragberry.era.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -14,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -111,6 +115,12 @@ public class Registration extends BaseEntity {
         joinColumns = @JoinColumn(name = "REGISTRATION_KEY", referencedColumnName = "REGISTRATION_KEY"), 
         inverseJoinColumns = @JoinColumn(name = "OUT_OF_COMPETITION_KEY", referencedColumnName = "OUT_OF_COMPETITION_KEY"))
 	private List<OutOfCompetition> outOfCompetitions;
+	
+	@ElementCollection
+	@CollectionTable(name = "REGISTRATION_EXAM_SUBJECT", joinColumns = @JoinColumn(name = "REGISTRATION_KEY"))
+	@MapKeyJoinColumn(name = "EXAM_SUBJECT_KEY")
+	@Column(name = "MARK")
+	private Map<ExamSubject, Integer> examMarks;
 	
 	@Override
 	public Long getEntityKey() {
@@ -265,6 +275,14 @@ public class Registration extends BaseEntity {
 
 	public void setPayer(Person payer) {
 		this.payer = payer;
+	}
+
+	public Map<ExamSubject, Integer> getExamMarks() {
+		return examMarks;
+	}
+
+	public void setExamMarks(Map<ExamSubject, Integer> examMarks) {
+		this.examMarks = examMarks;
 	}
 
 	public static enum Status implements BaseEnum<Character> {

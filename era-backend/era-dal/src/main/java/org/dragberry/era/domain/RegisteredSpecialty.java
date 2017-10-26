@@ -43,6 +43,9 @@ public class RegisteredSpecialty extends BaseEntity {
 	@JoinColumn(name = "SPECIALTY_KEY", referencedColumnName = "SPECIALTY_KEY")
 	private Specialty specialty;
 	
+	@Column(name = "EXAM_SUBJECT_EXPRESSION")
+	private String examSubjectExpression;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "REGISTRATION_PERIOD_KEY", referencedColumnName = "REGISTRATION_PERIOD_KEY")
 	private RegistrationPeriod registrationPeriod;
@@ -146,6 +149,14 @@ public class RegisteredSpecialty extends BaseEntity {
 
 	public void setRegistrationPeriod(RegistrationPeriod registrationPeriod) {
 		this.registrationPeriod = registrationPeriod;
+	}
+
+	public String getExamSubjectExpression() {
+		return examSubjectExpression;
+	}
+
+	public void setExamSubjectExpression(String examSubjectExpression) {
+		this.examSubjectExpression = examSubjectExpression;
 	}
 
 }
