@@ -1,15 +1,10 @@
 package org.dragberry.era.common.expression;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class ExpressionParser<T extends Serializable> {
 
@@ -25,7 +20,7 @@ public class ExpressionParser<T extends Serializable> {
 
 	public ExpressionResult<T> parse(String exp) {
 		ExpressionResult<T> result = new ExpressionResult<>();
-		Stack<List<T>> stack = new Stack<>();
+		LinkedList<List<T>> stack = new LinkedList<>();
 		Arrays.stream(expressionToRPN(exp).split(DELIMITER)).filter(item -> !item.isEmpty()).forEach(item -> {
 			Operator op = Operator.resolve(item);
 			if (op == null) {
@@ -39,7 +34,7 @@ public class ExpressionParser<T extends Serializable> {
 				}
 			}
 		});
-		result.setList(new ArrayList<>(stack));
+		result.setList(stack);
 		return result;
 	}
 	
@@ -48,7 +43,7 @@ public class ExpressionParser<T extends Serializable> {
 	 */
 	public String expressionToRPN(String exp) {
 		StringBuilder result = new StringBuilder();
-		Stack<Operator> operators = new Stack<>();
+		LinkedList<Operator> operators = new LinkedList<>();
 		Arrays.stream(exp.split(DELIMITER)).filter(s -> !s.isEmpty()).forEach(s -> {
 			Operator op = Operator.resolve(s);
 			if (op == null) {
@@ -63,7 +58,7 @@ public class ExpressionParser<T extends Serializable> {
 				operators.push(op);
 			}
 		});
-		while (!operators.empty()) {
+		while (!operators.isEmpty()) {
 			result.append(SPACE).append(operators.pop().value);
 		}
 		System.out.println(result.toString());
@@ -74,7 +69,7 @@ public class ExpressionParser<T extends Serializable> {
 	 * From Reverse Polish notation
 	 */
 	public String expressionFromRPN(String rpn) {
-		Stack<List<String>> stack = new Stack<>();
+		LinkedList<List<String>> stack = new LinkedList<>();
 		Arrays.stream(rpn.split(DELIMITER)).filter(item -> !item.isEmpty()).forEach(item -> {
 			Operator op = Operator.resolve(item);
 			if (op == null) {
