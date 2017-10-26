@@ -2,10 +2,10 @@ package org.dragberry.era.common.registration;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.dragberry.era.common.certificate.ExamSubjectCRUDTO;
-import org.dragberry.era.common.expression.ExpressionResult;
 
 public class RegisteredSpecialtyTO implements Serializable {
 
@@ -31,7 +31,7 @@ public class RegisteredSpecialtyTO implements Serializable {
 	
 	private String examSubjectsRule;
 	
-	private ExpressionResult<ExamSubjectCRUDTO> examSubjects;
+	private List<List<ExamSubjectCRUDTO>> examSubjects;
 
 	public Long getId() {
 		return id;
@@ -113,11 +113,11 @@ public class RegisteredSpecialtyTO implements Serializable {
 		this.examSubjectsRule = examSubjectsRule;
 	}
 
-	public ExpressionResult<ExamSubjectCRUDTO> getExamSubjects() {
+	public List<List<ExamSubjectCRUDTO>> getExamSubjects() {
 		return examSubjects;
 	}
 
-	public void setExamSubjects(ExpressionResult<ExamSubjectCRUDTO> examSubjects) {
+	public void setExamSubjects(List<List<ExamSubjectCRUDTO>> examSubjects) {
 		this.examSubjects = examSubjects;
 	}
 

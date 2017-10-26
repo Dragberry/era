@@ -358,8 +358,7 @@ public class RegistrationServiceBean implements RegistrationService {
 			specTo.setFundsSources(spec.getFundsSources().stream().map(FundsSource::getValue).collect(Collectors.toSet()));
 			if (spec.getExamSubjectExpression() != null) {
 				specTo.setExamSubjectsRule(spec.getExamSubjectExpression());
-				specTo.setExamSubjects(parser.parse(spec.getExamSubjectExpression()));
-				
+				specTo.setExamSubjects(parser.parse(spec.getExamSubjectExpression()).getList());
 			}
 			return specTo;
 		}).collect(Collectors.toList()));
