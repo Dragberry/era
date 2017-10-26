@@ -1,35 +1,41 @@
 package org.dragberry.era.common.expression;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-public class ExpressionParser {
+public class ExpressionParser<T extends Serializable> {
 
 	private static final String DELIMITER = "\\s|\\\"";
 	private static final String QUOTE = "\"";
 	private static final String SPACE = " ";
+	
+	private Function<String, T> dataProvider;
+	
+	public ExpressionParser(Function<String, T> dataProvider) {
+		this.dataProvider = dataProvider;
+	}
 
-	public ExpressionResult<String> parse(String exp) {
-		ExpressionResult<String> result = new ExpressionResult<>();
-		Stack<List<String>> stack = new Stack<>();
+	public ExpressionResult<T> parse(String exp) {
+		ExpressionResult<T> result = new ExpressionResult<>();
+		Stack<List<T>> stack = new Stack<>();
 		Arrays.stream(expressionToRPN(exp).split(DELIMITER)).filter(item -> !item.isEmpty()).forEach(item -> {
 			Operator op = Operator.resolve(item);
 			if (op == null) {
-				List<String> list = new ArrayList<>(1);
-				list.add(item);
+				List<T> list = new LinkedList<>();
+				list.add(dataProvider.apply(item));
 				stack.push(list);
 			} else {
 				if (op == Operator.OR) {
-					List<String> l1 = stack.pop();
-					List<String> l2 = stack.pop();
-					List<String> lr = new ArrayList<String>(l1.size() + l2.size());
-					lr.addAll(l1);
-					lr.addAll(l2);
-					stack.push(lr);
+					List<T> l1 = stack.pop();
+					stack.peek().addAll(l1);
 				}
 			}
 		});
@@ -72,17 +78,13 @@ public class ExpressionParser {
 		Arrays.stream(rpn.split(DELIMITER)).filter(item -> !item.isEmpty()).forEach(item -> {
 			Operator op = Operator.resolve(item);
 			if (op == null) {
-				List<String> list = new ArrayList<>(1);
+				List<String> list = new LinkedList<>();
 				list.add(item);
 				stack.push(list);
 			} else {
 				if (op == Operator.OR) {
 					List<String> l1 = stack.pop();
-					List<String> l2 = stack.pop();
-					List<String> lr = new ArrayList<String>(l1.size() + l2.size());
-					lr.addAll(l1);
-					lr.addAll(l2);
-					stack.push(lr);
+					stack.peek().addAll(l1);
 				}
 			}
 		});
@@ -97,8 +99,7 @@ public class ExpressionParser {
 				op = Operator.AND;
 			} 
 		});
-		result.setList(new ArrayList<>(stack));
-		return result;
+		return null;
 	}
 
 }

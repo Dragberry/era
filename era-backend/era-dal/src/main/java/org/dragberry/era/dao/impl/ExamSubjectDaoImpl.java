@@ -4,7 +4,6 @@ import javax.persistence.NoResultException;
 
 import org.dragberry.era.dao.ExamSubjectDao;
 import org.dragberry.era.domain.ExamSubject;
-import org.dragberry.era.domain.Subject;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -20,7 +19,7 @@ public class ExamSubjectDaoImpl extends AbstractDao<ExamSubject> implements Exam
 	@Override
 	public ExamSubject findByTitle(String title) {
 		try {
-			return getEntityManager().createNamedQuery(Subject.FIND_BY_TITLE, ExamSubject.class)
+			return getEntityManager().createNamedQuery(ExamSubject.FIND_BY_TITLE, ExamSubject.class)
 					.setParameter(TITLE, title)
 					.getSingleResult();
 		} catch (NoResultException nre) {
@@ -31,7 +30,7 @@ public class ExamSubjectDaoImpl extends AbstractDao<ExamSubject> implements Exam
 	@Override
 	public ExamSubject findByCode(String code) {
 		try {
-			return getEntityManager().createNamedQuery(Subject.FIND_BY_TITLE, ExamSubject.class)
+			return getEntityManager().createNamedQuery(ExamSubject.FIND_BY_CODE, ExamSubject.class)
 					.setParameter(CODE, code)
 					.getSingleResult();
 		} catch (NoResultException nre) {

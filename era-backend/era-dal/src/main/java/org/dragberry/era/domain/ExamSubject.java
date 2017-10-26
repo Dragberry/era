@@ -15,10 +15,10 @@ import javax.persistence.TableGenerator;
 @NamedQueries({
 	@NamedQuery(
 			name = ExamSubject.FIND_BY_TITLE,
-			query = "select s from Subject s where s.title = :title"),
+			query = "select s from ExamSubject s where s.title = :title"),
 	@NamedQuery(
 			name = ExamSubject.FIND_BY_CODE,
-			query = "select s from Subject s where s.code = :code")
+			query = "select s from ExamSubject s where s.code = :code")
 })
 @TableGenerator(
 		name = "EXAM_SUBJECT_GEN", 

@@ -14,8 +14,10 @@ import org.dragberry.era.common.IssueType;
 import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
 import org.dragberry.era.common.certificate.CertificateCRUDTO;
+import org.dragberry.era.common.certificate.ExamSubjectCRUDTO;
 import org.dragberry.era.common.certificate.SubjectCRUDTO;
 import org.dragberry.era.common.certificate.SubjectMarkCRUDTO;
+import org.dragberry.era.common.expression.ExpressionParser;
 import org.dragberry.era.common.institution.EducationInstitutionBaseCRUDTO;
 import org.dragberry.era.common.institution.EducationInstitutionTO;
 import org.dragberry.era.common.person.AddressTO;
@@ -31,6 +33,7 @@ import org.dragberry.era.dao.PrerogativeDao;
 import org.dragberry.era.dao.CertificateDao;
 import org.dragberry.era.dao.EducationInstitutionBaseDao;
 import org.dragberry.era.dao.EducationInstitutionDao;
+import org.dragberry.era.dao.ExamSubjectDao;
 import org.dragberry.era.dao.OutOfCompetitionDao;
 import org.dragberry.era.dao.PersonDao;
 import org.dragberry.era.dao.RegistrationDao;
@@ -45,6 +48,7 @@ import org.dragberry.era.domain.Document;
 import org.dragberry.era.domain.EducationBase;
 import org.dragberry.era.domain.EducationForm;
 import org.dragberry.era.domain.EducationInstitutionBase;
+import org.dragberry.era.domain.ExamSubject;
 import org.dragberry.era.domain.FundsSource;
 import org.dragberry.era.domain.Person;
 import org.dragberry.era.domain.Registration;
@@ -70,6 +74,8 @@ public class RegistrationServiceBean implements RegistrationService {
 	@Autowired
 	private EducationInstitutionBaseDao educationInstitutionBaseDao;
 	@Autowired
+	private ExamSubjectDao examSubjectDao;
+	@Autowired
 	private PersonDao personDao;
 	@Autowired
 	private RegistrationDao registrationDao;
@@ -89,6 +95,15 @@ public class RegistrationServiceBean implements RegistrationService {
 	private EducationInstitutionService eiService;
 	@Autowired
 	private CertificateService certificationService;
+	
+	private ExpressionParser<ExamSubjectCRUDTO> parser = new ExpressionParser<ExamSubjectCRUDTO>(code -> {
+		ExamSubject es = examSubjectDao.findByCode(code);
+		ExamSubjectCRUDTO esTO = new ExamSubjectCRUDTO();
+		esTO.setCode(es.getCode());
+		esTO.setId(es.getEntityKey());
+		esTO.setTitle(es.getTitle());
+		return esTO;
+	});
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -289,7 +304,7 @@ public class RegistrationServiceBean implements RegistrationService {
 	@Transactional
 	public List<RegistrationPeriodTO> getActiveRegistrationPeriods(Long customerKey) {
 		return registrationPeriodDao.findActivePeriodsForCustomer(customerKey).stream()
-				.map(RegistrationServiceBean::convertPeriod)
+				.map(this::convertPeriod)
 				.collect(Collectors.toList());
 	}
 	
@@ -297,11 +312,11 @@ public class RegistrationServiceBean implements RegistrationService {
 	@Transactional
 	public List<RegistrationPeriodTO> getRegistrationPeriodList(Long customerKey) {
 		return registrationPeriodDao.fetchList(customerKey).stream()
-				.map(RegistrationServiceBean::convertPeriod)
+				.map(this::convertPeriod)
 				.collect(Collectors.toList());
 	}
 
-	private static RegistrationPeriodTO convertPeriod(RegistrationPeriod entity) {
+	private RegistrationPeriodTO convertPeriod(RegistrationPeriod entity) {
 		RegistrationPeriodTO to = new RegistrationPeriodTO();
 		to.setId(entity.getEntityKey());
 		to.setTitle(entity.getTitle());
@@ -323,6 +338,11 @@ public class RegistrationServiceBean implements RegistrationService {
 			specTo.setEducationForms(spec.getEducationForms().stream().map(EducationForm::getValue).collect(Collectors.toSet()));
 			specTo.setSeparateByFundsSource(spec.getSeparateByFundsSource());
 			specTo.setFundsSources(spec.getFundsSources().stream().map(FundsSource::getValue).collect(Collectors.toSet()));
+			if (spec.getExamSubjectExpression() != null) {
+				specTo.setExamSubjectsRule(spec.getExamSubjectExpression());
+				specTo.setExamSubjects(parser.parse(spec.getExamSubjectExpression()));
+				
+			}
 			return specTo;
 		}).collect(Collectors.toList()));
 		return to;
