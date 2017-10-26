@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import org.dragberry.era.dao.PrerogativeDao;
 import org.dragberry.era.dao.CertificateDao;
 import org.dragberry.era.dao.EducationInstitutionBaseDao;
 import org.dragberry.era.dao.EducationInstitutionDao;
+import org.dragberry.era.dao.ExamSubjectDao;
 import org.dragberry.era.dao.OutOfCompetitionDao;
 import org.dragberry.era.dao.PersonDao;
 import org.dragberry.era.dao.RegistrationDao;
@@ -28,6 +30,7 @@ import org.dragberry.era.domain.EducationBase;
 import org.dragberry.era.domain.EducationForm;
 import org.dragberry.era.domain.EducationInstitution;
 import org.dragberry.era.domain.EducationInstitutionBase;
+import org.dragberry.era.domain.ExamSubject;
 import org.dragberry.era.domain.FundsSource;
 import org.dragberry.era.domain.OutOfCompetition;
 import org.dragberry.era.domain.Person;
@@ -68,17 +71,22 @@ public class DummyDataBean {
 	private OutOfCompetitionDao outOfCompetitionDao;
 	@Autowired
 	private EducationInstitutionBaseDao educationInstitutionBaseDao;
+	@Autowired
+	private ExamSubjectDao examSubjectDao;
 	
 	private UserAccount user1;
 	private UserAccount user2;
 	private EducationInstitution eInstitution;
 	private RegistrationPeriod period;
 	
+	private Map<String, ExamSubject> examSubjects = new HashMap<>();
+	
 	@Transactional
 	public void createTestData() {
 		if (registrationPeriodDao.findOne(1000L) != null) {
 			return;
 		}
+		fetchExamSubjects();
 		createBaseInstitutions();
 		
 		user1 = userAccountDao.findOne(1000L);
@@ -175,6 +183,10 @@ public class DummyDataBean {
 		
 	}
 	
+	private void fetchExamSubjects() {
+		examSubjects = examSubjectDao.fetchList().stream().collect(Collectors.toMap(ExamSubject::getCode, es -> es));
+	}
+
 	private void createRegistration(long id, int specId, EducationForm form, EducationBase base, FundsSource source, Benefit... benefits) {
 		Person person = person();
 		personDao.create(person);
@@ -208,6 +220,20 @@ public class DummyDataBean {
 		registration.setPrerogatives(Arrays.stream(benefits).filter(b -> b instanceof Prerogative).map(b -> (Prerogative) b).collect(Collectors.toList()));
 		registration.setOutOfCompetitions(Arrays.stream(benefits).filter(b -> b instanceof OutOfCompetition).map(b -> (OutOfCompetition) b).collect(Collectors.toList()));
 		
+		if (registration.getEducationBase() == EducationBase.L11) {
+			Map<ExamSubject, Integer> examMarks = new HashMap<>();
+			examMarks.put(examSubjects.get(RandomProvider.RANDOM.nextInt() % 2 == 0 ? "01" : "02"), 23);
+			if (specId == 1) {
+				examMarks.put(examSubjects.get("01"), RandomProvider.RANDOM.nextInt(101));
+				examMarks.put(examSubjects.get("03"), RandomProvider.RANDOM.nextInt(101));
+			} else {
+				examMarks.put(examSubjects.get("05"), RandomProvider.RANDOM.nextInt(101));
+				examMarks.put(examSubjects.get("06"), RandomProvider.RANDOM.nextInt(101));
+			}
+			
+			registration.setExamMarks(examMarks);
+		}
+		
 		return registration;
 	}
 	
@@ -231,6 +257,7 @@ public class DummyDataBean {
 					rSpec.setEducationForms(EnumSet.allOf(EducationForm.class));
 					rSpec.setSeparateByFundsSource(true);
 					rSpec.setFundsSources(EnumSet.allOf(FundsSource.class));
+					rSpec.setExamSubjectExpression("\"01\" or \"02\" and \"03\" and \"04\"");
 					break;
 				case 1001:
 					rSpec.setSeparateByEducationBase(true);
@@ -239,6 +266,7 @@ public class DummyDataBean {
 					rSpec.setEducationForms(EnumSet.allOf(EducationForm.class));
 					rSpec.setSeparateByFundsSource(false);
 					rSpec.setFundsSources(EnumSet.allOf(FundsSource.class));
+					rSpec.setExamSubjectExpression("\"05\" and \"01\" or \"02\" and \"06\"");
 					break;
 				case 1002:
 					rSpec.setSeparateByEducationBase(true);
@@ -247,6 +275,7 @@ public class DummyDataBean {
 					rSpec.setEducationForms(EnumSet.allOf(EducationForm.class));
 					rSpec.setSeparateByFundsSource(true);
 					rSpec.setFundsSources(EnumSet.allOf(FundsSource.class));
+					rSpec.setExamSubjectExpression("\"01\" or \"02\" and \"03\" and \"04\"");
 					break;
 				case 1003:
 					rSpec.setSeparateByEducationBase(false);
@@ -255,6 +284,7 @@ public class DummyDataBean {
 					rSpec.setEducationForms(EnumSet.allOf(EducationForm.class));
 					rSpec.setSeparateByFundsSource(true);
 					rSpec.setFundsSources(EnumSet.allOf(FundsSource.class));
+					rSpec.setExamSubjectExpression("\"01\" or \"02\" and \"03\" and \"04\"");
 					break;
 				case 1004:
 					rSpec.setSeparateByEducationBase(false);
@@ -263,6 +293,7 @@ public class DummyDataBean {
 					rSpec.setEducationForms(EnumSet.of(EducationForm.FULL_TIME));
 					rSpec.setSeparateByFundsSource(false);
 					rSpec.setFundsSources(EnumSet.of(FundsSource.BUDGET));
+					rSpec.setExamSubjectExpression("\"01\" or \"02\" and \"03\" and \"04\"");
 					break;
 				case 1005:
 					rSpec.setSeparateByEducationBase(false);
@@ -271,6 +302,7 @@ public class DummyDataBean {
 					rSpec.setEducationForms(EnumSet.allOf(EducationForm.class));
 					rSpec.setSeparateByFundsSource(false);
 					rSpec.setFundsSources(EnumSet.allOf(FundsSource.class));
+					rSpec.setExamSubjectExpression("\"01\" or \"02\" and \"03\" and \"04\"");
 					break;
 			}
 			return rSpec;
