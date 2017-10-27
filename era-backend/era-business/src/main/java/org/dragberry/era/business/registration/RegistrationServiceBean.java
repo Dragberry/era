@@ -287,6 +287,7 @@ public class RegistrationServiceBean implements RegistrationService {
 
 			registrationDao.create(registration);
 			registrationCRUD.setId(registration.getEntityKey());
+			registrationCRUD.setRegistrationId(registrationId);
 		}
 		return Results.create(registrationCRUD, registrationCRUD.getIgnoreWarnings() ? errorIssues : allIssues);
 	}

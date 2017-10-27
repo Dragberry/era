@@ -13,6 +13,8 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 
 	private static final long serialVersionUID = 5031693673010499164L;
 	
+	private Long registrationId;
+	
 	private Long periodId;
 	
 	private PersonCRUDTO enrollee;
@@ -141,6 +143,14 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 
 	public void setExamSubjectMarks(List<SubjectMarkCRUDTO<ExamSubjectCRUDTO>> examSubjectMarks) {
 		this.examSubjectMarks = examSubjectMarks;
+	}
+
+	public Long getRegistrationId() {
+		return registrationId;
+	}
+
+	public void setRegistrationId(Long registrationId) {
+		this.registrationId = registrationId;
 	}
 
 }

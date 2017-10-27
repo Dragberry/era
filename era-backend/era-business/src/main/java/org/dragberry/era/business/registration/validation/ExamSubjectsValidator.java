@@ -31,9 +31,11 @@ public class ExamSubjectsValidator extends AbstractValidator<Registration> imple
 	
 	private class Errors {
 		final String isEmpty = errorCode("is-empty");
-		public String markIsEmpty = errorCode("mark-is-empty");
-		public String markAlreadyExists = errorCode("mark-already-exists");
-		public String extraMarksProvided = errorCode("extra-mark-provided");
+		final String markIsEmpty = errorCode("mark-is-empty");
+		final String markAlreadyExists = errorCode("mark-already-exists");
+		final String extraMarksProvided = errorCode("extra-mark-provided");
+		final String markIsTooHigh = errorCode("mark-is-too-high");
+		final String markIsTooLow = errorCode("mark-is-too-low");
 	}
 	
 	private final Errors errors = new Errors();
@@ -85,6 +87,12 @@ public class ExamSubjectsValidator extends AbstractValidator<Registration> imple
 		}
 		if (mark == null) {
 			issues.add(Issues.warning(errors.markIsEmpty, (Object) subjectsGroup.get(0).getTitle()));
+		} else {
+			if (mark > 100) {
+				issues.add(Issues.error(errors.markIsTooHigh, (Object) subjectWithExistedMark.getTitle(), 100));
+			} else if (mark < 0) {
+				issues.add(Issues.error(errors.markIsTooLow, (Object) subjectWithExistedMark.getTitle(), 0));
+			}
 		}
 	}
 
