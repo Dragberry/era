@@ -2,19 +2,19 @@ package org.dragberry.era.common.certificate;
 
 import java.io.Serializable;
 
-public class SubjectMarkCRUDTO implements Serializable {
+public class SubjectMarkCRUDTO<S extends Serializable> implements Serializable {
 
 	private static final long serialVersionUID = -3082377271571049908L;
 
-	private SubjectCRUDTO subject;
+	private S subject;
 	
 	private Integer mark;
 
-	public SubjectCRUDTO getSubject() {
+	public S getSubject() {
 		return subject;
 	}
 
-	public void setSubject(SubjectCRUDTO subject) {
+	public void setSubject(S subject) {
 		this.subject = subject;
 	}
 

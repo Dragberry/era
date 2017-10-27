@@ -3,7 +3,9 @@ package org.dragberry.era.business.registration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.dragberry.era.business.certificate.CertificateService;
@@ -238,6 +240,12 @@ public class RegistrationServiceBean implements RegistrationService {
 		if (payerCRUD != null && !registrationCRUD.isEnrolleeAsPayer()) {
 			registration.setPayer(convertPerson(payerCRUD));
 		}
+		
+		Map<ExamSubject, Integer> examMarks = new HashMap<>();
+		registrationCRUD.getExamSubjectMarks().forEach(esm -> {
+			examMarks.put(examSubjectDao.findOne(esm.getSubject().getId()), esm.getMark());
+		});
+		registration.setExamMarks(examMarks);
 		
 		allIssues.addAll(validationService.validate(registration));
 		List<IssueTO> errorIssues = Collections.emptyList();

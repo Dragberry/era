@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.dragberry.era.common.AbstractCRUDTO;
 import org.dragberry.era.common.certificate.CertificateCRUDTO;
+import org.dragberry.era.common.certificate.ExamSubjectCRUDTO;
+import org.dragberry.era.common.certificate.SubjectMarkCRUDTO;
 import org.dragberry.era.common.person.PersonCRUDTO;
 
 public class RegistrationCRUDTO extends AbstractCRUDTO {
@@ -34,6 +36,8 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 	private List<Long> prerogatives = new ArrayList<>();
 	
 	private List<Long> outOfCompetitions = new ArrayList<>();
+	
+	private List<SubjectMarkCRUDTO<ExamSubjectCRUDTO>> examSubjectMarks = new ArrayList<>();
 
 	public Long getPeriodId() {
 		return periodId;
@@ -130,7 +134,13 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 	public void setEnrolleeAsPayer(Boolean enrolleeAsPayer) {
 		this.enrolleeAsPayer = enrolleeAsPayer;
 	}
-	
-	
+
+	public List<SubjectMarkCRUDTO<ExamSubjectCRUDTO>> getExamSubjectMarks() {
+		return examSubjectMarks;
+	}
+
+	public void setExamSubjectMarks(List<SubjectMarkCRUDTO<ExamSubjectCRUDTO>> examSubjectMarks) {
+		this.examSubjectMarks = examSubjectMarks;
+	}
 
 }
