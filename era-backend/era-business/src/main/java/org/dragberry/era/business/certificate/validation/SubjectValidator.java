@@ -41,7 +41,7 @@ public class SubjectValidator implements Validator<Subject> {
 		}
 		if (issues.isEmpty()) {
 			if (subjectDao.findByTitle(entity.getTitle()) != null) {
-				issues.add(Issues.error(Errors.SUBJECT_ALREADY_EXISTS, entity.getTitle()));
+				issues.add(Issues.error(Errors.SUBJECT_ALREADY_EXISTS, (Object) entity.getTitle()));
 			}
 		}
 		// Order

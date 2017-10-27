@@ -215,7 +215,8 @@ public class RegistrationServiceBean implements RegistrationService {
 							SubjectMarkCRUDTO::getMark)));
 			
 			List<Subject> extraSubjects = new ArrayList<>();
-			cert.getExtraMarks().stream().forEach(sm -> {
+			boolean extraSubjectsHasIssues = false;
+			for (SubjectMarkCRUDTO<SubjectCRUDTO> sm : cert.getExtraMarks()) {
 				SubjectCRUDTO subject = sm.getSubject();
 				if (subject != null) {
 					if (subject.getId() != null) {
@@ -224,28 +225,38 @@ public class RegistrationServiceBean implements RegistrationService {
 						ResultTO<SubjectCRUDTO> subjectResult = certificationService.createSubject(subject);
 						if (!subjectResult.getIssues().isEmpty()) {
 							allIssues.addAll(subjectResult.getIssues());
+							extraSubjectsHasIssues = true;
 						}
 					}
 				}
-				
-			certificate.getMarks().putAll(cert.getExtraMarks().stream().filter(esm -> esm.getMark() != null).collect(Collectors.toMap(
-					esm -> subjectDao.findOne(esm.getSubject().getId()),
-					SubjectMarkCRUDTO::getMark)));
-			});
+			}
+			
+			if (!extraSubjectsHasIssues) {
+				certificate.getMarks().putAll(cert.getExtraMarks().stream().filter(esm -> esm.getMark() != null).collect(Collectors.toMap(
+						esm -> subjectDao.findOne(esm.getSubject().getId()),
+						SubjectMarkCRUDTO::getMark)));
+			}
 			
 			registration.setCertificate(certificate);
 		}
 		
-		PersonCRUDTO payerCRUD = registrationCRUD.getPayer();
-		if (payerCRUD != null && !registrationCRUD.isEnrolleeAsPayer()) {
-			registration.setPayer(convertPerson(payerCRUD));
+		if (registrationCRUD.getExamSubjectMarks() != null) {
+			Map<ExamSubject, Integer> examMarks = new HashMap<>();
+			registrationCRUD.getExamSubjectMarks().forEach(esm -> {
+				examMarks.put(examSubjectDao.findOne(esm.getSubject().getId()), esm.getMark());
+			});
+			registration.setExamMarks(examMarks);
 		}
 		
-		Map<ExamSubject, Integer> examMarks = new HashMap<>();
-		registrationCRUD.getExamSubjectMarks().forEach(esm -> {
-			examMarks.put(examSubjectDao.findOne(esm.getSubject().getId()), esm.getMark());
-		});
-		registration.setExamMarks(examMarks);
+		registration.setEnrolleeAsPayer(registrationCRUD.isEnrolleeAsPayer());
+		if (registration.getFundsSource() != null && registration.getFundsSource() == FundsSource.PAYER) {
+			if (!registration.isEnrolleeAsPayer()) {
+				PersonCRUDTO payerCRUD = registrationCRUD.getPayer();
+				if (payerCRUD != null) {
+					registration.setPayer(convertPerson(payerCRUD));
+				}
+			}
+		}
 		
 		allIssues.addAll(validationService.validate(registration));
 		List<IssueTO> errorIssues = Collections.emptyList();
@@ -256,7 +267,7 @@ public class RegistrationServiceBean implements RegistrationService {
 				status = Status.UNCOMPLETE;
 			}
 		}
-		if (errorIssues.isEmpty() && registrationCRUD.getIgnoreWarnings()) {
+		if (allIssues.isEmpty() || errorIssues.isEmpty() && registrationCRUD.getIgnoreWarnings()) {
 			Person enrollee = personDao.create(registration.getEnrollee());
 			enrolleeCRUD.setId(enrollee.getEntityKey());
 			

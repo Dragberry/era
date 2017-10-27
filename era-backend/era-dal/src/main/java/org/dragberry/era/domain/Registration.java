@@ -71,6 +71,9 @@ public class Registration extends BaseEntity {
 	@JoinColumn(name = "PAYER_KEY", referencedColumnName = "PERSON_KEY")
 	private Person payer;
 	
+	@Column(name = "ENROLLEE_AS_PAYER")
+	private Boolean enrolleeAsPayer;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "REGISTRATION_PERIOD_KEY", referencedColumnName = "REGISTRATION_PERIOD_KEY")
 	private RegistrationPeriod registrationPeriod;
@@ -283,6 +286,14 @@ public class Registration extends BaseEntity {
 
 	public void setExamMarks(Map<ExamSubject, Integer> examMarks) {
 		this.examMarks = examMarks;
+	}
+
+	public Boolean isEnrolleeAsPayer() {
+		return enrolleeAsPayer;
+	}
+
+	public void setEnrolleeAsPayer(Boolean enrolleeAsPayer) {
+		this.enrolleeAsPayer = enrolleeAsPayer;
 	}
 
 	public static enum Status implements BaseEnum<Character> {

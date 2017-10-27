@@ -234,6 +234,13 @@ public class DummyDataBean {
 			registration.setExamMarks(examMarks);
 		}
 		
+		if (registration.getFundsSource() == FundsSource.PAYER) {
+			registration.setPayer(registration.getEnrollee());
+			registration.setEnrolleeAsPayer(Boolean.TRUE);
+		} else {
+			registration.setEnrolleeAsPayer(Boolean.FALSE);
+		}
+		
 		return registration;
 	}
 	

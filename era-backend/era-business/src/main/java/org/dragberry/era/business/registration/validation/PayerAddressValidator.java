@@ -11,7 +11,7 @@ public class PayerAddressValidator extends AbstractAddressValidator {
 
 	@Override
 	protected boolean shouldValidate(Registration entity) {
-		return super.shouldValidate(entity) && entity.getFundsSource() == FundsSource.PAYER;
+		return super.shouldValidate(entity) && !entity.isEnrolleeAsPayer() && entity.getFundsSource() == FundsSource.PAYER;
 	}
 	
 	@Override
