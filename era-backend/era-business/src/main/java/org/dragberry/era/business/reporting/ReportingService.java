@@ -6,7 +6,7 @@ import org.dragberry.era.common.reporting.ReportTemplateInfoTO;
 
 public interface ReportingService {
 	
-	ReportTemplateInfoTO getReportInfo(Long reportTemplateKey);
+	ReportTemplateInfoTO getReportInfo(Long customerKey, Long reportTemplateKey);
 	
 	List<ReportTemplateInfoTO> getReportsForCustomer(Long customerKey);
 

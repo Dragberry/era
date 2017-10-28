@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -21,6 +23,11 @@ import org.dragberry.era.domain.converter.ReportTemplateTypeConverter;
 
 @Entity
 @Table(name = "REPORT_TEMPLATE")
+@NamedQueries({
+		@NamedQuery(
+				name = ReportTemplate.FIND_REPORT_FOR_CUSTOMER_AND_REGISTRATION,
+				query = "select rt from ReportTemplate rt")
+})
 @TableGenerator(
 		name = "REPORT_TEMPLATE_GEN", 
 		table = "GENERATOR",
@@ -32,6 +39,8 @@ import org.dragberry.era.domain.converter.ReportTemplateTypeConverter;
 public class ReportTemplate extends BaseEntity {
 
 	private static final long serialVersionUID = 1996752534212078539L;
+	
+	public static final String FIND_REPORT_FOR_CUSTOMER_AND_REGISTRATION = "ReportTemplate.FindReportForCustomerAndRegitration";
 	
 	private static final String UNKNOWN_VALUE_MSG = "Unknown Report type value: {0}!";
 	private static final String NPE_MSG = "Transaction Report type cannot be null!";

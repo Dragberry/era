@@ -16,7 +16,7 @@ public class ReportingServiceBean implements ReportingService {
 	private ReportTemplateDao reportTemplateDao;
 	
 	@Override
-	public ReportTemplateInfoTO getReportInfo(Long reportTemplateKey) {
+	public ReportTemplateInfoTO getReportInfo(Long customerKey, Long reportTemplateKey) {
 		ReportTemplate entity = reportTemplateDao.findOne(reportTemplateKey);
 		return entity != null ? convertFromEntity(entity) : null;
 	}

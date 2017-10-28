@@ -1,15 +1,32 @@
 package org.dragberry.era.domain;
 
+import java.util.Map;
+
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.dragberry.era.domain.converter.FundsSourceConverter;
+
 @Entity
 @Table(name = "EDUCATION_INSTITUTION")
+@NamedQueries({
+	@NamedQuery(
+			name = EducationInstitution.FIND_BY_CUSTOMER,
+			query = "select c.institution from Customer c where c.entityKey = :customerKey"
+			)
+})
 @TableGenerator(
 		name = "EINSTITUTION_GEN", 
 		table = "GENERATOR",
@@ -21,6 +38,8 @@ import javax.persistence.TableGenerator;
 public class EducationInstitution extends BaseEntity {
 
 	private static final long serialVersionUID = 4453873327596382695L;
+	
+	public static final String FIND_BY_CUSTOMER = "EducationInstitution.FindByCustomer";
 
 	@Id
 	@Column(name = "EDUCATION_INSTITUTION_KEY")
@@ -38,6 +57,14 @@ public class EducationInstitution extends BaseEntity {
 	
 	@Column(name = "CITY")
 	private String city;
+	
+	@OneToMany
+	@JoinTable(name="REGITRATION_CONTRACTS",
+		joinColumns=@JoinColumn(name="EDUCATION_INSTITUTION_KEY"),
+		inverseJoinColumns=@JoinColumn(name="REPORT_TEMPLATE_KEY"))
+	@MapKeyColumn(name="FUNDS_SOURCE")
+	@Convert(converter = FundsSourceConverter.class)
+	private Map<FundsSource, ReportTemplate> registrationContracts;
 	
 	@Override
 	public Long getEntityKey() {
@@ -81,4 +108,12 @@ public class EducationInstitution extends BaseEntity {
 		this.shortName = shortName;
 	}
 
+	public Map<FundsSource, ReportTemplate> getRegistrationContracts() {
+		return registrationContracts;
+	}
+
+	public void setRegistrationContracts(Map<FundsSource, ReportTemplate> registrationContracts) {
+		this.registrationContracts = registrationContracts;
+	}
+	
 }

@@ -1,15 +1,17 @@
 package org.dragberry.era.web.controller;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.dragberry.era.business.benefit.BenefitService;
 import org.dragberry.era.business.registration.ContractService;
 import org.dragberry.era.business.registration.RegistrationService;
-import org.dragberry.era.business.reporting.ReportingService;
 import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
 import org.dragberry.era.common.registration.RegistrationCRUDTO;
@@ -36,6 +38,8 @@ public class RegistrationController {
 	private static final String CONTENT_DISPOSITION_KEY = "Content-Disposition";
 	private static final String CONTENT_DISPOSITION_VALUE = "attachment";
 	
+	private static final Logger LOG = LogManager.getLogger(RegistrationController.class);
+	
 	@Autowired
 	private AccessControl accessContoll;
 	
@@ -45,8 +49,6 @@ public class RegistrationController {
 	private ContractService contractService;
 	@Autowired
 	private RegistrationService registrationService;
-	@Autowired
-	private ReportingService reportingService;
 	
 	@GetMapping("/get-list")
 	public ResponseEntity<ResultTO<List<RegistrationTO>>> getRegistrationList(
@@ -72,32 +74,32 @@ public class RegistrationController {
 		return ResponseEntity.ok(Results.create(registrationService.getRegistrationList(query)));
 	}
 	
-	@GetMapping("/get-report-templates")
-	public ResponseEntity<ResultTO<List<ReportTemplateInfoTO>>> getReportTemplatesForCustomer() {
-		return ResponseEntity.ok(Results.create(reportingService.getReportsForCustomer(accessContoll.getLoggedUser().getId())));
-	}
-	
 	@GetMapping("/get-active-periods")
 	public ResponseEntity<?> getActivePeriods() {
 		return ResponseEntity.ok(Results.create(registrationService.getActiveRegistrationPeriods(accessContoll.getLoggedUser().getCustomerId())));
 	}
 	
-	@GetMapping("/get-contract/{contractId}/template/{templateId}")
+	@GetMapping("/get-contract-info/{registrationId}")
+	public ResponseEntity<ResultTO<ReportTemplateInfoTO>> getContractInfo(@PathVariable("registrationId") Long registrationId) {
+		return ResponseEntity.ok(Results.create(
+				contractService.findReportTemplate(registrationId, accessContoll.getLoggedUser().getCustomerId())));
+	}
+	
+	@GetMapping("/download-contract/{registrationId}")
 	public void downloadRegistrationContract(
 			HttpServletResponse response,
-			@PathVariable("contractId") Long contractId,
-			@PathVariable("templateId") Long templateId) {
+			@PathVariable("registrationId") Long registrationId) {
+		ReportTemplateInfoTO reportInfo = contractService.findReportTemplate(registrationId, accessContoll.getLoggedUser().getCustomerId());
+		if (reportInfo == null) {
+			new ResourceNotFoundException();
+		}
 		try {
-			ReportTemplateInfoTO reportInfo = reportingService.getReportInfo(templateId);
-			if (reportInfo == null) {
-				throw new ResourceNotFoundException();
-			}
 			response.setContentType(reportInfo.getMime());
 	        response.setHeader(CONTENT_DISPOSITION_KEY, CONTENT_DISPOSITION_VALUE);
-			contractService.generateRegistrationContract(contractId, templateId, response.getOutputStream());
+			contractService.generateRegistrationContract(registrationId, reportInfo.getId(), response.getOutputStream());
 			
 		} catch (IOException exc) {
-			exc.printStackTrace();
+			LOG.error(MessageFormat.format("Report generation failed for registration: {0}", registrationId), exc);
 		}
 	}
 	

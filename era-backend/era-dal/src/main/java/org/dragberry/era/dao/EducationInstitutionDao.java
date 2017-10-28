@@ -4,4 +4,6 @@ import org.dragberry.era.domain.EducationInstitution;
 
 public interface EducationInstitutionDao extends DataAccessObject<EducationInstitution, Long> {
 
+	EducationInstitution findByCustomer(Long customerKey);
+
 }
