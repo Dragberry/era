@@ -29,10 +29,15 @@ public class MSWordReportBuilder extends AbstractReportBuilder {
 		paragraphs.forEach(p -> {
 			p.getRuns().forEach(run -> {
 				run.getCTR().getTList().forEach(el -> {
-					Matcher matcher = dataProvider.getPropertyPattern().matcher(el.getStringValue());
-					if (matcher.find()) {
-						el.setStringValue(matcher.replaceAll(dataProvider.getData(matcher.group(1))));
-					}
+					boolean match = false;
+					String str = el.getStringValue();
+					do {
+						Matcher matcher = dataProvider.getPropertyPattern().matcher(str);
+						if (match = matcher.find()) {
+							str = matcher.replaceFirst(dataProvider.getData(matcher.group(1)));
+						}
+					} while (match);
+					el.setStringValue(str);
 				});
 			});
 		});
