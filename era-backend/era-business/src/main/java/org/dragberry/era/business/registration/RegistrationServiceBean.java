@@ -384,4 +384,77 @@ public class RegistrationServiceBean implements RegistrationService {
 		}).collect(Collectors.toList()));
 		return to;
 	}
+	
+	@Transactional
+	@Override
+	public RegistrationCRUDTO fetchDetails(Long id) {
+		Registration entity = registrationDao.findOne(id);
+		if (entity == null) {
+			return null;
+		}
+		RegistrationCRUDTO to = new RegistrationCRUDTO();
+		to.setId(entity.getEntityKey());
+		to.setFundsSource(entity.getFundsSource().value);
+		to.setEducationBase(entity.getEducationBase().value);
+		to.setEducationForm(entity.getEducationForm().value);
+		to.setRegistrationId(entity.getRegistrationId());
+		to.setEducationInstitutionId(entity.getInstitution().getEntityKey());
+		to.setSpecialtyId(entity.getSpecialty().getEntityKey());
+		to.setEnrolleeAsPayer(entity.isEnrolleeAsPayer());
+		to.setEnrollee(convertPerson(entity.getEnrollee()));
+		to.setPayer(convertPerson(entity.getPayer()));
+		return to;
+	}
+	
+	private static PersonCRUDTO convertPerson(Person entity) {
+		if (entity == null) {
+			return null;
+		}
+		PersonCRUDTO to = new PersonCRUDTO();
+		to.setId(entity.getEntityKey());
+		to.setFirstName(entity.getFirstName());
+		to.setLastName(entity.getLastName());
+		to.setMiddleName(entity.getMiddleName());
+		to.setBirthdate(entity.getBirthdate());
+		to.setAddress(converAddress(entity.getAddress()));
+		to.setDocument(convertDocument(entity.getDocument()));
+		to.setContactDetails(convertContactDetails(entity));
+		return to;
+	}
+
+	private static ContactDetailsTO convertContactDetails(Person entity) {
+		ContactDetailsTO to = new ContactDetailsTO();
+		to.setEmail(entity.getEmail());
+		to.setPhone(entity.getPhone());
+		return to;
+	}
+
+	private static DocumentTO convertDocument(Document entity) {
+		if (entity == null) {
+			return null;
+		}
+		DocumentTO to = new DocumentTO();
+		to.setId(entity.getId());
+		to.setDocumentId(entity.getDocumentId());
+		to.setIssueDate(entity.getIssueDate());
+		to.setIssuedBy(entity.getIssuedBy());
+		to.setCitizenship(entity.getCitizenhip());
+		to.setType(entity.getType().value);
+		return to;
+	}
+
+	private static AddressTO converAddress(Address address) {
+		if (address == null) {
+			return null;
+		}
+		AddressTO to = new AddressTO();
+		to.setCountry(address.getCountry());
+		to.setCity(address.getCity());
+		to.setStreet(address.getStreet());
+		to.setHouse(address.getHouse());
+		to.setHousing(address.getHousing());
+		to.setFlat(address.getFlat());
+		to.setZipCode(address.getZipCode());
+		return to;
+	}
 }

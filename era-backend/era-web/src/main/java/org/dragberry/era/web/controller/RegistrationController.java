@@ -122,4 +122,10 @@ public class RegistrationController {
 		return ResponseEntity.ok(registrationService.createRegistration(registration));
 	}
 	
+	@GetMapping("get-details/{id}")
+	public ResponseEntity<?> details(@PathVariable("id") Long id) {
+		accessContoll.checkPermission(Roles.Registrations.VIEW);
+		LOG.info("Get registration details for id: " + id);
+		return ResponseEntity.ok(null);
+	}
 }

@@ -17,4 +17,6 @@ public interface RegistrationService {
 	List<RegistrationPeriodTO> getActiveRegistrationPeriods(Long customerKey);
 
 	List<RegistrationPeriodTO> getRegistrationPeriodList(Long customerKey);
+
+	RegistrationCRUDTO fetchDetails(Long id);
 }
