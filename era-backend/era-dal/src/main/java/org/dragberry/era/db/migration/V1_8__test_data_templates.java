@@ -59,6 +59,41 @@ public class V1_8__test_data_templates implements SpringJdbcMigration  {
         prStatementRegContract.setString(3, FundsSource.PAYER.value.toString());
 		prStatementRegContract.execute();
 		prStatementRegContract.close();
+		
+		reportKey = jdbcTemplate.queryForObject(SELECT_REPORT_TEMPLATE_GEN_VALUE, Long.class);
+		institutionKey = jdbcTemplate.queryForObject(SELECT_INSTITUTION_KEY, Long.class);
+		
+		prStatementReportTemplate = jdbcTemplate.getDataSource().getConnection().prepareStatement(INSERT_REPORT_TEMPLATE);
+		prStatementReportTemplate.setLong(1, reportKey);
+		prStatementReportTemplate.setLong(2, institutionKey);
+		prStatementReportTemplate.setString(3, ReportTemplate.Type.DOCX.fileExtension);
+		prStatementReportTemplate.setString(4, "МРК (бюджет)");
+		lobCreator = handler.getLobCreator();
+        input = null;
+        try {
+            input = getClass().getResourceAsStream("/db/migration/V1/mrc-budget-contract.docx");
+            byte[] data = null;
+            if (input != null) {
+                data = IOUtils.toByteArray(input);
+            }
+            lobCreator.setBlobAsBytes(prStatementReportTemplate, 5, data);
+        } catch (IOException e) {
+        	prStatementReportTemplate.setBytes(5, null);
+        } finally {
+            IOUtils.closeQuietly(input);
+        }
+		prStatementReportTemplate.execute();
+		prStatementReportTemplate.close();
+        lobCreator.close();
+        
+        jdbcTemplate.execute(UPDATE_REPORT_TEMPLATE_GEN_VALUE);
+        
+        prStatementRegContract = jdbcTemplate.getDataSource().getConnection().prepareStatement(INSERT_REG_CONTRACT);
+        prStatementRegContract.setLong(1, institutionKey);
+        prStatementRegContract.setLong(2, reportKey);
+        prStatementRegContract.setString(3, FundsSource.BUDGET.value.toString());
+		prStatementRegContract.execute();
+		prStatementRegContract.close();
 	}
 
 

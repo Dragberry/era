@@ -31,6 +31,7 @@ public class MSWordReportBuilder extends AbstractReportBuilder {
 				run.getCTR().getTList().forEach(el -> {
 					boolean match = false;
 					String str = el.getStringValue();
+					System.out.println(str);
 					do {
 						Matcher matcher = dataProvider.getPropertyPattern().matcher(str);
 						if (match = matcher.find()) {
