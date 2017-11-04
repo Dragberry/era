@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.registration.RegistrationCRUDTO;
+import org.dragberry.era.common.registration.RegistrationDetailsTO;
 import org.dragberry.era.common.registration.RegistrationPeriodTO;
 import org.dragberry.era.common.registration.RegistrationSearchQuery;
 import org.dragberry.era.common.registration.RegistrationTO;
@@ -18,5 +19,5 @@ public interface RegistrationService {
 
 	List<RegistrationPeriodTO> getRegistrationPeriodList(Long customerKey);
 
-	RegistrationCRUDTO fetchDetails(Long id);
+	RegistrationDetailsTO fetchDetails(Long id);
 }

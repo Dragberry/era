@@ -126,6 +126,6 @@ public class RegistrationController {
 	public ResponseEntity<?> details(@PathVariable("id") Long id) {
 		accessContoll.checkPermission(Roles.Registrations.VIEW);
 		LOG.info("Get registration details for id: " + id);
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(Results.create(registrationService.fetchDetails(id)));
 	}
 }

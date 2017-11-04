@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.dragberry.era.business.certificate.CertificateService;
@@ -16,6 +18,7 @@ import org.dragberry.era.common.IssueType;
 import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
 import org.dragberry.era.common.certificate.CertificateCRUDTO;
+import org.dragberry.era.common.certificate.CertificateTO;
 import org.dragberry.era.common.certificate.ExamSubjectCRUDTO;
 import org.dragberry.era.common.certificate.SubjectCRUDTO;
 import org.dragberry.era.common.certificate.SubjectMarkCRUDTO;
@@ -28,9 +31,11 @@ import org.dragberry.era.common.person.DocumentTO;
 import org.dragberry.era.common.person.PersonCRUDTO;
 import org.dragberry.era.common.registration.RegisteredSpecialtyTO;
 import org.dragberry.era.common.registration.RegistrationCRUDTO;
+import org.dragberry.era.common.registration.RegistrationDetailsTO;
 import org.dragberry.era.common.registration.RegistrationPeriodTO;
 import org.dragberry.era.common.registration.RegistrationSearchQuery;
 import org.dragberry.era.common.registration.RegistrationTO;
+import org.dragberry.era.common.specialty.SpecialtyTO;
 import org.dragberry.era.dao.PrerogativeDao;
 import org.dragberry.era.dao.CertificateDao;
 import org.dragberry.era.dao.EducationInstitutionBaseDao;
@@ -56,6 +61,7 @@ import org.dragberry.era.domain.Person;
 import org.dragberry.era.domain.Registration;
 import org.dragberry.era.domain.Registration.Status;
 import org.dragberry.era.domain.RegistrationPeriod;
+import org.dragberry.era.domain.Specialty;
 import org.dragberry.era.domain.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -387,29 +393,70 @@ public class RegistrationServiceBean implements RegistrationService {
 	
 	@Transactional
 	@Override
-	public RegistrationCRUDTO fetchDetails(Long id) {
+	public RegistrationDetailsTO fetchDetails(Long id) {
 		Registration entity = registrationDao.findOne(id);
 		if (entity == null) {
 			return null;
 		}
-		RegistrationCRUDTO to = new RegistrationCRUDTO();
+		RegistrationDetailsTO to = new RegistrationDetailsTO();
 		to.setId(entity.getEntityKey());
+		to.setStatus(entity.getStatus().value);
+		to.setNote(entity.getNote());
 		to.setFundsSource(entity.getFundsSource().value);
 		to.setEducationBase(entity.getEducationBase().value);
 		to.setEducationForm(entity.getEducationForm().value);
 		to.setRegistrationId(entity.getRegistrationId());
-		to.setEducationInstitutionId(entity.getInstitution().getEntityKey());
-		to.setSpecialtyId(entity.getSpecialty().getEntityKey());
+		to.setEducationInstitution(entity.getInstitution().getName());
+		to.setSpecialty(nullSafeConvert(entity.getSpecialty(), RegistrationServiceBean::converSpecialty));
 		to.setEnrolleeAsPayer(entity.isEnrolleeAsPayer());
-		to.setEnrollee(convertPerson(entity.getEnrollee()));
-		to.setPayer(convertPerson(entity.getPayer()));
+		to.setEnrollee(nullSafeConvert(entity.getEnrollee(), RegistrationServiceBean::convertPerson));
+		to.setPayer(nullSafeConvert(entity.getPayer(), RegistrationServiceBean::convertPerson));
+		to.setCertificate(nullSafeConvert(entity.getCertificate(), RegistrationServiceBean::convertCertificate));
+		to.setExamSubjectMarks(nullSafeConvert(entity.getExamMarks(), RegistrationServiceBean::convertExamMarks));
+		to.setOutOfCompetitions(getBenefitNames(entity.getOutOfCompetitions()));
+		to.setPrerogatives(getBenefitNames(entity.getPrerogatives()));
+		to.setRegistrationDate(entity.getRegistrationDate());
+		to.setRegisteredBy(entity.getRegisteredBy().getUsername());
+		to.setRegisteredById(entity.getRegisteredBy().getEntityKey());
+		if (entity.getStatus() == Status.VERIFIED) {
+			to.setVerificationDate(entity.getVerificationDate());
+			to.setVerifiedBy(entity.getVerifiedBy().getUsername());
+			to.setVerifiedById(entity.getVerifiedBy().getEntityKey());
+		}
 		return to;
 	}
 	
+	private static <FROM, TO> TO nullSafeConvert(FROM from, Function<FROM, TO> convertFunction) {
+		return from != null ? convertFunction.apply(from) : null;
+	}
+	
+	private static Map<String, Integer> convertExamMarks(Map<ExamSubject, Integer> entityMarks) {
+		Map<String, Integer> marks = new LinkedHashMap<>();
+		entityMarks.forEach((s, m) -> marks.put(s.getTitle(), m));
+		return marks;
+	}
+	
+	private static CertificateTO convertCertificate(Certificate entity) {
+		CertificateTO to = new CertificateTO();
+		to.setInstitution(entity.getInstitution().getName());
+		to.setYear(entity.getYear());
+		to.setCountry(entity.getInstitution().getCountry());
+		Map<String, Integer> marks = new LinkedHashMap<>();
+		entity.getMarks().forEach((s, m) -> marks.put(s.getTitle(), m));
+		to.setMarks(marks);
+		return to;
+	}
+
+	private static SpecialtyTO converSpecialty(Specialty entity) {
+		SpecialtyTO to = new SpecialtyTO();
+		to.setId(entity.getEntityKey());
+		to.setName(entity.getTitle());
+		to.setCode(entity.getCode());
+		to.setQualification(entity.getQualification());
+		return to;
+	}
+
 	private static PersonCRUDTO convertPerson(Person entity) {
-		if (entity == null) {
-			return null;
-		}
 		PersonCRUDTO to = new PersonCRUDTO();
 		to.setId(entity.getEntityKey());
 		to.setFirstName(entity.getFirstName());
@@ -430,9 +477,6 @@ public class RegistrationServiceBean implements RegistrationService {
 	}
 
 	private static DocumentTO convertDocument(Document entity) {
-		if (entity == null) {
-			return null;
-		}
 		DocumentTO to = new DocumentTO();
 		to.setId(entity.getId());
 		to.setDocumentId(entity.getDocumentId());
@@ -444,9 +488,6 @@ public class RegistrationServiceBean implements RegistrationService {
 	}
 
 	private static AddressTO converAddress(Address address) {
-		if (address == null) {
-			return null;
-		}
 		AddressTO to = new AddressTO();
 		to.setCountry(address.getCountry());
 		to.setCity(address.getCity());
