@@ -3,9 +3,10 @@ package org.dragberry.era.common.registration;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import org.dragberry.era.common.certificate.CertificateTO;
+import org.dragberry.era.common.certificate.ExamSubjectCRUDTO;
+import org.dragberry.era.common.certificate.SubjectMarkCRUDTO;
 import org.dragberry.era.common.person.PersonCRUDTO;
 import org.dragberry.era.common.specialty.SpecialtyTO;
 
@@ -48,7 +49,7 @@ public class RegistrationDetailsTO implements Serializable {
 	
 	private CertificateTO certificate;
 	
-	private Map<String, Integer> examSubjectMarks;
+	private List<SubjectMarkCRUDTO<ExamSubjectCRUDTO>>  examSubjectMarks;
 	
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -178,11 +179,11 @@ public class RegistrationDetailsTO implements Serializable {
 		this.outOfCompetitions = outOfCompetitions;
 	}
 
-	public Map<String, Integer> getExamSubjectMarks() {
+	public List<SubjectMarkCRUDTO<ExamSubjectCRUDTO>>  getExamSubjectMarks() {
 		return examSubjectMarks;
 	}
 
-	public void setExamSubjectMarks(Map<String, Integer> examSubjectMarks) {
+	public void setExamSubjectMarks(List<SubjectMarkCRUDTO<ExamSubjectCRUDTO>> examSubjectMarks) {
 		this.examSubjectMarks = examSubjectMarks;
 	}
 

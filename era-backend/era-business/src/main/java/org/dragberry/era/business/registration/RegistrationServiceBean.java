@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -430,9 +429,16 @@ public class RegistrationServiceBean implements RegistrationService {
 		return from != null ? convertFunction.apply(from) : null;
 	}
 	
-	private static Map<String, Integer> convertExamMarks(Map<ExamSubject, Integer> entityMarks) {
-		Map<String, Integer> marks = new LinkedHashMap<>();
-		entityMarks.forEach((s, m) -> marks.put(s.getTitle(), m));
+	private static List<SubjectMarkCRUDTO<ExamSubjectCRUDTO>>  convertExamMarks(Map<ExamSubject, Integer> entityMarks) {
+		List<SubjectMarkCRUDTO<ExamSubjectCRUDTO>> marks = new ArrayList<>();
+		entityMarks.forEach((s, m) -> {
+			SubjectMarkCRUDTO<ExamSubjectCRUDTO> sm = new SubjectMarkCRUDTO<>();
+			ExamSubjectCRUDTO subject = new ExamSubjectCRUDTO();
+			subject.setTitle(s.getTitle());
+			sm.setSubject(subject);
+			sm.setMark(m);
+			marks.add(sm);	
+		});
 		return marks;
 	}
 	
@@ -441,8 +447,17 @@ public class RegistrationServiceBean implements RegistrationService {
 		to.setInstitution(entity.getInstitution().getName());
 		to.setYear(entity.getYear());
 		to.setCountry(entity.getInstitution().getCountry());
-		Map<String, Integer> marks = new LinkedHashMap<>();
-		entity.getMarks().forEach((s, m) -> marks.put(s.getTitle(), m));
+		List<SubjectMarkCRUDTO<SubjectCRUDTO>> marks = new ArrayList<>();
+		entity.getMarks().forEach((s, m) -> {
+			SubjectMarkCRUDTO<SubjectCRUDTO> sm = new SubjectMarkCRUDTO<>();
+			SubjectCRUDTO subject = new SubjectCRUDTO();
+			subject.setTitle(s.getTitle());
+			subject.setOrder(s.getOrder());
+			sm.setSubject(subject);
+			sm.setMark(m);
+			marks.add(sm);	
+		});
+		marks.sort((s1, s2) -> s1.getSubject().getOrder() - s2.getSubject().getOrder());
 		to.setMarks(marks);
 		return to;
 	}

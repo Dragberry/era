@@ -1,20 +1,19 @@
 package org.dragberry.era.common.certificate;
 
 import java.io.Serializable;
-import java.util.Map;
-
+import java.util.List;
 
 public class CertificateTO implements Serializable {
 
 	private static final long serialVersionUID = 817707147440284169L;
-	
+
 	private String institution;
-	
+
 	private String country;
-	
+
 	private Integer year;
-	
-	private Map<String, Integer> marks;
+
+	private List<SubjectMarkCRUDTO<SubjectCRUDTO>> marks;
 
 	public Integer getYear() {
 		return year;
@@ -32,11 +31,11 @@ public class CertificateTO implements Serializable {
 		this.institution = institution;
 	}
 
-	public Map<String, Integer> getMarks() {
+	public List<SubjectMarkCRUDTO<SubjectCRUDTO>> getMarks() {
 		return marks;
 	}
 
-	public void setMarks(Map<String, Integer> marks) {
+	public void setMarks(List<SubjectMarkCRUDTO<SubjectCRUDTO>> marks) {
 		this.marks = marks;
 	}
 
@@ -47,5 +46,5 @@ public class CertificateTO implements Serializable {
 	public void setCountry(String country) {
 		this.country = country;
 	}
-	
+
 }
