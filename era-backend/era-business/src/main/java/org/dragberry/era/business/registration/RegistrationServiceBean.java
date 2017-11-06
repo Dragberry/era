@@ -14,6 +14,7 @@ import org.dragberry.era.business.institution.EducationInstitutionService;
 import org.dragberry.era.business.validation.ValidationService;
 import org.dragberry.era.common.IssueTO;
 import org.dragberry.era.common.IssueType;
+import org.dragberry.era.common.Issues;
 import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
 import org.dragberry.era.common.certificate.CertificateCRUDTO;
@@ -53,6 +54,7 @@ import org.dragberry.era.domain.Certificate;
 import org.dragberry.era.domain.Document;
 import org.dragberry.era.domain.EducationBase;
 import org.dragberry.era.domain.EducationForm;
+import org.dragberry.era.domain.EducationInstitution;
 import org.dragberry.era.domain.EducationInstitutionBase;
 import org.dragberry.era.domain.ExamSubject;
 import org.dragberry.era.domain.FundsSource;
@@ -62,6 +64,7 @@ import org.dragberry.era.domain.Registration.Status;
 import org.dragberry.era.domain.RegistrationPeriod;
 import org.dragberry.era.domain.Specialty;
 import org.dragberry.era.domain.Subject;
+import org.dragberry.era.domain.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -132,7 +135,7 @@ public class RegistrationServiceBean implements RegistrationService {
 			to.setRegistrationDate(entity.getRegistrationDate());
 			to.setRegisteredBy(entity.getRegisteredBy().getUsername());
 			to.setRegisteredById(entity.getRegisteredBy().getEntityKey());
-			if (entity.getStatus() == Status.VERIFIED) {
+			if (Status.VERIFIED == entity.getStatus()) {
 				to.setVerificationDate(entity.getVerificationDate());
 				to.setVerifiedBy(entity.getVerifiedBy().getUsername());
 				to.setVerifiedById(entity.getVerifiedBy().getEntityKey());
@@ -512,5 +515,54 @@ public class RegistrationServiceBean implements RegistrationService {
 		to.setFlat(address.getFlat());
 		to.setZipCode(address.getZipCode());
 		return to;
+	}
+
+	@Transactional
+	@Override
+	public ResultTO<RegistrationCRUDTO> approveRegistration(RegistrationCRUDTO crud) {
+		Registration reg = null;
+		if (crud.getId() == null || (reg = registrationDao.findOne(crud.getId())) == null) {
+			return Results.create(crud, Issues.error("validation.registration.approve.registration-not-exist"));
+		}
+		EducationInstitution ei = educationInstitutionDao.findByCustomer(crud.getCustomerId());
+		if (ei == null || !ei.getEntityKey().equals(reg.getInstitution().getEntityKey())) {
+			return Results.create(crud, Issues.error("validation.registration.approve.registration-is-in-different-institution"));
+		}
+		if (Status.NOT_VERIFIED != reg.getStatus()) {
+			return Results.create(crud, Issues.error("validation.registration.approve.registration-is-in-incorrect-status"));
+		}
+		if (reg.getRegisteredBy().getEntityKey().equals(crud.getUserAccountId())) {
+			return Results.create(crud, Issues.error("validation.registration.approve.registration-couldnt-be-approved-by-initiator"));
+		}
+		UserAccount verifiedBy = userAccountDao.findOne(crud.getUserAccountId());
+		reg.setVersion(crud.getVersion());
+		reg.setVerifiedBy(verifiedBy);
+		reg.setVerificationDate(LocalDateTime.now());
+		reg.setStatus(Status.VERIFIED);
+		reg = registrationDao.update(reg);
+		crud.setVersion(reg.getVersion());
+		crud.setStatus(reg.getStatus().value);
+		return Results.create(crud);
+	}
+	
+	@Transactional
+	@Override
+	public ResultTO<RegistrationCRUDTO> cancelRegistration(RegistrationCRUDTO crud) {
+		Registration reg = null;
+		if (crud.getId() == null || (reg = registrationDao.findOne(crud.getId())) == null) {
+			return Results.create(crud, Issues.error("validation.registration.cancel.registration-not-exist"));
+		}
+		EducationInstitution ei = educationInstitutionDao.findByCustomer(crud.getCustomerId());
+		if (ei == null || !ei.getEntityKey().equals(reg.getInstitution().getEntityKey())) {
+			return Results.create(crud, Issues.error("validation.registration.cancel.registration-is-in-different-institution"));
+		}
+		if (Status.CANCELED == reg.getStatus()) {
+			return Results.create(crud, Issues.error("validation.registration.cancel.registration-is-in-incorrect-status"));
+		}
+		reg.setStatus(Status.CANCELED);
+		reg = registrationDao.update(reg);
+		crud.setVersion(reg.getVersion());
+		crud.setStatus(reg.getStatus().value);
+		return Results.create(crud);
 	}
 }

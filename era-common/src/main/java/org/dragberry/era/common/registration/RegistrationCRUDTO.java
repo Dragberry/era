@@ -41,6 +41,8 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 	
 	private List<SubjectMarkCRUDTO<ExamSubjectCRUDTO>> examSubjectMarks = new ArrayList<>();
 
+	private Character status;
+	
 	public Long getPeriodId() {
 		return periodId;
 	}
@@ -151,6 +153,14 @@ public class RegistrationCRUDTO extends AbstractCRUDTO {
 
 	public void setRegistrationId(Long registrationId) {
 		this.registrationId = registrationId;
+	}
+
+	public Character getStatus() {
+		return status;
+	}
+
+	public void setStatus(Character status) {
+		this.status = status;
 	}
 
 }

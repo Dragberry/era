@@ -20,4 +20,8 @@ public interface RegistrationService {
 	List<RegistrationPeriodTO> getRegistrationPeriodList(Long customerKey);
 
 	RegistrationDetailsTO fetchDetails(Long id);
+
+	ResultTO<RegistrationCRUDTO> approveRegistration(RegistrationCRUDTO registration);
+
+	ResultTO<RegistrationCRUDTO> cancelRegistration(RegistrationCRUDTO crud);
 }

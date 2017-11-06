@@ -128,4 +128,20 @@ public class RegistrationController {
 		LOG.info("Get registration details for id: " + id);
 		return ResponseEntity.ok(Results.create(registrationService.fetchDetails(id)));
 	}
+	
+	@PostMapping("/approve")
+	public ResponseEntity<?> approve(@RequestBody RegistrationCRUDTO registration) {
+		accessContoll.checkPermission(Roles.Registrations.APPROVE);
+		registration.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
+		registration.setUserAccountId(accessContoll.getLoggedUser().getId());
+		return ResponseEntity.ok(registrationService.approveRegistration(registration));
+	}
+	
+	@PostMapping("/cancel")
+	public ResponseEntity<?> cancel(@RequestBody RegistrationCRUDTO registration) {
+		accessContoll.checkPermission(Roles.Registrations.CANCEL);
+		registration.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
+		registration.setUserAccountId(accessContoll.getLoggedUser().getId());
+		return ResponseEntity.ok(registrationService.cancelRegistration(registration));
+	}
 }
