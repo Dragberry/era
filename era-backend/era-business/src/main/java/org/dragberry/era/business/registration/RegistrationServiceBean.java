@@ -451,6 +451,7 @@ public class RegistrationServiceBean implements RegistrationService {
 			SubjectMarkCRUDTO<ExamSubjectCRUDTO> sm = new SubjectMarkCRUDTO<>();
 			ExamSubjectCRUDTO subject = new ExamSubjectCRUDTO();
 			subject.setTitle(s.getTitle());
+			subject.setId(s.getEntityKey());
 			sm.setSubject(subject);
 			sm.setMark(m);
 			marks.add(sm);	
