@@ -17,8 +17,8 @@ import org.dragberry.era.common.IssueType;
 import org.dragberry.era.common.Issues;
 import org.dragberry.era.common.ResultTO;
 import org.dragberry.era.common.Results;
+import org.dragberry.era.common.benefit.BenefitTO;
 import org.dragberry.era.common.certificate.CertificateCRUDTO;
-import org.dragberry.era.common.certificate.CertificateTO;
 import org.dragberry.era.common.certificate.ExamSubjectCRUDTO;
 import org.dragberry.era.common.certificate.SubjectCRUDTO;
 import org.dragberry.era.common.certificate.SubjectMarkCRUDTO;
@@ -31,7 +31,6 @@ import org.dragberry.era.common.person.DocumentTO;
 import org.dragberry.era.common.person.PersonCRUDTO;
 import org.dragberry.era.common.registration.RegisteredSpecialtyTO;
 import org.dragberry.era.common.registration.RegistrationCRUDTO;
-import org.dragberry.era.common.registration.RegistrationDetailsTO;
 import org.dragberry.era.common.registration.RegistrationPeriodTO;
 import org.dragberry.era.common.registration.RegistrationSearchQuery;
 import org.dragberry.era.common.registration.RegistrationTO;
@@ -150,6 +149,15 @@ public class RegistrationServiceBean implements RegistrationService {
 		return benefits.stream().map(Benefit::getName).collect(Collectors.toList());
 	}
 	
+	private static List<BenefitTO> getBenefits(List<? extends Benefit> benefits) {
+		return benefits.stream().map(b -> {
+			BenefitTO to = new BenefitTO();
+			to.setId(b.getEntityKey());
+			to.setName(b.getName());
+			return to;
+		}).collect(Collectors.toList());
+	}
+	
 	@Override
 	@Transactional
 	public ResultTO<RegistrationCRUDTO> createRegistration(RegistrationCRUDTO registrationCRUD) {
@@ -160,11 +168,11 @@ public class RegistrationServiceBean implements RegistrationService {
 			Person enrollee = convertPerson(enrolleeCRUD);
 			registration.setEnrollee(enrollee);
 		}
-		if (registrationCRUD.getEducationInstitutionId() != null) {
-			registration.setInstitution(educationInstitutionDao.findOne(registrationCRUD.getEducationInstitutionId()));
+		if (registrationCRUD.getEducationInstitution() != null && registrationCRUD.getEducationInstitution().getId() != null) {
+			registration.setInstitution(educationInstitutionDao.findOne(registrationCRUD.getEducationInstitution().getId()));
 		}
-		if (registrationCRUD.getSpecialtyId() != null) {
-			registration.setSpecialty(specialtyDao.findOne(registrationCRUD.getSpecialtyId()));
+		if (registrationCRUD.getSpecialty() != null && registrationCRUD.getSpecialty().getId() != null) {
+			registration.setSpecialty(specialtyDao.findOne(registrationCRUD.getSpecialty().getId()));
 		}
 		try {
 			registration.setFundsSource(FundsSource.resolve(registrationCRUD.getFundsSource()));
@@ -189,8 +197,10 @@ public class RegistrationServiceBean implements RegistrationService {
 		}
 		registration.setRegistrationDate(LocalDateTime.now());
 		
-		registration.setPrerogatives(prerogativeDao.fetchByKeys(registrationCRUD.getPrerogatives()));
-		registration.setOutOfCompetitions(outOfCompetitionDao.fetchByKeys(registrationCRUD.getOutOfCompetitions()));
+		registration.setPrerogatives(prerogativeDao.fetchByKeys(
+				registrationCRUD.getPrerogatives().stream().map(BenefitTO::getId).collect(Collectors.toList())));
+		registration.setOutOfCompetitions(outOfCompetitionDao.fetchByKeys(
+				registrationCRUD.getOutOfCompetitions().stream().map(BenefitTO::getId).collect(Collectors.toList())));
 		
 		CertificateCRUDTO cert = registrationCRUD.getCertificate();
 		if (cert != null) {
@@ -395,12 +405,12 @@ public class RegistrationServiceBean implements RegistrationService {
 	
 	@Transactional
 	@Override
-	public RegistrationDetailsTO fetchDetails(Long id) {
+	public RegistrationCRUDTO fetchDetails(Long id) {
 		Registration entity = registrationDao.findOne(id);
 		if (entity == null) {
 			return null;
 		}
-		RegistrationDetailsTO to = new RegistrationDetailsTO();
+		RegistrationCRUDTO to = new RegistrationCRUDTO();
 		to.setId(entity.getEntityKey());
 		to.setStatus(entity.getStatus().value);
 		to.setNote(entity.getNote());
@@ -408,15 +418,18 @@ public class RegistrationServiceBean implements RegistrationService {
 		to.setEducationBase(entity.getEducationBase().value);
 		to.setEducationForm(entity.getEducationForm().value);
 		to.setRegistrationId(entity.getRegistrationId());
-		to.setEducationInstitution(entity.getInstitution().getName());
+		EducationInstitutionTO ei = new EducationInstitutionTO();
+		ei.setId(entity.getInstitution().getEntityKey());
+		ei.setName(entity.getInstitution().getName());
+		to.setEducationInstitution(ei);
 		to.setSpecialty(nullSafeConvert(entity.getSpecialty(), RegistrationServiceBean::converSpecialty));
 		to.setEnrolleeAsPayer(entity.isEnrolleeAsPayer());
 		to.setEnrollee(nullSafeConvert(entity.getEnrollee(), RegistrationServiceBean::convertPerson));
 		to.setPayer(nullSafeConvert(entity.getPayer(), RegistrationServiceBean::convertPerson));
 		to.setCertificate(nullSafeConvert(entity.getCertificate(), RegistrationServiceBean::convertCertificate));
 		to.setExamSubjectMarks(nullSafeConvert(entity.getExamMarks(), RegistrationServiceBean::convertExamMarks));
-		to.setOutOfCompetitions(getBenefitNames(entity.getOutOfCompetitions()));
-		to.setPrerogatives(getBenefitNames(entity.getPrerogatives()));
+		to.setOutOfCompetitions(getBenefits(entity.getOutOfCompetitions()));
+		to.setPrerogatives(getBenefits(entity.getPrerogatives()));
 		to.setRegistrationDate(entity.getRegistrationDate());
 		to.setRegisteredBy(entity.getRegisteredBy().getUsername());
 		to.setRegisteredById(entity.getRegisteredBy().getEntityKey());
@@ -445,23 +458,36 @@ public class RegistrationServiceBean implements RegistrationService {
 		return marks;
 	}
 	
-	private static CertificateTO convertCertificate(Certificate entity) {
-		CertificateTO to = new CertificateTO();
-		to.setInstitution(entity.getInstitution().getName());
+	private static CertificateCRUDTO convertCertificate(Certificate entity) {
+		CertificateCRUDTO to = new CertificateCRUDTO();
+		EducationInstitutionBase eibEntity = entity.getInstitution();
+		if (eibEntity != null) {
+			EducationInstitutionBaseCRUDTO eib = new EducationInstitutionBaseCRUDTO();
+			eib.setId(eibEntity.getEntityKey());
+			eib.setCountry(eibEntity.getCountry());
+			eib.setName(eibEntity.getName());
+			to.setInstitution(eib);
+		}
 		to.setYear(entity.getYear());
-		to.setCountry(entity.getInstitution().getCountry());
 		List<SubjectMarkCRUDTO<SubjectCRUDTO>> marks = new ArrayList<>();
+		List<SubjectMarkCRUDTO<SubjectCRUDTO>> extraMarks = new ArrayList<>();
 		entity.getMarks().forEach((s, m) -> {
 			SubjectMarkCRUDTO<SubjectCRUDTO> sm = new SubjectMarkCRUDTO<>();
 			SubjectCRUDTO subject = new SubjectCRUDTO();
 			subject.setTitle(s.getTitle());
 			subject.setOrder(s.getOrder());
+			subject.setId(s.getEntityKey());
 			sm.setSubject(subject);
 			sm.setMark(m);
-			marks.add(sm);	
+			if (s.isBase()) {
+				marks.add(sm);
+			} else {
+				extraMarks.add(sm);
+			}
 		});
 		marks.sort((s1, s2) -> s1.getSubject().getOrder() - s2.getSubject().getOrder());
 		to.setMarks(marks);
+		to.setExtraMarks(extraMarks);
 		return to;
 	}
 
