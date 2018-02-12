@@ -592,4 +592,9 @@ public class RegistrationServiceBean implements RegistrationService {
 		crud.setStatus(reg.getStatus().value);
 		return Results.create(crud);
 	}
+	
+	@Override
+	public ResultTO<RegistrationCRUDTO> updateRegistration(RegistrationCRUDTO registration) {
+		return null;
+	}
 }

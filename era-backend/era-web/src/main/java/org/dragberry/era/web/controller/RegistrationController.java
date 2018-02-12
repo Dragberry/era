@@ -122,6 +122,14 @@ public class RegistrationController {
 		return ResponseEntity.ok(registrationService.createRegistration(registration));
 	}
 	
+	@PostMapping("/create")
+	public ResponseEntity<?> update(@RequestBody RegistrationCRUDTO registration) {
+		accessContoll.checkPermission(Roles.Registrations.UPDATE);
+		registration.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
+		registration.setUserAccountId(accessContoll.getLoggedUser().getId());
+		return ResponseEntity.ok(registrationService.updateRegistration(registration));
+	}
+	
 	@GetMapping("get-details/{id}")
 	public ResponseEntity<?> details(@PathVariable("id") Long id) {
 		accessContoll.checkPermission(Roles.Registrations.VIEW);

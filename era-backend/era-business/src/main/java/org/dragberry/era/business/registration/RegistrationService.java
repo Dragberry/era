@@ -23,4 +23,6 @@ public interface RegistrationService {
 	ResultTO<RegistrationCRUDTO> approveRegistration(RegistrationCRUDTO registration);
 
 	ResultTO<RegistrationCRUDTO> cancelRegistration(RegistrationCRUDTO crud);
+
+	ResultTO<RegistrationCRUDTO> updateRegistration(RegistrationCRUDTO registration);
 }
