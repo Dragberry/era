@@ -49,7 +49,7 @@ public class AbstractCRUDTO implements Serializable {
 	}
 
 	public Boolean getIgnoreWarnings() {
-		return ignoreWarnings;
+		return ignoreWarnings != null && ignoreWarnings;
 	}
 
 	public void setIgnoreWarnings(Boolean ignoreWarnings) {
