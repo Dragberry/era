@@ -96,15 +96,15 @@ public class RegistrationServiceBean implements RegistrationService {
 	private SubjectDao subjectDao;
 	@Autowired
 	private UserAccountDao userAccountDao;
-	
+
 	@Autowired
 	private ValidationService<Registration> validationService;
-	
+
 	@Autowired
 	private EducationInstitutionService eiService;
 	@Autowired
 	private CertificateService certificationService;
-	
+
 	private ExpressionParser<ExamSubjectCRUDTO> parser = new ExpressionParser<ExamSubjectCRUDTO>(code -> {
 		ExamSubject es = examSubjectDao.findByCode(code);
 		ExamSubjectCRUDTO esTO = new ExamSubjectCRUDTO();
@@ -113,7 +113,7 @@ public class RegistrationServiceBean implements RegistrationService {
 		esTO.setTitle(es.getTitle());
 		return esTO;
 	});
-	
+
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public List<RegistrationTO> getRegistrationList(RegistrationSearchQuery query) {
@@ -139,16 +139,17 @@ public class RegistrationServiceBean implements RegistrationService {
 				to.setVerifiedBy(entity.getVerifiedBy().getUsername());
 				to.setVerifiedById(entity.getVerifiedBy().getEntityKey());
 			}
-			to.setAttestateAvg(entity.getCertificate() != null 
-					? certificateDao.getAverageMark(entity.getCertificate().getEntityKey()) : 0);
+			to.setAttestateAvg(entity.getCertificate() != null
+			        ? certificateDao.getAverageMark(entity.getCertificate().getEntityKey())
+			        : 0);
 			return to;
 		}).collect(Collectors.toList());
 	}
-	
+
 	private static List<String> getBenefitNames(List<? extends Benefit> benefits) {
 		return benefits.stream().map(Benefit::getName).collect(Collectors.toList());
 	}
-	
+
 	private static List<BenefitTO> getBenefits(List<? extends Benefit> benefits) {
 		return benefits.stream().map(b -> {
 			BenefitTO to = new BenefitTO();
@@ -157,161 +158,12 @@ public class RegistrationServiceBean implements RegistrationService {
 			return to;
 		}).collect(Collectors.toList());
 	}
-	
-	@Override
-	@Transactional
-	public ResultTO<RegistrationCRUDTO> createRegistration(RegistrationCRUDTO registrationCRUD) {
-		List<IssueTO> allIssues = new ArrayList<>();
-		Registration registration = new Registration();
-		PersonCRUDTO enrolleeCRUD = registrationCRUD.getEnrollee();
-		if (enrolleeCRUD != null) {
-			Person enrollee = convertPerson(enrolleeCRUD);
-			registration.setEnrollee(enrollee);
-		}
-		if (registrationCRUD.getEducationInstitution() != null && registrationCRUD.getEducationInstitution().getId() != null) {
-			registration.setInstitution(educationInstitutionDao.findOne(registrationCRUD.getEducationInstitution().getId()));
-		}
-		if (registrationCRUD.getSpecialty() != null && registrationCRUD.getSpecialty().getId() != null) {
-			registration.setSpecialty(specialtyDao.findOne(registrationCRUD.getSpecialty().getId()));
-		}
-		try {
-			registration.setFundsSource(FundsSource.resolve(registrationCRUD.getFundsSource()));
-		} catch (Exception exc) {
-			registration.setFundsSource(null);
-		}
-		try {
-			registration.setEducationForm(EducationForm.resolve(registrationCRUD.getEducationForm()));
-		} catch (Exception exc) {
-			registration.setEducationForm(null);
-		}
-		try {
-			registration.setEducationBase(EducationBase.resolve(registrationCRUD.getEducationBase()));
-		} catch (Exception exc) {
-			registration.setEducationForm(null);
-		}
-		if (registrationCRUD.getUserAccountId() != null) {
-			registration.setRegisteredBy(userAccountDao.findOne(registrationCRUD.getUserAccountId()));
-		}
-		if (registrationCRUD.getPeriodId() != null) {
-			registration.setRegistrationPeriod(registrationPeriodDao.findOne(registrationCRUD.getPeriodId()));
-		}
-		registration.setRegistrationDate(LocalDateTime.now());
-		
-		registration.setPrerogatives(prerogativeDao.fetchByKeys(
-				registrationCRUD.getPrerogatives().stream().map(BenefitTO::getId).collect(Collectors.toList())));
-		registration.setOutOfCompetitions(outOfCompetitionDao.fetchByKeys(
-				registrationCRUD.getOutOfCompetitions().stream().map(BenefitTO::getId).collect(Collectors.toList())));
-		
-		CertificateCRUDTO cert = registrationCRUD.getCertificate();
-		if (cert != null) {
-			Certificate certificate = new Certificate();
-			certificate.setEntityKey(cert.getId());
-			certificate.setYear(cert.getYear());
-			EducationInstitutionBaseCRUDTO institution = cert.getInstitution();
-			if (institution != null) {
-				EducationInstitutionBase eiBase = null;
-				if (institution.getId() != null) {
-					eiBase = educationInstitutionBaseDao.findOne(institution.getId());
-				} else if (institution.getName() != null && institution.getCountry() != null) {
-					eiBase = educationInstitutionBaseDao.findByNameAndCountry(institution.getName(), institution.getCountry());
-				}
-				if (eiBase == null) {
-					ResultTO<EducationInstitutionBaseCRUDTO> eiResult = eiService.create(institution);
-					if (eiResult.getIssues().isEmpty()) {
-						eiBase = educationInstitutionBaseDao.findOne(institution.getId());
-					} else {
-						allIssues.addAll(eiResult.getIssues());
-					}
-				}
-				certificate.setInstitution(eiBase);
-			}
-			
-			certificate.setEnrollee(registration.getEnrollee());
-			
-			certificate.setMarks(cert.getMarks().stream().filter(sm -> sm.getMark() != null).collect(Collectors.toMap(
-							sm -> subjectDao.findOne(sm.getSubject().getId()),
-							SubjectMarkCRUDTO::getMark)));
-			
-			List<Subject> extraSubjects = new ArrayList<>();
-			boolean extraSubjectsHasIssues = false;
-			for (SubjectMarkCRUDTO<SubjectCRUDTO> sm : cert.getExtraMarks()) {
-				SubjectCRUDTO subject = sm.getSubject();
-				if (subject != null) {
-					if (subject.getId() != null) {
-						extraSubjects.add(subjectDao.findOne(subject.getId()));
-					} else {
-						ResultTO<SubjectCRUDTO> subjectResult = certificationService.createSubject(subject);
-						if (!subjectResult.getIssues().isEmpty()) {
-							allIssues.addAll(subjectResult.getIssues());
-							extraSubjectsHasIssues = true;
-						}
-					}
-				}
-			}
-			
-			if (!extraSubjectsHasIssues) {
-				certificate.getMarks().putAll(cert.getExtraMarks().stream().filter(esm -> esm.getMark() != null).collect(Collectors.toMap(
-						esm -> subjectDao.findOne(esm.getSubject().getId()),
-						SubjectMarkCRUDTO::getMark)));
-			}
-			
-			registration.setCertificate(certificate);
-		}
-		
-		if (registrationCRUD.getExamSubjectMarks() != null) {
-			Map<ExamSubject, Integer> examMarks = new HashMap<>();
-			registrationCRUD.getExamSubjectMarks().forEach(esm -> {
-				examMarks.put(examSubjectDao.findOne(esm.getSubject().getId()), esm.getMark());
-			});
-			registration.setExamMarks(examMarks);
-		}
-		
-		registration.setEnrolleeAsPayer(registrationCRUD.isEnrolleeAsPayer());
-		if (registration.getFundsSource() != null && registration.getFundsSource() == FundsSource.PAYER) {
-			if (!registration.isEnrolleeAsPayer()) {
-				PersonCRUDTO payerCRUD = registrationCRUD.getPayer();
-				if (payerCRUD != null) {
-					registration.setPayer(convertPerson(payerCRUD));
-				}
-			}
-		}
-		
-		allIssues.addAll(validationService.validate(registration));
-		List<IssueTO> errorIssues = Collections.emptyList();
-		Status status = Status.NOT_VERIFIED;
-		if (!allIssues.isEmpty() && registrationCRUD.getIgnoreWarnings()) {
-			errorIssues = allIssues.stream().filter(issue -> IssueType.WARNING != issue.getType()).collect(Collectors.toList());
-			if (errorIssues.isEmpty()) {
-				status = Status.UNCOMPLETE;
-			}
-		}
-		if (allIssues.isEmpty() || errorIssues.isEmpty() && registrationCRUD.getIgnoreWarnings()) {
-			Person enrollee = personDao.create(registration.getEnrollee());
-			enrolleeCRUD.setId(enrollee.getEntityKey());
-			
-			if (registrationCRUD.isEnrolleeAsPayer()) {
-				registration.setPayer(enrollee);
-			} else if (registration.getPayer() != null) {
-				personDao.create(registration.getPayer());
-				registrationCRUD.getPayer().setId(registration.getPayer().getEntityKey());
-			}
-			
-			certificateDao.create(registration.getCertificate());
-			registrationCRUD.getCertificate().setId(registration.getCertificate().getEntityKey());
-			
-			Long registrationId = getIdForRegistration(registration);
-			registration.setRegistrationId(registrationId);
-			registration.setStatus(status);
 
-			registrationDao.create(registration);
-			registrationCRUD.setId(registration.getEntityKey());
-			registrationCRUD.setRegistrationId(registrationId);
+	private static Person convertPerson(PersonCRUDTO personCRUD, Person person) {
+		if (person == null) {
+			person = new Person();
 		}
-		return Results.create(registrationCRUD, registrationCRUD.getIgnoreWarnings() ? errorIssues : allIssues);
-	}
-
-	private static Person convertPerson(PersonCRUDTO personCRUD) {
-		Person person = new Person();
+		person.setVersion(personCRUD.getVersion());
 		person.setEntityKey(personCRUD.getId());
 		person.setFirstName(personCRUD.getFirstName());
 		person.setLastName(personCRUD.getLastName());
@@ -351,25 +203,23 @@ public class RegistrationServiceBean implements RegistrationService {
 		}
 		return person;
 	}
-	
+
 	private long getIdForRegistration(Registration registration) {
 		return registrationDao.findMaxRegistrationId(registration) + 1L;
 	}
 
-	@Override 
+	@Override
 	@Transactional
 	public List<RegistrationPeriodTO> getActiveRegistrationPeriods(Long customerKey) {
-		return registrationPeriodDao.findActivePeriodsForCustomer(customerKey).stream()
-				.map(this::convertPeriod)
-				.collect(Collectors.toList());
+		return registrationPeriodDao.findActivePeriodsForCustomer(customerKey).stream().map(this::convertPeriod)
+		        .collect(Collectors.toList());
 	}
-	
+
 	@Override
 	@Transactional
 	public List<RegistrationPeriodTO> getRegistrationPeriodList(Long customerKey) {
-		return registrationPeriodDao.fetchList(customerKey).stream()
-				.map(this::convertPeriod)
-				.collect(Collectors.toList());
+		return registrationPeriodDao.fetchList(customerKey).stream().map(this::convertPeriod)
+		        .collect(Collectors.toList());
 	}
 
 	private RegistrationPeriodTO convertPeriod(RegistrationPeriod entity) {
@@ -389,11 +239,14 @@ public class RegistrationServiceBean implements RegistrationService {
 			specTo.setId(spec.getEntityKey());
 			specTo.setSpecialty(spec.getSpecialty().getTitle());
 			specTo.setSeparateByEducationBase(spec.getSeparateByEducationBase());
-			specTo.setEducationBases(spec.getEducationBases().stream().map(EducationBase::getValue).collect(Collectors.toSet()));
+			specTo.setEducationBases(
+			        spec.getEducationBases().stream().map(EducationBase::getValue).collect(Collectors.toSet()));
 			specTo.setSeparateByEducationForm(spec.getSeparateByEducationForm());
-			specTo.setEducationForms(spec.getEducationForms().stream().map(EducationForm::getValue).collect(Collectors.toSet()));
+			specTo.setEducationForms(
+			        spec.getEducationForms().stream().map(EducationForm::getValue).collect(Collectors.toSet()));
 			specTo.setSeparateByFundsSource(spec.getSeparateByFundsSource());
-			specTo.setFundsSources(spec.getFundsSources().stream().map(FundsSource::getValue).collect(Collectors.toSet()));
+			specTo.setFundsSources(
+			        spec.getFundsSources().stream().map(FundsSource::getValue).collect(Collectors.toSet()));
 			if (spec.getExamSubjectExpression() != null) {
 				specTo.setExamSubjectsRule(spec.getExamSubjectExpression());
 				specTo.setExamSubjects(parser.parse(spec.getExamSubjectExpression()).getList());
@@ -402,7 +255,7 @@ public class RegistrationServiceBean implements RegistrationService {
 		}).collect(Collectors.toList()));
 		return to;
 	}
-	
+
 	@Transactional
 	@Override
 	public RegistrationCRUDTO fetchDetails(Long id) {
@@ -412,6 +265,7 @@ public class RegistrationServiceBean implements RegistrationService {
 		}
 		RegistrationCRUDTO to = new RegistrationCRUDTO();
 		to.setId(entity.getEntityKey());
+		to.setVersion(entity.getVersion());
 		to.setStatus(entity.getStatus().value);
 		to.setNote(entity.getNote());
 		to.setFundsSource(entity.getFundsSource().value);
@@ -440,12 +294,12 @@ public class RegistrationServiceBean implements RegistrationService {
 		}
 		return to;
 	}
-	
+
 	private static <FROM, TO> TO nullSafeConvert(FROM from, Function<FROM, TO> convertFunction) {
 		return from != null ? convertFunction.apply(from) : null;
 	}
-	
-	private static List<SubjectMarkCRUDTO<ExamSubjectCRUDTO>>  convertExamMarks(Map<ExamSubject, Integer> entityMarks) {
+
+	private static List<SubjectMarkCRUDTO<ExamSubjectCRUDTO>> convertExamMarks(Map<ExamSubject, Integer> entityMarks) {
 		List<SubjectMarkCRUDTO<ExamSubjectCRUDTO>> marks = new ArrayList<>();
 		entityMarks.forEach((s, m) -> {
 			SubjectMarkCRUDTO<ExamSubjectCRUDTO> sm = new SubjectMarkCRUDTO<>();
@@ -454,13 +308,14 @@ public class RegistrationServiceBean implements RegistrationService {
 			subject.setId(s.getEntityKey());
 			sm.setSubject(subject);
 			sm.setMark(m);
-			marks.add(sm);	
+			marks.add(sm);
 		});
 		return marks;
 	}
-	
+
 	private static CertificateCRUDTO convertCertificate(Certificate entity) {
 		CertificateCRUDTO to = new CertificateCRUDTO();
+		to.setVersion(entity.getVersion());
 		EducationInstitutionBase eibEntity = entity.getInstitution();
 		if (eibEntity != null) {
 			EducationInstitutionBaseCRUDTO eib = new EducationInstitutionBaseCRUDTO();
@@ -511,6 +366,7 @@ public class RegistrationServiceBean implements RegistrationService {
 		to.setAddress(converAddress(entity.getAddress()));
 		to.setDocument(convertDocument(entity.getDocument()));
 		to.setContactDetails(convertContactDetails(entity));
+		to.setVersion(entity.getVersion());
 		return to;
 	}
 
@@ -553,13 +409,16 @@ public class RegistrationServiceBean implements RegistrationService {
 		}
 		EducationInstitution ei = educationInstitutionDao.findByCustomer(crud.getCustomerId());
 		if (ei == null || !ei.getEntityKey().equals(reg.getInstitution().getEntityKey())) {
-			return Results.create(crud, Issues.error("validation.registration.approve.registration-is-in-different-institution"));
+			return Results.create(crud,
+			        Issues.error("validation.registration.approve.registration-is-in-different-institution"));
 		}
 		if (Status.NOT_VERIFIED != reg.getStatus()) {
-			return Results.create(crud, Issues.error("validation.registration.approve.registration-is-in-incorrect-status"));
+			return Results.create(crud,
+			        Issues.error("validation.registration.approve.registration-is-in-incorrect-status"));
 		}
 		if (reg.getRegisteredBy().getEntityKey().equals(crud.getUserAccountId())) {
-			return Results.create(crud, Issues.error("validation.registration.approve.registration-couldnt-be-approved-by-initiator"));
+			return Results.create(crud,
+			        Issues.error("validation.registration.approve.registration-couldnt-be-approved-by-initiator"));
 		}
 		UserAccount verifiedBy = userAccountDao.findOne(crud.getUserAccountId());
 		reg.setVersion(crud.getVersion());
@@ -571,7 +430,7 @@ public class RegistrationServiceBean implements RegistrationService {
 		crud.setStatus(reg.getStatus().value);
 		return Results.create(crud);
 	}
-	
+
 	@Transactional
 	@Override
 	public ResultTO<RegistrationCRUDTO> cancelRegistration(RegistrationCRUDTO crud) {
@@ -581,10 +440,12 @@ public class RegistrationServiceBean implements RegistrationService {
 		}
 		EducationInstitution ei = educationInstitutionDao.findByCustomer(crud.getCustomerId());
 		if (ei == null || !ei.getEntityKey().equals(reg.getInstitution().getEntityKey())) {
-			return Results.create(crud, Issues.error("validation.registration.cancel.registration-is-in-different-institution"));
+			return Results.create(crud,
+			        Issues.error("validation.registration.cancel.registration-is-in-different-institution"));
 		}
 		if (Status.CANCELED == reg.getStatus()) {
-			return Results.create(crud, Issues.error("validation.registration.cancel.registration-is-in-incorrect-status"));
+			return Results.create(crud,
+			        Issues.error("validation.registration.cancel.registration-is-in-incorrect-status"));
 		}
 		reg.setStatus(Status.CANCELED);
 		reg = registrationDao.update(reg);
@@ -593,8 +454,232 @@ public class RegistrationServiceBean implements RegistrationService {
 		return Results.create(crud);
 	}
 	
+	private Certificate convertCertificate(CertificateCRUDTO cert, Certificate certificate, List<IssueTO> allIssues, Person enrollee) {
+		if (cert != null) {
+			if (certificate == null) {
+				certificate = new Certificate();
+			}
+			certificate.setVersion(cert.getVersion());
+			certificate.setEntityKey(cert.getId());
+			certificate.setYear(cert.getYear());
+			EducationInstitutionBaseCRUDTO institution = cert.getInstitution();
+			if (institution != null) {
+				EducationInstitutionBase eiBase = null;
+				if (institution.getId() != null) {
+					eiBase = educationInstitutionBaseDao.findOne(institution.getId());
+				} else if (institution.getName() != null && institution.getCountry() != null) {
+					eiBase = educationInstitutionBaseDao.findByNameAndCountry(institution.getName(),
+					        institution.getCountry());
+				}
+				if (eiBase == null) {
+					ResultTO<EducationInstitutionBaseCRUDTO> eiResult = eiService.create(institution);
+					if (eiResult.getIssues().isEmpty()) {
+						eiBase = educationInstitutionBaseDao.findOne(institution.getId());
+					} else {
+						allIssues.addAll(eiResult.getIssues());
+					}
+				}
+				certificate.setInstitution(eiBase);
+			}
+	
+			certificate.setEnrollee(enrollee);
+	
+			certificate.setMarks(cert.getMarks().stream().filter(sm -> sm.getMark() != null).collect(
+			        Collectors.toMap(sm -> subjectDao.findOne(sm.getSubject().getId()), SubjectMarkCRUDTO::getMark)));
+	
+			List<Subject> extraSubjects = new ArrayList<>();
+			boolean extraSubjectsHasIssues = false;
+			for (SubjectMarkCRUDTO<SubjectCRUDTO> sm : cert.getExtraMarks()) {
+				SubjectCRUDTO subject = sm.getSubject();
+				if (subject != null) {
+					if (subject.getId() != null) {
+						extraSubjects.add(subjectDao.findOne(subject.getId()));
+					} else {
+						ResultTO<SubjectCRUDTO> subjectResult = certificationService.createSubject(subject);
+						if (!subjectResult.getIssues().isEmpty()) {
+							allIssues.addAll(subjectResult.getIssues());
+							extraSubjectsHasIssues = true;
+						}
+					}
+				}
+			}
+	
+			if (!extraSubjectsHasIssues) {
+				certificate.getMarks()
+				        .putAll(cert.getExtraMarks().stream().filter(esm -> esm.getMark() != null)
+				                .collect(Collectors.toMap(esm -> subjectDao.findOne(esm.getSubject().getId()),
+				                        SubjectMarkCRUDTO::getMark)));
+			}
+		}
+		return certificate;
+	}
+	
+	private Registration convertRegistration(RegistrationCRUDTO crud, Registration registration, List<IssueTO> allIssues) {
+		if (registration == null) {
+			registration = new Registration();
+		}
+		PersonCRUDTO enrolleeCRUD = crud.getEnrollee();
+		if (enrolleeCRUD != null) {
+			Person enrollee = convertPerson(enrolleeCRUD, new Person());
+			registration.setEnrollee(enrollee);
+		}
+		if (crud.getEducationInstitution() != null
+		        && crud.getEducationInstitution().getId() != null) {
+			registration.setInstitution(
+			        educationInstitutionDao.findOne(crud.getEducationInstitution().getId()));
+		}
+		if (crud.getSpecialty() != null && crud.getSpecialty().getId() != null) {
+			registration.setSpecialty(specialtyDao.findOne(crud.getSpecialty().getId()));
+		}
+		try {
+			registration.setFundsSource(FundsSource.resolve(crud.getFundsSource()));
+		} catch (Exception exc) {
+			registration.setFundsSource(null);
+		}
+		try {
+			registration.setEducationForm(EducationForm.resolve(crud.getEducationForm()));
+		} catch (Exception exc) {
+			registration.setEducationForm(null);
+		}
+		try {
+			registration.setEducationBase(EducationBase.resolve(crud.getEducationBase()));
+		} catch (Exception exc) {
+			registration.setEducationForm(null);
+		}
+		if (crud.getUserAccountId() != null) {
+			registration.setRegisteredBy(userAccountDao.findOne(crud.getUserAccountId()));
+		}
+		if (crud.getPeriodId() != null) {
+			registration.setRegistrationPeriod(registrationPeriodDao.findOne(crud.getPeriodId()));
+		}
+		registration.setRegistrationDate(LocalDateTime.now());
+
+		registration.setPrerogatives(prerogativeDao.fetchByKeys(
+		        crud.getPrerogatives().stream().map(BenefitTO::getId).collect(Collectors.toList())));
+		registration.setOutOfCompetitions(outOfCompetitionDao.fetchByKeys(
+		        crud.getOutOfCompetitions().stream().map(BenefitTO::getId).collect(Collectors.toList())));
+		
+		registration.setCertificate(convertCertificate(crud.getCertificate(), registration.getCertificate(), allIssues, registration.getEnrollee()));
+		
+		if (crud.getExamSubjectMarks() != null) {
+			Map<ExamSubject, Integer> examMarks = new HashMap<>();
+			crud.getExamSubjectMarks().forEach(esm -> {
+				examMarks.put(examSubjectDao.findOne(esm.getSubject().getId()), esm.getMark());
+			});
+			registration.setExamMarks(examMarks);
+		}
+
+		registration.setEnrolleeAsPayer(crud.isEnrolleeAsPayer());
+		if (registration.getFundsSource() != null && registration.getFundsSource() == FundsSource.PAYER) {
+			if (!registration.isEnrolleeAsPayer()) {
+				PersonCRUDTO payerCRUD = crud.getPayer();
+				if (payerCRUD != null) {
+					registration.setPayer(convertPerson(payerCRUD, registration.getPayer()));
+				}
+			}
+		}
+		
+		return registration;
+	}
+
 	@Override
-	public ResultTO<RegistrationCRUDTO> updateRegistration(RegistrationCRUDTO registration) {
-		return null;
+	@Transactional
+	public ResultTO<RegistrationCRUDTO> createRegistration(RegistrationCRUDTO crud) {
+		List<IssueTO> allIssues = new ArrayList<>();
+		Registration registration = convertRegistration(crud, new Registration(), allIssues);
+
+		allIssues.addAll(validationService.validate(registration));
+		List<IssueTO> errorIssues = Collections.emptyList();
+		Status status = Status.NOT_VERIFIED;
+		if (!allIssues.isEmpty() && crud.getIgnoreWarnings()) {
+			errorIssues = allIssues.stream().filter(issue -> IssueType.WARNING != issue.getType())
+			        .collect(Collectors.toList());
+			if (errorIssues.isEmpty()) {
+				status = Status.UNCOMPLETE;
+			}
+		}
+		if (allIssues.isEmpty() || errorIssues.isEmpty() && crud.getIgnoreWarnings()) {
+			Person enrollee = personDao.create(registration.getEnrollee());
+			crud.setId(enrollee.getEntityKey());
+
+			if (crud.isEnrolleeAsPayer()) {
+				registration.setPayer(enrollee);
+			} else if (registration.getPayer() != null) {
+				personDao.create(registration.getPayer());
+				crud.getPayer().setId(registration.getPayer().getEntityKey());
+			}
+
+			certificateDao.create(registration.getCertificate());
+			crud.getCertificate().setId(registration.getCertificate().getEntityKey());
+
+			Long registrationId = getIdForRegistration(registration);
+			registration.setRegistrationId(registrationId);
+			registration.setStatus(status);
+
+			registrationDao.create(registration);
+			crud.setId(registration.getEntityKey());
+			crud.setRegistrationId(registrationId);
+		}
+		return Results.create(crud, crud.getIgnoreWarnings() ? errorIssues : allIssues);
+	}
+	
+	@Transactional
+	@Override
+	public ResultTO<RegistrationCRUDTO> updateRegistration(RegistrationCRUDTO crud) {
+		Registration reg = null;
+		if (crud.getId() == null || (reg = registrationDao.findOne(crud.getId())) == null) {
+			return Results.create(crud, Issues.error("validation.registration.update.registration-isnt-exist"));
+		}
+		EducationInstitution ei = educationInstitutionDao.findByCustomer(crud.getCustomerId());
+		if (ei == null || !ei.getEntityKey().equals(reg.getInstitution().getEntityKey())) {
+			return Results.create(crud,
+			        Issues.error("validation.registration.update.registration-is-in-different-institution"));
+		}
+		
+		List<IssueTO> allIssues = new ArrayList<>();
+		Registration registration = convertRegistration(crud, new Registration(), allIssues);
+
+		allIssues.addAll(validationService.validate(registration));
+		List<IssueTO> errorIssues = Collections.emptyList();
+		Status status = Status.NOT_VERIFIED;
+		if (!allIssues.isEmpty() && crud.getIgnoreWarnings()) {
+			errorIssues = allIssues.stream().filter(issue -> IssueType.WARNING != issue.getType())
+			        .collect(Collectors.toList());
+			if (errorIssues.isEmpty()) {
+				status = Status.UNCOMPLETE;
+			}
+		}
+		if (allIssues.isEmpty() || errorIssues.isEmpty() && crud.getIgnoreWarnings()) {
+			Person enrollee = registration.getEnrollee();
+			if (enrollee == null || enrollee.getEntityKey() == null) {
+				enrollee = personDao.create(registration.getEnrollee());
+			}
+			crud.setId(enrollee.getEntityKey());
+
+			if (crud.isEnrolleeAsPayer()) {
+				registration.setPayer(enrollee);
+			} else if (registration.getPayer() != null) {
+				Person payer = registration.getPayer();
+				if (payer == null || payer.getEntityKey() == null) {
+					payer = personDao.create(registration.getPayer());
+				}
+				crud.getPayer().setId(payer.getEntityKey());
+			}
+
+			Certificate certificate = registration.getCertificate();
+			if (certificate == null || certificate.getEntityKey() == null) {
+				certificateDao.create(certificate);
+			}
+			crud.getCertificate().setId(registration.getCertificate().getEntityKey());
+
+			registration.setRegistrationId(crud.getRegistrationId());
+			registration.setStatus(status);
+
+			registration.setEntityKey(crud.getId());
+			registration.setVersion(crud.getVersion());
+		    registrationDao.update(registration);
+			crud.setId(registration.getEntityKey());
+		}
+		return Results.create(crud, crud.getIgnoreWarnings() ? errorIssues : allIssues);
 	}
 }

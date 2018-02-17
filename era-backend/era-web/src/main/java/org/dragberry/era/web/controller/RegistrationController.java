@@ -122,7 +122,7 @@ public class RegistrationController {
 		return ResponseEntity.ok(registrationService.createRegistration(registration));
 	}
 	
-	@PostMapping("/create")
+	@PostMapping("/update")
 	public ResponseEntity<?> update(@RequestBody RegistrationCRUDTO registration) {
 		accessContoll.checkPermission(Roles.Registrations.UPDATE);
 		registration.setCustomerId(accessContoll.getLoggedUser().getCustomerId());
